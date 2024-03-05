@@ -1,0 +1,4 @@
+.accordion__button--active[aria-expanded="true"] {
+    background-color: rgb(153, 123, 123);
+    transition: background-color 500ms ease-in-out;
+}

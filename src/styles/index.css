@@ -1,0 +1,7 @@
+/* Reset CSS */
+@import url('./generic/reset.css');
+
+/* Styling for base HTML elements */
+@import url('./elements/global.css');
+
+

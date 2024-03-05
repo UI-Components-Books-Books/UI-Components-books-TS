@@ -1,0 +1,32 @@
+import type { Meta, StoryObj } from '@storybook/react'
+
+import { Kbd } from '../src/kbd'
+
+
+const meta = {
+    title: 'Kbd',
+    component: Kbd,
+    parameters: {
+        layout: 'centered'
+    },
+    tags: ['autodocs']
+} satisfies Meta<typeof Kbd>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+
+export const Default: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story: "Description to a button test component"
+            }
+        }
+    },
+    args: {
+        children: ['Ctrl']
+    },
+    render: (args) => <Kbd {...args} />
+
+}

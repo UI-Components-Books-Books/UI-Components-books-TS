@@ -1,0 +1,27 @@
+.c-image {
+    margin: 0 auto;
+    max-width: var(--image-max-width, auto);
+}
+
+:where(.c-image) {
+    position: relative;
+    padding: .625rem;
+}
+
+:where(.c-image img) {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+}
+
+:where(.c-image__figcaption) {
+    margin-top: .9375rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.c-image__figcaption p::first-letter {
+    text-transform: uppercase;
+}

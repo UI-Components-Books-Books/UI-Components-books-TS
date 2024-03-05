@@ -1,0 +1,7 @@
+.c-kbd {
+    background-color: var(--kbd-bg-color, rgba(0, 0, 0, 0.1));
+    border-radius: var(--kbd-border-radious, .25rem);
+    color: var(--kbd-color, rgba(0, 0, 0, 0.7));
+    padding: 8px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px -2px 0px inset, rgba(0, 0, 0, 0.4) 0px 1px 1px;
+}
