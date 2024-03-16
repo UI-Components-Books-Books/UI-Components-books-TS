@@ -49,7 +49,7 @@ export const AccordionItem: React.FC<Props> = ({ id, children, addClass }) => {
 
     return (
         <AccordionItemProvider value={{ uid, isExpanded, handleExpanded }}>
-            <div className={classnames(`c-accordion__item`, addClass)}>
+            <div className={classnames(`c-accordion__item`, { [addClass ?? ""]: addClass })}>
                 {children}
             </div>
         </AccordionItemProvider>

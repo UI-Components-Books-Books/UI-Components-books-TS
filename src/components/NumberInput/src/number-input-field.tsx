@@ -117,7 +117,7 @@ export const NumberInputField: React.FC<Props> = forwardRef<HTMLInputElement, Pr
     return (
       <label
         htmlFor={uid}
-        className={classNames('c-number-input__label', { addClass: addClass })}
+        className={classNames('c-number-input__label', { [addClass ?? ""]: addClass })}
       >
         <span className={`${!isLabelVisible && 'u-sr-only'}`}> {label} </span>
         <input

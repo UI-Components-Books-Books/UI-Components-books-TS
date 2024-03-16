@@ -9,8 +9,8 @@ interface Props {
 
 export const Kbd: React.FC<Props> = ({ addClass, children, ...props }) => {
     return (
-        <kbd className={classnames('c-kbd', addClass ?? "")} {...props} >
-            {children}    
+        <kbd className={classnames('c-kbd', { [addClass ?? ""]: addClass })} {...props} >
+            {children}
         </kbd>
     )
 }

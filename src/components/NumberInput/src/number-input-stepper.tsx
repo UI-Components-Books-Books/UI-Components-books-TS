@@ -9,7 +9,7 @@ interface Props {
 
 export const NumberInputStepper: React.FC<Props> = ({ children, addClass }) => {
   return (
-    <div className={classNames('c-number-input__stepper', { addClass: addClass })}>
+    <div className={classNames('c-number-input__stepper', { [addClass ?? ""]: addClass })}>
       {children}
     </div>
   )

@@ -212,7 +212,7 @@ export const Tooltip: React.FC<Props> = ({
           style={styles.popper}
           className={classNames('c-tooltip', {
             'c-tooltip--active': isOpen ,
-            addClass: addClass
+            [addClass ?? ""]: addClass
           })}
           {...attributes.popper}
         >

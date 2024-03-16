@@ -1,5 +1,7 @@
 import { forwardRef } from 'react'
 
+import classnames from 'classnames';
+
 import './col.css'
 
 type range =
@@ -17,7 +19,7 @@ type range =
     | '12';
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
-    addClass?: range;
+    addClass?: string;
     xs?: range;
     xm?: range;
     sm?: range;
@@ -30,7 +32,7 @@ interface Props extends React.HTMLProps<HTMLDivElement> {
 export const Col = forwardRef<HTMLDivElement, Props>(
     function Col({ addClass, ...props }, ref: React.Ref<HTMLDivElement>) {
         return (
-            <div ref={ref} className={`c-col ${addClass ?? ''}`} {...props} />
+            <div ref={ref} className={classnames('c-col', { [addClass ?? ""]: addClass })} {...props} />
         );
     }
 );

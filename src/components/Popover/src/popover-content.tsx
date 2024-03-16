@@ -210,7 +210,7 @@ export const PopoverContent: React.FC<Props> = ({
         className={classnames('c-popover-modal', {
           'c-popover-modal--active': isPopoverOpen,
           'video-interpreter-ui-popover': 'video-interpreter-ui-popover',
-          addClass: addClass
+          [addClass ?? ""]: addClass
         })}
         onKeyDown={onKeyDown}
         data-hidden={!isPopoverOpen}

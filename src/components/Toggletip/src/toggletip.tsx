@@ -183,7 +183,7 @@ export const Toggletip: React.FC<Props> = ({
                     style={styles.popper}
                     className={classNames('c-toggletip', {
                         'c-toggletip--active': isOpen,
-                        addClass: addClass
+                        [addClass ?? ""]: addClass
                     })}
                     {...attributes.popper}
                 >

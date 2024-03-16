@@ -65,7 +65,7 @@ export const Section: React.FC<Props> = forwardRef<HTMLDivElement, Props>(
         aria-hidden={!isSelected}
         data-value={uid}
         aria-labelledby={`section-${uid}`}
-        className={classnames('c-section video-interpreter-ui-section', addClass ?? "")}
+        className={classnames('c-section video-interpreter-ui-section', { [addClass ?? ""]: addClass })}
         {...(type === 'carrousel' && {
           'aria-roledescription': 'Sección'
         })}

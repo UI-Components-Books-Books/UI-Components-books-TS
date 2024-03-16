@@ -36,7 +36,7 @@ export const ModalOverlay: React.FC<Props> = ({ addClass, onClick }) => {
 
     return (
         <motion.div
-            className={classnames('c-layout', { addClass: addClass })}
+            className={classnames('c-layout', { [addClass ?? ""]: addClass })}
             onClick={handleClick}
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.6 }}

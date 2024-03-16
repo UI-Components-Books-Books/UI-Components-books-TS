@@ -25,7 +25,7 @@ export const NumberDecrementStepper: React.FC<Props> = ({ children, addClass, la
       onClick={onDecrementValue}
       disabled={validate(min)}
       aria-label={label}
-      className={classNames('c-number-input__button', { addClass: addClass })}
+      className={classNames('c-number-input__button', { [addClass ?? ""]: addClass })}
     >
       {children ||
         <Icon>

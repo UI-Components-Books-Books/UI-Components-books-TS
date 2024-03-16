@@ -46,7 +46,7 @@ export const Image: React.FC<Props> = forwardRef<HTMLImageElement, Props>(functi
 
     return (
         <figure
-            className={classnames('c-image', addClass ?? "")}
+            className={classnames('c-image', { [addClass ?? ""]: addClass })}
             {...(size && { style: { '--image-max-width': size } as React.CSSProperties })}
         >
             <img

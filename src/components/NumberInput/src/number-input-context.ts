@@ -1,4 +1,4 @@
-import { createContext } from "../../../utils/createcontex";
+import { createContext } from "../../../utils/createcontext";
 
 type NumberInputContextType = {
     counter: number;

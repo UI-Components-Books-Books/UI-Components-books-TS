@@ -32,8 +32,10 @@ export const Button: React.FC<Props> = forwardRef<HTMLButtonElement, Props>(func
             ref={ref}
             className={classnames(
                 'c-button', `c-button--${variant}`, `c-button--${size}`,
-                { 'c-button--round': hasIcon },
-                addClass && addClass
+                {
+                    'c-button--round': hasIcon,
+                    [addClass ?? ""]: addClass
+                }
             )}
             {...(hasAriaLabel && { 'aria-label': `${label}` })}
             {...others}

@@ -25,7 +25,7 @@ export const AccordionButton: React.FC<Props> = ({
       id={`accordion-button-${uid}`}
       aria-controls={`accordion-panel-${uid}`}
       aria-expanded={isExpanded}
-      className={classnames('c-accordion__button', addClass)}
+      className={classnames('c-accordion__button', { [addClass ?? ""]: addClass })}
       onClick={handleExpanded}
       {...props}
     >

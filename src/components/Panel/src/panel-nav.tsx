@@ -249,7 +249,7 @@ export const NavSection: React.FC<Props> = ({
         role='tablist'
         aria-labelledby='section-list-navigation'
         aria-orientation="horizontal"
-        className={classnames('c-navigation', addClass ?? "")}
+        className={classnames('c-navigation', { [addClass ?? ""]: addClass })}
       >
         {
           items.map(({ section, type, selected, ...others }, index) => (

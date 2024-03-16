@@ -17,7 +17,7 @@ export const AccordionPanel: React.FC<Props> = ({ children, addClass, ...props }
             role='region'
             aria-hidden={!isExpanded}
             aria-labelledby={`accordion-button-${uid}`}
-            className={classnames('c-accordion__panel', addClass )}
+            className={classnames('c-accordion__panel', { [addClass ?? ""]: addClass })}
             {...props}
         >
             <div

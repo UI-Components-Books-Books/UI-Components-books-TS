@@ -110,7 +110,7 @@ const NumberInput: React.FC<Props> & subComponents = ({
         onDecrementValue
       }}
     >
-      <div className={classNames('c-number-input', { addClass: addClass })}>{children}</div>
+      <div className={classNames('c-number-input', { [addClass ?? ""]: addClass })}>{children}</div>
     </NumberInputProvider>
   )
 }

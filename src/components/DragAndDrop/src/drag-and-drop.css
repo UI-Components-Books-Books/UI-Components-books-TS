@@ -1,0 +1,18 @@
+.c-droppable {
+    --clr-grey: rgba(201, 211, 219, 0.5);
+    --clr-grey-dark: rgba(201, 211, 219, 0.25);
+}
+
+:where(.c-droppable) {
+    height: 340px;
+    box-shadow: inset var(--clr-grey) 0 0 0 1px;
+    transition: box-shadow 250ms ease;
+}
+
+:where(.c-droppable--active) {
+    box-shadow: inset var(--clr-grey-dark) 0 0 0 3px;
+}
+
+.c-draggable {
+    cursor: grab;
+}

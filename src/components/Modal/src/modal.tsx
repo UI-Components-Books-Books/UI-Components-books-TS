@@ -53,7 +53,7 @@ const Modal: React.FC<Props> & subModules = ({ children, isOpen = false, onClose
      */
     const inertToggle = (state: boolean) => {
         // Busca el elemento #root en el DOM
-        const root = document.querySelector('#root');
+        const root = document.querySelector('#root') as HTMLDivElement;
 
         // Si no se encuentra el elemento #root, salir de la función
         if (!root) return;

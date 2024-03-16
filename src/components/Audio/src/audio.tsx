@@ -264,8 +264,8 @@ export const Audio: React.FC<Props> = ({
             {
               'is-button-playing': play,
               'is-button-paused': !play,
-            },
-            addClass ?? "")
+              [addClass ?? ""]: addClass
+            })
           }
           {...(a11y && { disabled: a11y })}
           {...props}
@@ -354,7 +354,7 @@ export const Audio: React.FC<Props> = ({
         ref={refAudio}
         preload='metadata'
         controls
-        className={classnames('c-audio', `c-audio--${size}`, addClass ?? "")}
+        className={classnames(`c-audio c-audio--${size}`, { [addClass ?? ""]: addClass })}
         onLoadedMetadata={onLoadedMetadata}
         onTimeUpdate={onTimeUpdate}
         onPlay={() => setPlay(true)}
