@@ -1,0 +1,4 @@
+.tab--selected {
+    background-color: rgb(201, 125, 27);
+    transition: background-color 500ms ease-in-out;
+}

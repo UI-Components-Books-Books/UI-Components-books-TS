@@ -1,11 +1,10 @@
-import { cloneElement, Children, isValidElement, useRef } from 'react'
+import React, { cloneElement, Children, isValidElement, useRef } from 'react'
 
 import classnames from 'classnames'
-import PropTypes from 'prop-types'
 
-import css from './Tabs.module.scss'
-import { getChildrenByType } from '../../../utils/validations/getChildrenType'
-import { typeValidation } from '../../../utils/validations/typeValidation'
+import { TabListProvider } from './tabs-context'
+
+import './tabs.css'
 
 
 /**
@@ -17,106 +16,99 @@ const KEYCODE = Object.freeze({
   RIGHT: 39
 })
 
-export const TabList = ({
+interface Props {
+  children: JSX.Element | JSX.Element[];
+  addClass?: string;
+  label: string;
+  orientation: "horizontal" | "vertical";
+}
+
+export const TabList: React.FC<Props> = ({
   children: ChildrenProps,
   addClass,
-  label,
-  orientation,
-  defaultStyle,
-  __TYPE,
+  label = 'Simple tabs',
+  orientation = 'horizontal',
   ...props
 }) => {
   /**
    * Usado para almacenar las referencias
    * de todos los botones usados como Tab.
    */
-  const refTabs = useRef([])
+  const refTabs = useRef<HTMLButtonElement[]>([])
+
 
   /**
    * Función para utilizada para agregar una nueva referencia
    * al arreglo de referencias refTabs.
    *
-   * @param {ReactNode[]} ref - Referencia del botón usado en el Tab.
-   * @returns {ReactNode[]} refTabs - Arreglo de referencias.
+   * @param {HTMLButtonElement} ref - Referencia del botón usado en el Tab.
+   * @returns {void}
    */
-  const addNewRef = (ref) => (refTabs.current = [...refTabs.current, ref])
+  const addNewTabRef = (ref: HTMLButtonElement): void => {
+    refTabs.current = [...refTabs.current, ref];
+  };
+
 
   /**
    * Función utilizada en el evento KeyDown del botón,
    * permite decidir el focus del siguiente elemento
    * utilizando las teclas ArrowLeft o ArrowRight.
    *
-   * @param {Event} event - Evento disparado por KeyDown
+   * @param {React.KeyboardEvent} e - Evento disparado por KeyDown
+   * @returns {void}
    */
-  const onNavigation = (e) => {
+  const handleNavigationFocus = (e: React.KeyboardEvent): void => {
     // Obtenemos la primera Tab
-    const FIRST_TAB = refTabs.current[0]
+    const FIRST_TAB = refTabs.current[0];
     // Obtenemos la última Tab
-    const LAST_TAB = refTabs.current[refTabs.current.length - 1]
+    const LAST_TAB = refTabs.current[refTabs.current.length - 1] as HTMLButtonElement;
 
     // Si la tecla pulsada ArrowLeft
-    if ((e.keyCode || e.which) === KEYCODE.LEFT) {
+    if (e.keyCode === KEYCODE.LEFT) {
       if (e.target === FIRST_TAB) {
-        LAST_TAB.focus()
+        LAST_TAB.focus();
       } else {
-        const prevFocusButton = refTabs.current.indexOf(e.target) - 1
+        const prevFocusButton = refTabs.current.indexOf(e.target as HTMLButtonElement) - 1;
         // Agregamos el focus al botón anterior
-        refTabs.current[prevFocusButton].focus()
+        refTabs.current[prevFocusButton].focus();
       }
-    } else if ((e.keyCode || e.which) === KEYCODE.RIGHT) {
+    } else if (e.keyCode === KEYCODE.RIGHT) {
       // Si la tecla pulsada es ArrowRight
       if (e.target === LAST_TAB) {
-        FIRST_TAB.focus()
+        FIRST_TAB.focus();
       } else {
-        const nextFocusButton = refTabs.current.indexOf(e.target) + 1
+        const nextFocusButton = refTabs.current.indexOf(e.target as HTMLButtonElement) + 1;
         // Agregamos el focus al siguiente botón
-        refTabs.current[nextFocusButton].focus()
+        refTabs.current[nextFocusButton].focus();
       }
     }
-  }
+  };
+
 
   const children = Children.map(ChildrenProps, (child, index) => {
-    if (!isValidElement(child)) return null
-    return cloneElement(child, {
-      ...child.props,
-      id: index,
-      addNewRef,
-      onNavigation
-    })
-  })
+    // Si el hijo no es un elemento React válido, lo ignoramos
+    if (!isValidElement(child)) return null;
+
+    // Obtenemos los props del hijo
+    const { props } = child as React.ReactElement;
+
+    // Creamos un nuevo elemento clonado con los componentProperties actualizados
+    return cloneElement(child, { id: index, ...props });
+  });
 
   return (
-    <div
-      role='tablist'
-      data-type={__TYPE}
-      aria-label={label}
-      aria-orientation={orientation}
-      className={classnames({
-        [css['c-tab__list']]: !defaultStyle,
-        [addClass]: addClass
-      })}
-      {...props}
-    >
-      {/* Filtramos los children para solo aceptar de tipo Tab. */}
-      {getChildrenByType(children, ['Tab'])}
-    </div>
+    <TabListProvider value={{ addNewTabRef, handleNavigationFocus }}>
+      <div
+        role='tablist'
+        aria-label={label}
+        aria-orientation={orientation}
+        className={classnames('c-tab__list', {
+          [addClass ?? ""]: addClass
+        })}
+        {...props}
+      >
+        {children}
+      </div>
+    </TabListProvider>
   )
-}
-
-TabList.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.element),
-    PropTypes.element
-  ]),
-  addClass: PropTypes.string,
-  label: PropTypes.string,
-  orientation: PropTypes.string,
-  defaultStyle: PropTypes.bool,
-  __TYPE: typeValidation('TabList')
-}
-
-TabList.defaultProps = {
-  __TYPE: 'TabList',
-  label: 'Simple tabs',
-  orientation: 'horizontal'
 }

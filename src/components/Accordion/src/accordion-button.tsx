@@ -5,8 +5,8 @@ import { ExpandLessIcon, ExpandMoreIcon } from './accordion-icons';
 import './Accordion.css'
 
 interface Props {
-  children: React.ReactNode
-  addClass?: string,
+  children: React.ReactNode;
+  addClass?: string;
   expandedIcon?: React.ReactNode;
   closedIcon?: React.ReactNode;
 }

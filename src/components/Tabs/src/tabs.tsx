@@ -1,41 +1,30 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
+import { Tab } from './tab'
+import { TabList } from './tab-list'
+import { TabPanel } from './tab-panel'
+import { TabPanels } from './tab-panels'
 import { TabsProvider } from './tabs-context'
 
 import './tabs.css'
 
+
 interface Props {
-    children: React.ReactNode[]
+    children: JSX.Element | JSX.Element[];
     defaultIndex?: number,
     addClass?: string
 }
 
-export const Tabs: React.FC<Props> = ({ children, defaultIndex = 0, addClass, ...props }) => {
+type subComponents = {
+    Tab: typeof Tab;
+    TabList: typeof TabList;
+    TabPanel: typeof TabPanel;
+    TabPanels: typeof TabPanels;
+}
+
+const Tabs: React.FC<Props> & subComponents = ({ children, defaultIndex = 0, addClass, ...props }) => {
     // Controla el estado de abierto/cerrado del TabPanel.
-    const [isOpen, setIsOpen] = useState<string | null>(null);
-
-
-    /**
-     * Referencia mutable utilizada para almacenar los identificadores únicos
-     * de cada componente <Section/>.
-     */
-    const tabsId = useRef<string[]>([]);
-
-
-    /**
-     * Función utilizada para agregar el ID de un tab a la referencia `tabsId`.
-     *
-     * @param {string} uid - El ID del tab que se va a agregar.
-     * @returns {void}
-     */
-    const addTabIndex = (uid: string): void => {
-        // Verifica si el ID del tab ya está en `tabsId.current`
-        if (!tabsId.current.includes(uid)) {
-            // Si no está, agrega el ID a `tabsId.current`
-            tabsId.current = [...tabsId.current, uid];
-        }
-    };
-
+    const [isOpen, setIsOpen] = useState<number | null>(null);
 
     /**
      * Función para abrir o cerrar el TabPanel.
@@ -43,30 +32,32 @@ export const Tabs: React.FC<Props> = ({ children, defaultIndex = 0, addClass, ..
      * @param {string} uid - El ID correspondiente del TabPanel.
      * @returns {void}
      */
-    const handleToggle = (uid: string): void => {
+    const handleToggle = (uid: number): void => {
         setIsOpen(uid);
     };
+
+    const handleValidation = (uid: number): boolean => isOpen === uid
 
 
     useEffect(() => {
         // Verificamos si defaultIndex es un índice válido y si hay IDs de hijos disponibles
-        if (defaultIndex === undefined || defaultIndex < 0 || defaultIndex >= tabsId.current.length) return;
+        if (defaultIndex === undefined || defaultIndex < 0) return;
 
-        const childIds = tabsId.current;
-        setIsOpen(childIds[defaultIndex]);
-
-    }, [defaultIndex, tabsId.current.length]);
+        setIsOpen(defaultIndex);
+    }, [defaultIndex]);
 
     return (
-        <TabsProvider value={{
-            isOpen,
-            handleToggle,
-            addTabIndex
-        }}>
-            <div {...(addClass && { className: `${addClass}` })} {...props}>
+        <TabsProvider value={{ isOpen, handleValidation, handleToggle }}>
+            <div {...(addClass && { className: addClass })} {...props}>
                 {children}
             </div>
         </TabsProvider>
     )
 }
 
+Tabs.Tab = Tab;
+Tabs.TabList = TabList;
+Tabs.TabPanel = TabPanel;
+Tabs.TabPanels = TabPanels;
+
+export { Tabs }

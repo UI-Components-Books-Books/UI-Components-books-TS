@@ -52,7 +52,7 @@ export const Default: Story = {
     },
     render: (args) => (
         <Accordion {...args}></Accordion>
-    ),
+    )
 }
 
 export const MultipleAccordionsOpen: Story = {

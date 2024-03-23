@@ -1,83 +1,81 @@
-import { useRef, useEffect, useContext } from 'react'
+import { useRef, useEffect } from 'react'
 
 import classnames from 'classnames'
-import PropTypes from 'prop-types'
 
-import css from './Tabs.module.scss'
+import { useTabListContext, useTabsContext } from './tabs-context'
 
+import './tabs.css'
 
-export const Tab = ({
-  children,
+interface Props {
+  id?: number;
+  children: React.ReactNode;
+  selected?: string;
+  addClass?: string;
+  icon?: (isSelected: boolean) => React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+export const Tab: React.FC<Props> = ({
   id,
+  children,
   selected,
   addClass,
   icon,
-  addNewRef,
-  onNavigation,
   onClick,
-  defaultStyle,
-  __TYPE,
   ...props
 }) => {
-  /**
-   * Necesitamos obtener la referencia del botón
-   * para luego pasarla en la función addNewRef proveniente
-   * de las propiedades.
-   */
-  const refButton = useRef()
+  // Referencia mutable al botón para poder interactuar con el DOM
+  const refButton = useRef<HTMLButtonElement | null>(null);
+
+  // Obtenemos las funciones necesarias del contexto de Tabs
+  const { handleValidation, handleToggle } = useTabsContext();
+
+  // Obtenemos la función para agregar una nueva referencia del contexto de la lista de Tabs
+  const { addNewTabRef, handleNavigationFocus } = useTabListContext();
+
+  // Determina si este tab está seleccionado
+  const isSelected = handleValidation(id!);
+
 
   /**
-   * Obtenemos las funciones validation y onToggle del contexto creado en Tabs.
-   */
-  const { validation, onToggle } = useContext(TabsContext)
-
-  /**
-   * variable que almacena el resultado de validation.
-   * Devuelve "true" o "false" apartir de evaluar
-   * el id con el estado.
+   * Manejador para el evento de click en el botón de tab.
+   * Llama a la función onClick proporcioanda (si existe) y activa el tab.
    *
-   * @returns {(Boolean)}
+   * @param {React.MouseEvent<HTMLButtonElement>} event - Evento de click
    */
-  const isSelected = validation(id)
-
-  /**
-   * Usada para poder ejecutar la función onToggle y
-   * la propiedad onClick en el evento click del botón.
-   *
-   * @param {HTMLButtonElement} event - Evento click
-   */
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
-      onClick(event)
+      onClick(event);
     }
-    onToggle(id)
-  }
+    handleToggle(id!);
+  };
 
+
+  // Efecto para agregar y limpiar la referencia al botón
   useEffect(() => {
-    // Agregamos al Referencia a la función addNewRef si está existe
-    refButton.current && addNewRef(refButton.current)
+    if (refButton.current) {
+      addNewTabRef(refButton.current); // Agrega la referencia al contexto de la lista de Tabs
+    }
 
     return () => {
       // Limpiamos la referencia al desmontar el componente
       refButton.current = null
-    }
-  }, [refButton])
+    };
+  }, [addNewTabRef]);
 
   return (
     <button
       id={`tab-${id}`}
       role='tab'
       ref={refButton}
-      data-type={__TYPE}
-      tabIndex={`${isSelected ? 0 : -1}`}
+      tabIndex={isSelected ? 0 : -1}
       aria-controls={`panel-${id}`}
       aria-selected={isSelected}
-      onKeyDown={onNavigation}
+      onKeyDown={handleNavigationFocus}
       onClick={handleClick}
-      className={classnames({
-        [`${css['c-tab__button']} u-flex`]: !defaultStyle,
-        [addClass]: addClass,
-        [isSelected]: selected
+      className={classnames('c-tab__button', {
+        [addClass ?? ""]: addClass,
+        [selected ?? ""]: isSelected
       })}
       {...props}
     >
@@ -85,26 +83,4 @@ export const Tab = ({
       {icon && icon(isSelected)}
     </button>
   )
-}
-
-Tab.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.arrayOf(PropTypes.element),
-    PropTypes.element,
-    PropTypes.node
-  ]),
-  id: PropTypes.number,
-  selected: PropTypes.string,
-  addClass: PropTypes.string,
-  icon: PropTypes.func,
-  addNewRef: PropTypes.func,
-  onClick: PropTypes.func,
-  onNavigation: PropTypes.func,
-  defaultStyle: PropTypes.bool,
-  __TYPE: typeValidation('Tab')
-}
-
-Tab.defaultProps = {
-  __TYPE: 'Tab'
 }
