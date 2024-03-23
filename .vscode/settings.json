@@ -1,0 +1,19 @@
+{
+  "files.exclude": {
+    "**.gitignore": true,
+    "**/.github": true,
+    "**/.storybook": true,
+    "**/tests": true,
+    ".npmrc": true,
+    "babel.config.json": true,
+    "**jest.config.cjs": true,
+    "**jest.setup.js": true,
+    "package-lock.json": true,
+    "**setupTest.js": true,
+    "**/commitlint.config.js": true,
+  },
+  "workbench.colorCustomizations": {
+		"titleBar.activeBackground": "#0b5088",
+    "titleBar.inactiveBackground": "#083b64"
+	},
+}
