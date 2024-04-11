@@ -28,11 +28,11 @@ export const Icon: React.FC<Props> = ({ children, size = 'normal' }) => {
 
 
     // Clonamos el elemento hijo y aplicamos estilos y atributos adicionales.
-    return (
-        cloneElement(children as JSX.Element, {
-            className: `c-icon c-${size} ${childProps.className ?? ''}`,
-            'aria-hidden': true,
-            ...(children.props ?? {}),
-        })
-    );
+    return cloneElement(children as JSX.Element, {
+        className: `c-icon c-${size} ${childProps.className ?? ''}`,
+        'aria-hidden': true,
+        'data-monda': 'true',
+        ...(children.props ?? {}),
+    })
+
 };
