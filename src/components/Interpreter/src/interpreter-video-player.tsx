@@ -4,7 +4,7 @@ import classNames from 'classnames'
 
 import { SHOW_VIDEO } from "./const";
 import { PauseIcon, PlayIcon } from "./interpreter-icons";
-import { converterTime } from "../../../utils/converterTime";
+import { formatTime } from "../../../utils/converterTime";
 import { Icon } from "../../Icon";
 
 import './interpreter.css'
@@ -187,7 +187,7 @@ export const VideoPlayer: React.FC<Props> = ({ displayVideo, URLs }) => {
                         min={0}
                         max={duration}
                         type="range"
-                        aria-valuetext={`${converterTime(currentTime)}`}
+                        aria-valuetext={`${formatTime(currentTime)}`}
                         className="input-progress"
                         onChange={onPlayTimeChange}
                     />

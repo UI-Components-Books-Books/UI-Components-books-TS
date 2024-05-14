@@ -1,6 +1,6 @@
 {
   "files.exclude": {
-    "**.gitignore": true,
+    "**.gitignore": false,
     "**/.github": true,
     "**/.storybook": true,
     "**/tests": true,
