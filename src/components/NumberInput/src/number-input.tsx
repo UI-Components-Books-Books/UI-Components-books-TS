@@ -38,8 +38,6 @@ const NumberInput: React.FC<Props> & subComponents = ({
   step = 1,
   onValue
 }) => {
-
-
   // Utilizado para controlar el valor del input.
   const [counter, setCounter] = useState<number>(defaultValue)
 

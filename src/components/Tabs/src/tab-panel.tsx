@@ -27,7 +27,6 @@ export const TabPanel: React.FC<Props> = ({ id, children, addClass, ...props }) 
       aria-labelledby={`tab-${id}`}
       className={classnames('c-tab__panel', {
         'c-tab__panel--active': isSelected,
-        ['video-interpreter-ui-tabpanel']: 'video-interpreter-ui-tabpanel',
         [addClass ?? ""]: addClass
       })}
       {...props}>

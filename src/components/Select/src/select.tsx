@@ -44,11 +44,11 @@ const Select: React.FC<Props> = (props) => {
       <HiddenSelect state={state} triggerRef={ref} label={label} name={name} />
 
       <Button buttonRef={ref} {...triggerProps}>
-        <span className='c-select__text' {...valueProps}>
+        <span className='c-select-button__text' {...valueProps}>
           {state.selectedItem ? state.selectedItem.rendered : placeholder}
         </span>
 
-        <span aria-hidden='true'>
+        <span className="c-select-button__icon">
           <Icon>
             <ArrowDownIcon />
           </Icon>

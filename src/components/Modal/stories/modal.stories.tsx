@@ -32,7 +32,7 @@ function ModalWithHooks() {
                 <Modal.Overlay />
                 <Modal.Content>
                     <p>Hola</p>
-                    <button>Modal</button>
+                    <button onClick={toggleModal}>Modal</button>
                     <Modal.CloseButton />
                 </Modal.Content>
             </Modal>

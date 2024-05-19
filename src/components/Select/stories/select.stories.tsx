@@ -24,8 +24,8 @@ export const Default: Story = {
         }
     },
     args: {
-        label: "Hola",
-        name: "a",
+        label: "Select",
+        name: "select",
         placeholder: "Select the correct answer",
     },
     render: (args) => (

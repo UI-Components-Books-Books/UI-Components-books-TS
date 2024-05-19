@@ -14,17 +14,15 @@ interface Props extends AriaListBoxOptions<unknown> {
 }
 
 export const ListBox: React.FC<Props> = (props) => {
-  // Creamos una referencia mutable para el <ul> de la lista
   const ref = useRef<HTMLUListElement>(null);
-  // Extraemos las props y el state del componente
   const { listBoxRef = ref, state, } = props;
-  // Obtenemos las props de la lista usando useListBox
+
   const { listBoxProps } = useListBox(props, state, listBoxRef);
 
   return (
     <ul
       ref={listBoxRef}
-      className='c-list-box'
+      className='c-select-list'
       {...listBoxProps}
     >
       {[...state.collection].map((item) => (

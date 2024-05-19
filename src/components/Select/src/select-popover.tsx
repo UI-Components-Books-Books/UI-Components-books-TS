@@ -27,12 +27,12 @@ export const Popover: React.FC<Props> = ({ state, children, ...props }) => {
         <Overlay>
             <div {...underlayProps} style={{ position: 'fixed', inset: 0 }} />
             <div
-                {...popoverProps}
                 ref={popoverRef}
-                className="c-popover"
+                className="c-select-popover"
                 style={{
                     ...popoverProps.style
                 }}
+                {...popoverProps}
             >
                 {children}
                 <DismissButton onDismiss={state.close} />

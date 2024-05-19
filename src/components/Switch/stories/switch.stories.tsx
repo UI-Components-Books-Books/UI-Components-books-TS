@@ -26,7 +26,7 @@ export const Default: Story = {
     },
     argTypes: {
         size: {
-            options: ['sm' ,'md' ,'lg'],
+            options: ['small', 'normal', 'big'],
             control: { type: 'radio' }
         }
     },
@@ -39,13 +39,16 @@ export const Default: Story = {
     ),
 }
 
-export const IsDisabled: Story = {
+export const Disabled: Story = {
     parameters: {
         docs: {
             description: {
                 story: "Description to a button test component"
             }
         }
+    },
+    argTypes: {
+        ...Default.argTypes
     },
     args: {
         id: 'switch',

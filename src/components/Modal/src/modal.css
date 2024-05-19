@@ -34,7 +34,7 @@
 }
 
 .c-close-button {
-    --button-padding: var(--padding-1) var(--padding-1);
+    --button-padding: .4rem;
 }
 
 :where(.c-close-button) {

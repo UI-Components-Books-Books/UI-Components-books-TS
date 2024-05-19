@@ -1,5 +1,5 @@
 .c-tooltip {
-    --tooltip-bg: greenyellow;
+    --tooltip-bg: var(--ui-color-gray-400);
     --tooltip-arrow-bg: var(--tooltip-bg);
 }
 

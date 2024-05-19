@@ -1,27 +1,28 @@
-.c-switch-wrapper {
+:where(.c-switch) {
+    --switch-bg: var(--ui-color-gray-500);
     display: inline-flex;
     align-items: center;
 }
 
-.c-switch-wrapper:where(.is-sm) {
+.c-switch:where(.c-switch--small) {
     --switch-width: 1.375rem;
     --switch-height: 0.75rem;
     --switch-tumb: 0.75rem;
 }
 
-.c-switch-wrapper:where(.is-md) {
+.c-switch:where(.c-switch--normal) {
     --switch-width: 1.875rem;
     --switch-height: 1rem;
     --switch-tumb: 1rem;
 }
 
-.c-switch-wrapper:where(.is-lg) {
+.c-switch:where(.c-switch--big) {
     --switch-width: 2.875rem;
     --switch-height: 1.5rem;
     --switch-tumb: 1.5rem;
 }
 
-.c-switch {
+:where(.c-switch__check) {
     position: relative;
     padding: 0.125rem;
     display: inline-flex;
@@ -31,14 +32,14 @@
     width: var(--switch-width);
     height: var(--switch-height);
     cursor: pointer;
-    border-radius: 9999px;
-    background-color: blue;
+    border-radius: 100vw;
+    background-color: var(--switch-bg);
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
 }
 
-.c-switch::after {
+.c-switch__check::after {
     content: "";
     position: absolute;
     left: 3px;
@@ -49,32 +50,31 @@
     transition: all 0.354s cubic-bezier(0.25, 0.1, 0.25, 1.65);
 }
 
-.c-switch:active:not(:disabled)::after {
+.c-switch__check:active:not(:disabled)::after {
     width: calc(var(--switch-tumb) + 4px);
 }
 
-.c-switch:checked {
-    background-color: skyblue;
+:where(.c-switch__check:checked) {
+    --switch-bg: var(--ui-color-gray-800)
 }
 
-.c-switch:checked::after {
+.c-switch__check:checked::after {
     left: calc(100% - 3px);
     transform: translateX(-100%);
 }
 
-.c-switch:disabled {
+.c-switch__check:disabled {
     cursor: not-allowed;
 }
 
-.c-switch:disabled:checked {
-    background-color: var(--clr-primary-200);
+:where(.c-switch__check:disabled:checked) {
+    --switch-bg: var(--ui-color-gray-400)
 }
 
-.c-switch:disabled:not(:checked) {
-    background-color: grey;
+:where(.c-switch__check:disabled:not(:checked)) {
+    --switch-bg: var(--ui-color-gray-300)
 }
 
-.c-switch:focus-visible {
-    --outline-color: var(--clr-primary-500);
+:where(.c-switch__check:focus-visible) {
+    --outline-color: var(--ui-color-gray-600);
 }
-

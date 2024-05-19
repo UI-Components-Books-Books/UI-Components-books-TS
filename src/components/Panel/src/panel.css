@@ -1,7 +1,8 @@
-.c-panel {
+:where(.c-panel) {
+    display: grid;
     width: 100%;
     min-height: 100%;
-    display: grid;
+    place-content: center;
 }
 
 :where(.c-section) {
@@ -34,16 +35,16 @@
     width: 0.75rem;
     border-radius: 100%;
     background-color: transparent;
-    border: 1px solid rgb(144, 144, 190);
+    border: 1px solid var(--ui-color-gray-500);
     cursor: pointer;
     appearance: none;
     transition: var(--transitions);
 }
 
 :where(.c-navigation__section[aria-selected="true"]) {
-    color: red;
-    border: 1px solid red;
-    background-color: rgba(25, 118, 210, 0.12);
+    color: var(--ui-color-gray-500);
+    border: 1px solid var(--ui-color-gray-500);
+    background-color: var(--ui-color-gray-200);
 }
 
 :where(.c-navigation__button) {
@@ -56,21 +57,20 @@
     justify-content: center;
     background-color: transparent;
     border-radius: 0.25rem;
-    border: 1px solid rgb(144, 144, 190);
+    border: 1px solid var(--ui-color-gray-500);
     cursor: pointer;
     appearance: none;
     transition: var(--transitions);
 }
 
 :where(.c-navigation__button:active) {
-    color: red;
-    background-color: rgba(25, 118, 210, 0.12);
+    color: var(--ui-color-gray-500);
+    background-color: var(--ui-color-gray-200);
 }
 
 :where(.c-navigation__button:disabled) {
     opacity: 0.55;
     pointer-events: none;
     cursor: default;
-    border: 1px solid gray;
-    stroke: green;
+    border: 1px solid var(--ui-color-gray-200);
 }

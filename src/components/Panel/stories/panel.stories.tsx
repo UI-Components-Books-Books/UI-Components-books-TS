@@ -28,7 +28,6 @@ export const Default: Story = {
     args: {
         children: [
             <>
-                <Panel.Nav />
                 <Panel.Section>
                     First section
                 </Panel.Section>
@@ -41,6 +40,7 @@ export const Default: Story = {
                 <Panel.Section>
                     Fourth section
                 </Panel.Section>
+                <Panel.Nav />
             </>
         ]
     },
@@ -58,7 +58,6 @@ export const WithNavigationButtons: Story = {
     args: {
         children: [
             <>
-                <Panel.Nav showNextButton showPrevButton />
                 <Panel.Section>
                     First section
                 </Panel.Section>
@@ -71,6 +70,7 @@ export const WithNavigationButtons: Story = {
                 <Panel.Section>
                     Fourth section
                 </Panel.Section>
+                <Panel.Nav showNextButton showPrevButton />
             </>
         ]
     }
@@ -88,7 +88,6 @@ export const WithADefaultIndex: Story = {
         defaultIndex: 3,
         children: [
             <>
-                <Panel.Nav />
                 <Panel.Section>
                     First section
                 </Panel.Section>
@@ -101,6 +100,7 @@ export const WithADefaultIndex: Story = {
                 <Panel.Section>
                     Fourth section
                 </Panel.Section>
+                <Panel.Nav />
             </>
         ]
     }
@@ -117,7 +117,6 @@ export const ButtonToNavigateBetweenSections: Story = {
     args: {
         children: [
             <>
-                <Panel.Nav />
                 <Panel.Section>
                     First section
                     <Panel.Button section={1}>
@@ -130,6 +129,7 @@ export const ButtonToNavigateBetweenSections: Story = {
                         <Button>Go to the first section 👈</Button>
                     </Panel.Button>
                 </Panel.Section>
+                <Panel.Nav />
             </>
         ]
     }

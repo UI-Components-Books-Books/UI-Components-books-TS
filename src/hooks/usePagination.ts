@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 export interface usePaginationProps {
-    boundaryCount: number;
+    boundaryCount?: number;
     count: number;
     defaultPage?: number;
     disabled?: boolean;

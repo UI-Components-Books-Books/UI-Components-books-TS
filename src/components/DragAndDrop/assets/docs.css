@@ -1,5 +1,7 @@
 
 .drag-story {
+    --outline-color: #181a22;
+    
     padding: .5rem 1.125rem;
     display: flex;
     align-items: center;
@@ -8,7 +10,6 @@
     min-width: 8rem;
     flex-shrink: 1;
     appearance: none;
-    outline: none;
     border: 0;
     background-color: #181a22;
     color: #fff;

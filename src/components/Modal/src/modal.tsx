@@ -12,6 +12,7 @@ import { Portal } from '../../Portal'
 
 
 interface Props {
+    id?: string,
     children: JSX.Element | JSX.Element[],
     isOpen: boolean,
     onClose: () => void,
@@ -25,7 +26,7 @@ type subModules = {
 }
 
 
-const Modal: React.FC<Props> & subModules = ({ children, isOpen = false, onClose, finalFocusRef }) => {
+const Modal: React.FC<Props> & subModules = ({ id = 'js-modal', children, isOpen = false, onClose, finalFocusRef }) => {
     /**
      * Obtenemos la referencia del modal para
      * agregarle el focus cuando este se abra.
@@ -113,7 +114,7 @@ const Modal: React.FC<Props> & subModules = ({ children, isOpen = false, onClose
 
     return (
         <ModalProvider value={{ onClose, refModal }}>
-            <Portal id='js-modal'>
+            <Portal id={id}>
                 <AnimatePresence initial={false}>
                     {isOpen ? <motion.div key={modalId}>{children}</motion.div> : null}
                 </AnimatePresence>

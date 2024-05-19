@@ -1,6 +1,8 @@
 .c-input-radio {
-    --input-color: blue;
-    --input-border-radius: 50%;
+    --input-radio-bg: var(--ui-color-gray-400);
+    --input-radio-clr: var(--ui-color-gray-800);
+    --input-radio-border-clr: var(--ui-color-gray-800);
+    --input-radio-border-radius: 50%;
 
     display: flex;
     align-items: center;
@@ -8,14 +10,14 @@
 }
 
 .c-input-radio:where([data-state="right"]) {
-    --input-color: var(--clr-success-600);
+    --input-radio-bg: var(--ui-color-gray-400);
 }
 
 .c-input-radio:where([data-state="wrong"]) {
-    --input-color: var(--clr-error-600);
+    --input-radio-bg: var(--ui-color-gray-400);
 }
 
-:where(.c-input-label) {
+:where(.c-input-radio__label) {
     order: 1;
 }
 
@@ -23,13 +25,13 @@
     position: relative;
     min-inline-size: 1.875rem;
     min-block-size: 1.875rem;
-    color: blue;
-    border-radius: var(--input-border-radius);
-    border: 2px solid blue;
+    border-radius: var(--input-radio-border-radius);
+    border: 2px solid var(--input-radio-border-clr);
+    overflow: hidden;
 }
 
 :where(.c-input-radio__box:focus-within) {
-    outline: max(2px, 0.08em) solid blue;
+    outline: max(2px, 0.08em) solid var(--input-radio-border-clr);
     outline-offset: max(2px, 0.08em);
 }
 
@@ -49,19 +51,18 @@
     display: grid;
     place-items: center;
     pointer-events: none;
-    color: var(--clr-neutral-100);
+    color: var(--input-radio-clr);
     isolation: isolate;
 }
 
-
 .c-input-radio__check:checked+.c-input-radio__icon svg {
     display: block;
+    fill: currentColor;
 }
 
 :where(.c-input-radio__icon svg) {
     display: none;
 }
-
 
 .c-input-radio__icon::before {
     content: "";
@@ -69,12 +70,12 @@
     width: 100%;
     height: 100%;
     transform: scale(0);
-    transition: 100ms transform ease;
-    box-shadow: inset 0px 0px 0px 2px #ffffff;
+    transition: transform 100ms ease;
+    box-shadow: inset 0 0 0 .16rem #ffffff;
+    border-radius: var(--input-radio-border-radius);
+    background-color: var(--input-radio-bg);
     z-index: -1;
-    background-color: blue;
     forced-color-adjust: none;
-    border-radius: var(--input-border-radius);
 }
 
 @media screen and (forced-colors: active) {

@@ -1,5 +1,5 @@
 .c-popover-modal {
-    --popover-modal-bg: var(--clr-neutral-800);
+    --popover-modal-bg: var(--ui-color-gray-400);
     --popover-modal-arrow-bg: var(--popover-modal-bg);
 }
 
@@ -9,7 +9,7 @@
     width: 100%;
     display: none;
     font-size: 0.875rem;
-    color: var(--clr-common-white-100);
+    color: #fff;
     background: var(--popover-modal-bg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     z-index: 1800;

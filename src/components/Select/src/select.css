@@ -1,0 +1,48 @@
+:where(.c-select) {
+    --select-padding: .6rem .4rem;
+}
+
+.c-select-button {
+    display: grid;
+    grid-template-columns: 1fr 3ch;
+    place-content: center;
+    height: 100%;
+    padding: 0;
+    border-radius: .4rem;
+    border: 1px solid var(--ui-color-gray-600);
+    background-color: var(--ui-color-gray-100);
+    overflow: hidden;
+}
+
+.c-select-button__text {
+    margin: var(--select-padding);
+}
+
+:where(.c-select-button__icon) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: var(--ui-color-gray-500);
+    color: var(--ui-color-gray-100);
+}
+
+:where(.c-select-popover) {
+    border: 1px solid var(--ui-color-gray-600);
+    border-end-start-radius: .4rem;
+    border-end-end-radius: .4rem;
+    background-color: var(--ui-color-gray-100);
+}
+
+.c-select-list {
+    list-style-type: none;
+    padding-inline-start: 0;
+}
+
+:where(.c-select-list li[data-option-select="true"] ){
+    background-color: var(--ui-color-gray-500);
+}
+
+:where(.c-select-list li[data-option-focus="true"]) {
+    background-color: var(--ui-color-gray-300);
+}

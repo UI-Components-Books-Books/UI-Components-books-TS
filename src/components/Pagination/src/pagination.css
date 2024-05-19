@@ -30,9 +30,9 @@
     background-color: transparent;
     cursor: pointer;
     appearance: none;
-    color: var(--clr-neutral-700);
+    color: var(--ui-color-gray-700);
     border-radius: 4px;
-    border: 1px solid var(--clr-neutral-300);
+    border: 1px solid var(--ui-color-gray-300);
     transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
@@ -42,12 +42,9 @@
     cursor: default;
 }
 
-
-
 :where(.c-pagination-item--selected) {
-    color: var(--clr-primary-400);
-    border: 1px solid var(--clr-primary-400);
-    background-color: rgba(25, 118, 210, 0.12);
+    border: 1px solid var(--ui-color-gray-400);
+    background-color: var(--ui-color-gray-100);
 }
 
 :where(.c-pagination-item__ellipsis) {
@@ -55,7 +52,7 @@
     height: auto;
     padding: 0 6px;
     margin: 0 3px;
-    color: var(--clr-neutral-700);
+    color: var(--ui-color-gray-700);
     font-size: 0.875rem;
     line-height: 1.43;
     text-align: center;

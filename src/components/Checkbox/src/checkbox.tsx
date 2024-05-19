@@ -31,21 +31,21 @@ export const CheckBox: React.FC<Props> = forwardRef<HTMLInputElement, Props>(
         const uid = id ?? reactId;
 
         return (
-            <div className={classNames('c-input-checkbox', { [addClass ?? ""]: addClass })}>
-                <label htmlFor={uid} data-state={state} className='c-input-label'>
+            <div className={classNames('c-input-check', { [addClass ?? ""]: addClass })} data-state={state}>
+                <label htmlFor={uid} data-state={state} className='c-input-check__label'>
                     {label}
                 </label>
 
-                <div className="c-input-checkbox__box">
+                <div className="c-input-check__box">
                     <input
                         id={uid}
                         ref={ref}
                         type="checkbox"
                         data-state={state}
-                        className="c-input-checkbox__check"
+                        className="c-input-check__check"
                         {...props}
                     />
-                    <div className="c-input-checkbox__icon">
+                    <div className="c-input-check__icon">
                         {ICON_STATE[state]}
                     </div>
                 </div>

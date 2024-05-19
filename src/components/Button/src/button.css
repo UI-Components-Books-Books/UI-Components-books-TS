@@ -1,9 +1,5 @@
-:root {
-    --clr-primary-800: hsl(220, 62%, 17%);
-}
-
 .c-button {
-    --outline-color: var(--clr-primary-800);
+    --outline-color: var(--ui-color-gray-800);
     --button-gap: 0.5em;
 }
 
@@ -19,7 +15,7 @@
     background-color: var(--button-bg-color);
     font-size: var(--button-font-size);
     font-weight: bold;
-    border-radius: 100vh;
+    border-radius: .8rem;
     cursor: pointer;
 }
 
@@ -27,60 +23,61 @@
 
 :where(.c-button--round) {
     aspect-ratio: 1;
+    border-radius: 100vh;
 }
 
 
 /* Definición de padding y font size */
 
 .c-button:where(.c-button--small) {
-    --button-padding: var(--padding-1);
+    --button-padding: clamp(0.5rem, 1%, 0.5rem);
     --button-font-size: var(--fs-200);
 }
 
 .c-button:where(.c-button--normal) {
-    --button-padding: var(--padding-1) var(--padding-2);
+    --button-padding: clamp(0.5rem, 1%, 0.5rem) clamp(0.5rem, 2%, 1rem);
     --button-font-size: var(--fs-300);
 }
 
 .c-button:where(.c-button--big) {
-    --button-padding: var(--padding-2) var(--padding-3);
+    --button-padding: clamp(0.5rem, 2%, 1rem) clamp(1rem, 3%, 1.5rem);
     --button-font-size: var(--fs-400);
 }
 
 .c-button:where(.c-button--round.c-small, .c-button--round.c-button--normal) {
-    --button-padding: var(--padding-1);
+    --button-padding: clamp(0.5rem, 1%, 0.5rem);
 }
 
 .c-button:where(.c-button--round.c-button--big) {
-    --button-padding: var(--padding-2);
+    --button-padding: clamp(0.5rem, 2%, 1rem);
 }
 
 /* Definición de colores */
 
 .c-button:where(.c-button--primary) {
     --button-border-color: transparent;
-    --button-bg-color: var(--clr-primary-800);
-    --button-text-color: var(--clr-neutral-100);
+    --button-bg-color: var(--ui-color-gray-800);
+    --button-text-color: var(--ui-color-gray-100);
 }
 
 .c-button:where(.c-button--secondary) {
-    --button-border-color: var(--clr-primary-800);
+    --button-border-color: var(--ui-color-gray-800);
     --button-bg-color: transparent;
-    --button-text-color: var(--clr-primary-800);
+    --button-text-color: var(--ui-color-gray-800);
 }
 
 .c-button:where(.c-button--no-line) {
     --button-border-color: transparent;
     --button-bg-color: transparent;
-    --button-text-color: var(--clr-primary-800);
+    --button-text-color: var(--ui-color-gray-800);
 }
 
 .c-button:where(.c-button--no-line:hover) {
-    --button-bg-color: var(--clr-primary-300);
+    --button-bg-color: var(--ui-color-gray-300);
 }
 
 .c-button:where([disabled]) {
-    --button-bg-color: var(--clr-neutral-500);
-    --button-text-color: var(--clr-primary-100);
+    --button-bg-color: var(--ui-color-gray-500);
+    --button-text-color: var(--ui-color-gray-100);
     cursor: not-allowed;
 }

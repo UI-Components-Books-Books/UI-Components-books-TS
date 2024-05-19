@@ -4,7 +4,7 @@ import { useEffect, useId, useMemo } from 'react'
 import classnames from 'classnames'
 
 import { useAccordionContext, AccordionItemProvider } from './accordion-context'
-import './Accordion.css'
+import './accordion.css'
 
 interface Props {
     id?: string

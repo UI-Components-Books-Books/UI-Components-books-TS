@@ -29,7 +29,7 @@ export const Default: Story = {
     argTypes: {
         size: {
             options: ['small'],
-            control: { type: 'radio'}
+            control: { type: 'check'}
         },
         type: {
             options: ['bar', 'button'],

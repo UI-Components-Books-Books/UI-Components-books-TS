@@ -5,6 +5,7 @@ type DragAndDropContextType = {
     propValidate: string;
     validate: boolean;
     isDragging: string | null;
+    handleResetDnd: () => void;
 }
 
 export const [DragAndDropProvider, useDragAndDropContext] = createContext<DragAndDropContextType>({

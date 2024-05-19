@@ -94,13 +94,9 @@ export const TourHelpLayer: React.FC<Props> = ({ addClass }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
-      <span className='c-tour-number' data-class='c-tour-number'>
+      <p className='c-tour-number' data-class='c-tour-number'>
         {id}
-      </span>
+      </p>
     </motion.div>
   )
 }
-
-
-// 'animate__animated animate__fadeIn animate__faster animate__delay-2s':
-// isOpen,

@@ -1,5 +1,5 @@
 :where(.c-toggletip) {
-    --toggletip-bg: var(--clr-neutral-800);
+    --toggletip-bg: var(--ui-color-gray-400);
     --toggletip-arrow-bg: var(--toggletip-bg);
 
     padding: .25rem .5rem;

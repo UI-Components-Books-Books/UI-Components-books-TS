@@ -6,12 +6,10 @@ import { RightIcon, WrongIcon } from './radio-icons';
 
 import './radio.css';
 
-
 const ICON_STATE = Object.freeze({
     right: <RightIcon />,
     wrong: <WrongIcon />
 })
-
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
     id?: string,
@@ -30,8 +28,8 @@ export const Radio: React.FC<Props> = forwardRef<HTMLInputElement, Props>(
         const uid = id ?? reactId;
 
         return (
-            <div className={classNames('c-input-radio', { [addClass ?? ""]: addClass })}>
-                <label htmlFor={uid} data-state={state} className='c-input-label'>
+            <div className={classNames('c-input-radio', { [addClass ?? ""]: addClass })} data-state={state}>
+                <label htmlFor={uid} data-state={state} className='c-input-radio__label'>
                     {label}
                 </label>
 

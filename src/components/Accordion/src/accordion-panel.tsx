@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 
 import { useAccordionItemContext } from './accordion-context';
-import './Accordion.css'
+import './accordion.css'
 
 interface Props {
     children: React.ReactNode,

@@ -27,8 +27,8 @@ export const Default: Story = {
     args: {
         id: 'default-drag',
         children: (
-            <Row justify-content="center" align-items="center" addClass="testttt">
-                <Col xs='11' mm='10' md='9' lg='5' hd='4' addClass="reacttest">
+            <Row justify-content="center" align-items="center">
+                <Col xs='11' mm='10' md='9' lg='5' hd='4' >
                     <DragAndDrop.Container id="general-1" label="container" addClass="drop-story">
                         <DragAndDrop.Drag id='A' label='Draggable item' addClass="drag-story" dragging="drag-story--active" >
                             Draggable
@@ -61,8 +61,8 @@ export const MultipleDropContainers: Story = {
     args: {
         id: 'default-drag',
         children: (
-            <Row justify-content="center" align-items="center" addClass="testttt">
-                <Col xs='11' mm='10' md='9' lg='5' hd='4' addClass="reacttest">
+            <Row justify-content="center" align-items="center">
+                <Col xs='11' mm='10' md='9' lg='5' hd='4' >
                     <DragAndDrop.Container id="general-1" label="container" addClass="drop-story">
                         <DragAndDrop.Drag id='A' label='Draggable item' addClass="drag-story" dragging="drag-story--active" >
                             Draggable

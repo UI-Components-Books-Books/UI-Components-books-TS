@@ -1,11 +1,8 @@
 import { useRef } from "react"
 
 import { useOption } from "@react-aria/listbox"
-import classNames from "classnames"
 import type { ListState } from "react-stately";
 import type { Node } from "react-stately";
-
-import './select.css'
 
 interface Props {
   state: ListState<object>;
@@ -23,14 +20,13 @@ export const Option: React.FC<Props>  = ({ item, state }) => {
     return (
       <li
         ref={ref}
-        className={classNames('c-option', {
-          'c-option--focus': isFocused,
-          'c-option--disabled': isDisabled
-        })}
+        data-option-focus={isFocused}
+        data-option-disabled={isDisabled}
+        data-option-select={isSelected}
         {...optionProps}
       >
         {item.rendered}
-        {isSelected ? <span>✓</span> : null}
+        
       </li>
     )
   }

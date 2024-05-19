@@ -13,68 +13,11 @@ import { DragAndDropProvider } from './drag-and-drop-context'
 import type { ItemType, ModifiersType } from './drag-and-drop-types'
 import { Droppable } from './drop'
 import { coordinateGetter } from './keyboard-coordinates'
+import { defaultAnnouncements } from '../utils/announcements'
+import { propertyUseToValidation, screenReaderInstruction } from '../utils/const'
+import { getChildrenByType } from '../utils/getChildrenByType'
 
 import './drag-and-drop.css'
-
-
-/**
- * Función utilizada para devolver de los hijos de un
- * componente el elemento de un tipo especifico.
- *
- * @param {ReactElement[]} children - Hijos del componente.
- * @param {String} type - Tipo de componente.
- * @returns {ReactElement[]} Elementos de React que coinciden con el tipo especificado.
- */
-const getChildrenByType = (children: React.ReactNode, type: string): React.ReactNode[] => {
-  const result: React.ReactNode[] = [];
-
-  Children.map(children, (child) => {
-    if (!isValidElement(child)) return;
-
-    // Utilizamos esta validación para prevenir errores cuando son strings.
-    if (!child.props) return;
-
-    if (child?.props?.__TYPE === type) {
-      result.push(child);
-    }
-
-    if (child.props.children) {
-      const nestedChildren = getChildrenByType(child.props.children, type);
-      result.push(...nestedChildren);
-    }
-  })
-
-  return result;
-};
-
-/**
- * Objeto utilizado para la parte de accesibilidad.
- * este contiene los diferentes anuncios por defecto
- * que los lectores de pantalla dirán cuando se ejecuten
- * los eventos: onDragCancel, onDragStart, onDragEnd y onDragOver.
- */
-const defaultAnnouncements: Announcements = {
-  onDragStart({ active }) {
-    return `Se ha agarrado el elemento arrastrable ${active.data.current?.label}.`
-  },
-  onDragOver({ active, over }) {
-    if (over) {
-      return `El elemento arrastrable ${active.data.current?.label} se movió sobre la área desplegable ${over.data.current?.label}.`
-    }
-
-    return `El elemento arrastrable ${active.data.current?.label} ya no está sobre una área desplegable.`
-  },
-  onDragEnd({ active, over }) {
-    if (over) {
-      return `El elemento arrastrable ${active.data.current?.label} se soltó sobre la área desplegable ${over.data.current?.label}.`
-    }
-
-    return `El elemento arrastrable item ${active.data.current?.label} se eliminó.`
-  },
-  onDragCancel({ active }) {
-    return `Se cancelo el arrastre. El elemento arrastrable ${active.data.current?.label} se eliminó.`
-  }
-}
 
 
 interface Props {
@@ -100,19 +43,18 @@ type subModules = {
 }
 
 const DragAndDrop: React.FC<Props> & subModules = ({
+  id: idDragAndDrop,
   children: childrenProps,
   multipleDrags = false,
   onValidate,
   validate = false,
-  reboot = false,
-  propValidate = 'data-validation',
+  propValidate = propertyUseToValidation,
   modifiers: modifiersProp,
-  screenReaderInstructions = 'Para recoger un elemento arrastrable, presiona la barra espaciadora o la tecla Enter. Mientras arrastras, usa las teclas de flecha para mover el elemento en cualquier dirección deseada. Presiona nuevamente la barra espaciadora o la tecla Enter para soltar el elemento en su nueva posición, o presiona escape para cancelar.',
+  screenReaderInstructions = screenReaderInstruction,
   announcements = defaultAnnouncements,
   defaultState,
   defaultValidate,
   onState,
-  id: idDragAndDrop
 }) => {
   /**
    * Utilizamos este estado para almacenar la lista
@@ -120,12 +62,14 @@ const DragAndDrop: React.FC<Props> & subModules = ({
    */
   const [validateId, setValidateId] = useState<string[]>([])
 
+
   /**
    * Estado utilizado para almacenar el "id" del elemento "drag"
    * seleccionado. Esto nos ayuda para el DragOverlay y para aplicar
    * estilos al componente cuando está en dicho estado.
    */
   const [activeId, setActiveId] = useState<string | null>(null)
+
 
   /**
    * Referencia utilizada como "flag", para que cuando
@@ -182,7 +126,6 @@ const DragAndDrop: React.FC<Props> & subModules = ({
   }, [childrenProps])
 
 
-
   /**
    * Estado principal del componente, este se encarga
    * de almacenar la posición de los elementos "drag"
@@ -201,6 +144,7 @@ const DragAndDrop: React.FC<Props> & subModules = ({
     restrictToVerticalAxis,
     restrictToHorizontalAxis
   })
+
 
   /**
    * Sensores que detectan los
@@ -416,24 +360,22 @@ const DragAndDrop: React.FC<Props> & subModules = ({
 
 
   /**
-   * Efecto que se encarga de reiniciar el estado `items`
-   * cada vez que la propiedad `reboot` esté en `true`.
+   * Función utilizada para reiniciar el estado 
+   * del Drang and Drop.
    */
-  useEffect(() => {
-    // Si `reboot` es `true`, ejecutamos las siguientes acciones.
-    if (reboot) {
-      // Reinicia el estado `items` con la función `initialState`.
-      setItems(initialState);
+  const handleResetDnd = () => {
+    // Reinicia el estado `items` con la función `initialState`.
+    setItems(initialState);
 
-      // Reinicia el estado `validateId` a un arreglo vacío.
-      setValidateId([]);
+    // Reinicia el estado `validateId` a un arreglo vacío.
+    setValidateId([]);
 
-      // Si existe la función `onValidate`, llama a la función con un objeto vacío.
-      if (onValidate) {
-        onValidate({ validate: [], active: false });
-      }
+    // Si existe la función `onValidate`, llama a la función con un objeto vacío.
+    if (onValidate) {
+      onValidate({ validate: [], active: false });
     }
-  }, [reboot, onValidate, initialState]);
+  }
+
 
   /**
    * Efecto que observa los cambios en la propiedad `defaultState`
@@ -483,14 +425,17 @@ const DragAndDrop: React.FC<Props> & subModules = ({
         listId: validateId,
         propValidate,
         validate,
-        isDragging: activeId
+        isDragging: activeId,
+        handleResetDnd
       }}
     >
       <DndContext
         sensors={sensors}
-        accessibility={{ announcements }}
-        screenReaderInstructions={{
-          draggable: screenReaderInstructions
+        accessibility={{
+          announcements,
+          screenReaderInstructions: {
+            draggable: screenReaderInstructions
+          }
         }}
         onDragStart={({ active }) => setActiveId(active.id.toString())}
         onDragEnd={onDragEnd}

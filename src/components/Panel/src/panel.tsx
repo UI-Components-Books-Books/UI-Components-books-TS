@@ -105,7 +105,7 @@ const Panel: React.FC<Props> & subComponents = ({ children, defaultIndex = 0, ad
             }}
         >
             <div
-                className={classnames('c-panel video-interpreter-ui-panel', { [addClass ?? ""]: addClass })}
+                className={classnames('c-panel', { [addClass ?? ""]: addClass })}
                 data-value={isOpen}
                 {...(type === 'carrousel' && {
                     role: 'group',

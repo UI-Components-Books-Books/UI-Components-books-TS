@@ -1,5 +1,5 @@
 .c-image {
-    margin: 0 auto;
+    margin-inline: auto;
     max-width: var(--image-max-width, auto);
 }
 
