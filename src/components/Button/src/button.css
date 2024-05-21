@@ -19,37 +19,20 @@
     cursor: pointer;
 }
 
-/* Hace que los botones que tengan sólo íconos sean redondos */
-
-:where(.c-button--round) {
-    aspect-ratio: 1;
-    border-radius: 100vh;
-}
-
-
 /* Definición de padding y font size */
 
 .c-button:where(.c-button--small) {
     --button-padding: clamp(0.5rem, 1%, 0.5rem);
-    --button-font-size: var(--fs-200);
+    --button-font-size: clamp(0.8rem, 0.15vw + 0.77rem, 0.89rem);
 }
 
 .c-button:where(.c-button--normal) {
     --button-padding: clamp(0.5rem, 1%, 0.5rem) clamp(0.5rem, 2%, 1rem);
-    --button-font-size: var(--fs-300);
 }
 
 .c-button:where(.c-button--big) {
     --button-padding: clamp(0.5rem, 2%, 1rem) clamp(1rem, 3%, 1.5rem);
-    --button-font-size: var(--fs-400);
-}
-
-.c-button:where(.c-button--round.c-small, .c-button--round.c-button--normal) {
-    --button-padding: clamp(0.5rem, 1%, 0.5rem);
-}
-
-.c-button:where(.c-button--round.c-button--big) {
-    --button-padding: clamp(0.5rem, 2%, 1rem);
+    --button-font-size: clamp(1.25rem, 0.55vw + 1.14rem, 1.58rem);
 }
 
 /* Definición de colores */

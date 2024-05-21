@@ -1,0 +1,9 @@
+
+.audio-class-example {
+    --audio-background-color: #003148;
+    --audio-slider-color: #ED7D86;
+    --audio-border-radius: .4rem;
+    --audio-icon-color: #f5f5f5;
+    color: #f5f5f5;
+    box-shadow: 2px 2px 0 2px #b9b9b9bf, -2px 2px 0 2px #b9b9b9bf;
+}

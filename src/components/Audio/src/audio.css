@@ -39,6 +39,7 @@
     width: var(--audio-btn-size, 3rem);
     height: var(--audio-btn-size, 3rem);
     transition: background-color 0.25s ease, transform 0.25s ease;
+    border-radius: 100%;
 }
 
 :where(.c-audio__button--small) {

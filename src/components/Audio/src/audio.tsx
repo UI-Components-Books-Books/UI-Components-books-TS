@@ -9,8 +9,6 @@ import { Icon } from '../../Icon'
 
 import './audio.css'
 
-// TODO: Agregar el tamaño small bb porque ps es necesario
-
 /**
  * Se crea un objeto que no se puede cambiar para
  * almacenar los tipos o formas que tiene el componente.
@@ -28,6 +26,7 @@ const VOLUME_LOW_THRESHOLD = 0.25;
 const SECONDS_IN_MINUTE = 60;
 
 interface Props {
+  id?: string,
   src: string,
   a11y?: boolean,
   size?: 'small',
@@ -37,6 +36,7 @@ interface Props {
 }
 
 export const Audio: React.FC<Props> = ({
+  id,
   src,
   a11y = false,
   size,
@@ -45,9 +45,16 @@ export const Audio: React.FC<Props> = ({
   addClass,
   ...props
 }) => {
+  /**
+   * Utilizado para identificar el elemento audio.
+   */
+  const reactId: string = useId();
 
-  // Utilizado para identificar el elemento audio.
-  const Id = useId();
+
+  /**
+   * Si `id` está definido, usa `id`; de lo contrario, usa `reactId`
+   */
+  const uid = id ?? reactId;
 
 
   /**
@@ -246,6 +253,7 @@ export const Audio: React.FC<Props> = ({
     return (
       <>
         <audio
+          id={uid}
           ref={refAudio}
           src={src}
           onPlay={() => setPlay(true)}
@@ -278,10 +286,10 @@ export const Audio: React.FC<Props> = ({
       <div
         className={`c-audio__bar c-audio__bar--${size} ${addClass ?? ''}`}
         role='group'
-        aria-labelledby={`description${Id}`}
+        aria-labelledby={`description${uid}`}
         data-a11y={a11y}
       >
-        <span id={`description${Id}`} hidden>
+        <span id={`description${uid}`} hidden>
           {a11y ? 'Audio description' : description ? description : 'Barra de audio'}
         </span>
 
@@ -291,7 +299,7 @@ export const Audio: React.FC<Props> = ({
           </Icon>
         ) : null
         }
-        
+
         <button type='button' onClick={togglePlay}>
           <span className='u-sr-only'>{play ? 'Pausar' : 'Reproducir'}</span>
           <Icon size='big'>
@@ -303,12 +311,12 @@ export const Audio: React.FC<Props> = ({
           {formattedMediaTime} / {formattedDuration}
         </small>
 
-        <label className='u-sr-only' htmlFor={`time${Id}`}>
+        <label className='u-sr-only' htmlFor={`time${uid}`}>
           Tiempo transcurrido
         </label>
         <input
           className='c-audio__bar-scrubber'
-          id={`time${Id}`}
+          id={`time${uid}`}
           value={mediaTime}
           min={0}
           max={duration}
@@ -332,18 +340,18 @@ export const Audio: React.FC<Props> = ({
         {openMenu
           ? (
             <div className='c-audio__bar-volume-control' ref={refVolumeSlider}>
-              <label className='u-sr-only' htmlFor={`volume${Id}`}>
+              <label className='u-sr-only' htmlFor={`volume${uid}`}>
                 Volumen
               </label>
               <input
-                id={`volume${Id}`}
+                id={`volume${uid}`}
                 value={volume}
                 min={0}
                 max={1}
                 step={0.05}
                 type='range'
                 aria-valuetext={`${Math.round(volume * 100)}%`}
-                aria-orientation='vertical'     
+                aria-orientation='vertical'
                 onChange={handleVolumeChange}
               />
             </div>
@@ -351,10 +359,10 @@ export const Audio: React.FC<Props> = ({
           : null}
       </div>
       <audio
+        id={uid}
         ref={refAudio}
         preload='metadata'
         controls
-        // className={classnames(`c-audio c-audio--${size}`, { [addClass ?? ""]: addClass })}
         className={classnames('c-audio', { [addClass ?? ""]: addClass })}
         onLoadedMetadata={onLoadedMetadata}
         onTimeUpdate={onTimeUpdate}

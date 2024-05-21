@@ -10,7 +10,6 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'no-line';
     hasAriaLabel?: boolean;
     addClass?: string;
-    hasIcon?: boolean,
     children?: React.ReactNode;
 }
 
@@ -22,7 +21,6 @@ export const Button: React.FC<Props> = forwardRef<HTMLButtonElement, Props>(func
         hasAriaLabel = false,
         children,
         addClass,
-        hasIcon = false,
         ...others
     } = props
 
@@ -33,7 +31,6 @@ export const Button: React.FC<Props> = forwardRef<HTMLButtonElement, Props>(func
             className={classnames(
                 'c-button', `c-button--${variant}`, `c-button--${size}`,
                 {
-                    'c-button--round': hasIcon,
                     [addClass ?? ""]: addClass
                 }
             )}
