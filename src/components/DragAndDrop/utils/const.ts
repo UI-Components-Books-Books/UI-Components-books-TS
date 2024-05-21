@@ -4,7 +4,7 @@
  *  Propiedad utilizada para cambiar los estilos de los 
  *  elementos arrastrables cuando se realiza la validación.
  */
-export const propertyUseToValidation = "data-validation'"
+export const propertyUseToValidation = "data-validation"
 
 /**
  * Instrucción para los lectores de pantalla.

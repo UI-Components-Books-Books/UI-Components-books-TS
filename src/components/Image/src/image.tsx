@@ -6,7 +6,7 @@ import { imageBase } from './image-base'
 import './image.css'
 
 interface Props {
-    url?: string,
+    src?: string,
     alt?: string,
     title?: string,
     size?: string,
@@ -15,8 +15,8 @@ interface Props {
 }
 
 export const Image: React.FC<Props> = forwardRef<HTMLImageElement, Props>(function Image({
-    url = 'default',
-    alt = 'Default image.',
+    src = 'none',
+    alt = '',
     title = 'Image 1.',
     size,
     addClass,
@@ -40,7 +40,7 @@ export const Image: React.FC<Props> = forwardRef<HTMLImageElement, Props>(functi
      * Condicionamos que imagen se va a mostrar
      * dependiendo del valor del estado error.
      */
-    const imgToSee = !error ? url : imageBase
+    const imgToSee = !error ? src : imageBase
 
 
 
@@ -52,15 +52,15 @@ export const Image: React.FC<Props> = forwardRef<HTMLImageElement, Props>(functi
             <img
                 ref={ref}
                 src={imgToSee}
-                onError={onError}
                 alt={alt}
+                onError={onError}
                 {...props}
             />
 
             {!noCaption && (
                 <figcaption className='c-image__figcaption'>
                     <p>
-                        <strong>{title}&nbsp;</strong>
+                        { title ? <strong>{title}&nbsp;</strong> : null}
                         {alt}
                     </p>
                 </figcaption>

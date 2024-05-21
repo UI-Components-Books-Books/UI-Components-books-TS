@@ -16,7 +16,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: "Description to a button test component"
+                story: "No lo he terminado asi que no moleste 🤬"
             }
         }
     },

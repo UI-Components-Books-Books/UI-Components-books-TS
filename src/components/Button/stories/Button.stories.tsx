@@ -22,7 +22,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: "Componente `Button`: sencillo, fácil de personalizar y accesible."
+                story: "Un componente `Button` sencillo, fácil de personalizar y accesible. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo."
             }
         }
     },

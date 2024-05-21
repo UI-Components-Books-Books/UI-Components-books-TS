@@ -2,7 +2,7 @@
   "files.exclude": {
     "**.gitignore": false,
     "**/.github": true,
-    "**/.storybook": true,
+    "**/.storybook": false,
     "**/tests": true,
     ".npmrc": true,
     "babel.config.json": true,

@@ -25,7 +25,6 @@ interface Props {
   children: JSX.Element[] | JSX.Element;
   multipleDrags?: boolean;
   onValidate?: ({ validate, active }: { validate: string[]; active: boolean; }) => void;
-  reboot?: boolean;
   validate?: boolean;
   propValidate?: string;
   modifiers?: ModifiersType;

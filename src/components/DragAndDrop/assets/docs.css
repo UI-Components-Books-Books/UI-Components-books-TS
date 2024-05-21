@@ -1,6 +1,6 @@
 
 .drag-story {
-    --outline-color: #181a22;
+    --outline-color: var(--ui-color-gray-800);
     
     padding: .5rem 1.125rem;
     display: flex;
@@ -11,13 +11,21 @@
     flex-shrink: 1;
     appearance: none;
     border: 0;
-    background-color: #181a22;
+    background-color: var(--ui-color-gray-800);
     color: #fff;
     border-radius: 5px;
     box-shadow: var(--box-shadow);
     transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
     transition: box-shadow 300ms ease;
     font-weight: bold;
+}
+
+.drag-story[data-validation="true"] {
+    background-color: #0ab454;
+}
+
+.drag-story[data-validation="false"] {
+    background-color: #b91818;
 }
 
 .drag-story--active {
@@ -29,7 +37,7 @@
 .drop-story {
     margin: 2rem 0;
     width: 100%;
-    height: 340px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,4 +55,8 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: grey;
+}
+
+.button-story {
+    margin-inline: auto;
 }

@@ -22,7 +22,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: "El componente `Audio` es un reproductor totalmente personalizado que se puede ajustar a tus diferentes necesidades. Cuenta con las funcionalidades básicas de todo reproductor, como pausar/iniciar, medidor de tiempo, una línea de tiempo arrastrable y un controlador de volumen. Además, está construido acorde a los estándares de la WCAG para que sea un elemento accesible para usuarios con diferentes discapacidades."
+                story: "El componente `Audio` es un reproductor totalmente personalizado que se puede ajustar a tus diferentes necesidades. Cuenta con las funcionalidades básicas de todo reproductor, como pausar/iniciar, medidor de tiempo, una línea de tiempo arrastrable y un controlador de volumen. Además, está construido acorde a los estándares de la WCAG para que sea un elemento accesible para usuarios con diferentes discapacidades. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo."
             }
         }
     },

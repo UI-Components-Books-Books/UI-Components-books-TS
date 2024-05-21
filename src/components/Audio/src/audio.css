@@ -112,6 +112,10 @@
     border-radius: var(--audio-border-radius);
 }
 
+:where(.c-audio__bar svg) {
+    --icon-size: 1.32rem;
+}
+
 :where(.c-audio__bar--small) {
     --audio-size: 12.5rem;
     padding: 0.3rem;

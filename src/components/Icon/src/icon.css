@@ -8,13 +8,13 @@
 }
 
 :where(.c-icon.c-small) {
-    --icon-size: 0.75rem;
-}
-
-:where(.c-icon.c-normal) {
     --icon-size: 1rem;
 }
 
+:where(.c-icon.c-normal) {
+    --icon-size: 1.75rem;
+}
+
 :where(.c-icon.c-big) {
-    --icon-size: 1.25rem;
+    --icon-size: 2.25rem;
 }
