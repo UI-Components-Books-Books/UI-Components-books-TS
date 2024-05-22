@@ -1,0 +1,5 @@
+.tab--selected[aria-selected="true"] {
+    background-color: rgb(201, 125, 27);
+    transition: background-color 200ms ease-in-out;
+    color: #fff;
+}

@@ -94,7 +94,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: "Description to a button test component"
+                story: "Uy no mera flojera documentar esto"
             }
         }
     },

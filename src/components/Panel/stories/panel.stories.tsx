@@ -21,7 +21,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: "Description to a button test component"
+                story: "El componente `Panel` nos brinda la oportunidad de distribuir el contenido de nuestra página en diferentes secciones. Además, incorpora diferentes atributos `aria` para garantizar su correcto funcionamiento con lectores de pantalla. Para su implementación, solo necesitas importar el componente `<Panel />`. Este incluye los componentes `<Panel.Section />` y `<Panel.Nav />`, necesarios para su uso. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo."
             }
         }
     },
@@ -51,7 +51,7 @@ export const WithNavigationButtons: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'Kill'
+                story: 'Utilizando las propiedades `showNextButton` y `showNextButton` presentes en el `<Panel.Nav />`, podemos mostrar los botones de siguiente y anterior sección.'
             }
         }
     },
@@ -80,7 +80,7 @@ export const WithADefaultIndex: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'Kill'
+                story: "Con la propiedad `defaultIndex`, podemos decidir qué sección debe aparecer al momento de mostrarse en un grupo de secciones. Ten en cuenta que esta propiedad se maneja igual que las posiciones de un `Array`, por lo que el número `0` corresponderá la primera sección del grupo, y así sucesivamente."
             }
         }
     },
@@ -110,7 +110,7 @@ export const ButtonToNavigateBetweenSections: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'Kill'
+                story: 'Existe otra forma de navegar entre secciones aparte del `<Panel.Nav />`, y es usando el componente `<Panel.Button />`. Este componente es un `botón` igual que el componente `<Button/>` con la uníca diferencia que recibe la propiedad `section`, en la cual indicaremos el número de la sección a la que queremos ir. Al igual que con `defaultIndex`, ten en cuenta que esta propiedad se maneja igual que las posiciones de un `Array`, por lo que el número `0` corresponderá a la primera sección del grupo, y así sucesivamente.'
             }
         }
     },

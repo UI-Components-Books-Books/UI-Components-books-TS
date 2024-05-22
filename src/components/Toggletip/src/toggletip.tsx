@@ -7,7 +7,6 @@ import {
     useId
 } from 'react'
 
-
 import classNames from 'classnames';
 import { usePopper } from 'react-popper'
 
@@ -51,20 +50,18 @@ interface Props {
     distance?: number,
     placement?: placementsType
     children: React.ReactNode,
-    isVisible?: boolean
+    disabledInteractOutside?: boolean
 }
-
 
 export const Toggletip: React.FC<Props> = ({
     id,
     label,
     addClass,
     hasArrow,
-    isDisabled,
     distance,
     placement = "auto",
     children,
-    isVisible,
+    disabledInteractOutside,
 }) => {
     // Estado que controla la apertura o cierre del Toggletip
     const [isOpen, setIsOpen] = useState(false);
@@ -101,7 +98,7 @@ export const Toggletip: React.FC<Props> = ({
         setIsOpen(!isOpen);
 
         // Si ya está abierto y se hace clic en el mismo elemento, ciérralo
-        if (isOpen && document.activeElement === refElement.current && !isVisible) {
+        if (isOpen && document.activeElement === refElement.current && !disabledInteractOutside) {
             setTimeout(() => {
                 setIsOpen((prev) => !prev);
             }, 100);
@@ -137,7 +134,7 @@ export const Toggletip: React.FC<Props> = ({
                 onClick();
             },
             'data-open': isOpen,
-            ...(isVisible ? {} : { onBlur, onKeyDown }),
+            ...(disabledInteractOutside ? {} : { onBlur, onKeyDown }),
         });
     });
 
@@ -168,7 +165,7 @@ export const Toggletip: React.FC<Props> = ({
 
 
     // Si no hay label, está deshabilitado o tiene más de 1 hijo no mostrar el Toggletip
-    if (!label || Children.count(children) > 1 || isDisabled) {
+    if (!label || Children.count(children) > 1) {
         return <>{children}</>
     }
 

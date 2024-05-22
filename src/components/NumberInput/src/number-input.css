@@ -75,6 +75,7 @@
 }
 
 :where(.c-number-input__button > svg) {
+    --icon-size: 1rem;
     transform: scale(1.4);
 }
 

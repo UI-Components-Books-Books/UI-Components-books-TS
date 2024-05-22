@@ -73,7 +73,7 @@ export const Checked: Story = {
     }
 }
 
-export const CheckBoxStyling: Story = {
+export const CheckStyling: Story = {
     parameters: {
         docs: {
             description: {

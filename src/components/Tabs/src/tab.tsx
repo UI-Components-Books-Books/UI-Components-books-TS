@@ -18,7 +18,6 @@ interface Props {
 export const Tab: React.FC<Props> = ({
   id,
   children,
-  selected,
   addClass,
   icon,
   onClick,
@@ -75,7 +74,6 @@ export const Tab: React.FC<Props> = ({
       onClick={handleClick}
       className={classnames('c-tab__button', {
         [addClass ?? ""]: addClass,
-        [selected ?? ""]: isSelected
       })}
       {...props}
     >

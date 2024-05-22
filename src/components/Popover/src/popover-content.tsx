@@ -59,7 +59,6 @@ export const PopoverContent: React.FC<Props> = ({
   children,
   addClass,
   hasArrow = false,
-  isDisabled,
   distance,
   placement = 'auto',
   disabledInteractOutside = false,
@@ -191,12 +190,6 @@ export const PopoverContent: React.FC<Props> = ({
       refPopoverSwitch.current = null;
     }
   }, [isPopoverOpen, refPopover]);
-
-
-  if (isDisabled) {
-    // Si el popover está deshabilitado, simplemente renderiza los children
-    return <>{children}</>;
-  }
 
 
   return (

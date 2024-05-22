@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import './switch.css'
 
 interface Props extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-    id: string;
+    id?: string;
     size?: 'small' | 'normal' | 'big';
     label: string;
     addClass?: string;
