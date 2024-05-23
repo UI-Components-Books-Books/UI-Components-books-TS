@@ -39,7 +39,7 @@ export const AudioDescription: Story = {
     },
     args: {
         ...Default.args,
-        audio: "/slide3-1-description.mp3"
+        audio: "https://demos.booksandbooksdigital.com.co/ui-components/assets/slide3-1-description.mp3"
     }
 }
 
@@ -54,7 +54,7 @@ export const Captions: Story = {
     args: {
         ...Default.args,
         caption: {
-            src: "/slide3-1.vtt",
+            src: "https://demos.booksandbooksdigital.com.co/120-ovas/ova-98/assets/videos/slide3-1.vtt",
             lang: 'es'
         },
     }
@@ -70,6 +70,6 @@ export const Poster: Story = {
     },
     args: {
         ...Default.args,
-        poster: "https://demos.booksandbooksdigital.com.co/120-ovas/ova-98/assets/images/poster.webp",
+        poster: "https://demos.booksandbooksdigital.com.co/ui-components/assets/poster.webp",
     }
 }

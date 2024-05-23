@@ -51,7 +51,7 @@ export const Interpreter: React.FC<Props> = ({
      * @param {Event} event - Evento del drag.
      * @param {object} data - Información sobre el arrastre.
      */
-    const handleDrag: DraggableEventHandler = (event, data) => {
+    const handleDrag: DraggableEventHandler = (_, data) => {
         // Obtener las coordenadas actuales de la posición del arrastre
         const { x, y } = positionDrag.deltaPosition;
 
