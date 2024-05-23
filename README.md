@@ -1,30 +1,60 @@
-# React + TypeScript + Vite
+<h1 align="center">
+  📘 Books-ui
+</h1>
+<br />
+<p align="center">
+  <img alt="NPM Downloads" src="https://img.shields.io/npm/dm/ui-components-books-ts">
+  <img alt="NPM Version" src="https://img.shields.io/npm/v/ui-components-books-ts">
+</p>
+<br />
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Books & Books library components 🐱‍👤
 
-Currently, two official plugins are available:
+Books UI es una biblioteca de componentes de interfaz de usuario que te ayuda a construir aplicaciones modernas de React rápidamente. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tabla de contenidos
 
-## Expanding the ESLint configuration
+- 📋 [Documentación](#Documentación)
+- 🚀 [Características](#Características)
+- 📦 [Instalación](#Instalación)
+- 💻 [Uso](#Uso)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Documentación
 
-- Configure the top-level `parserOptions` property like this:
+Este es el sitio web para la última versión de Books UI. 🎈
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Características
+
+- 🔍 Accesible: Los componentes de Books UI siguen las especificaciones de las directrices WAI-ARIA y tienen los atributos aria-* correctos. 
+- 🧱 Flexible: Los componentes de Books UI  están construidos de tal manera que permite su facíl modificación para ajustarse a todos su requerimientos. 
+
+## Instalación
+Para usar los componentes de Books UI, todo lo que necesitas hacer es instalar el paquete `books-ui` y sus peer dependencies.
+
+```sh
+# Usando npm
+$ npm i books-ui  framer-motion
+
+# Usando Yarn
+$ yarn add books-ui  framer-motion
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Uso
+
+Para comenzar a usar los componentes, por favor sigue estos pasos:
+
+1. 🧵 Importa el archivo de estilos en el archivo principal de tu aplicación.
+   
+   ```jsx
+import "books-ui/styles";
+```
+
+2. 🎉¡Ahora puedes comenzar a usar los componentes de la siguiente manera!:
+
+```jsx
+import { Button } from "books-ui"
+
+function Example() {
+  return <Button>Un simple botón</Button>
+}
+```
