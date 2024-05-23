@@ -1,5 +1,5 @@
 {
-  "name": "ui-components-books-ts",
+  "name": "books-ui",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
@@ -7,18 +7,18 @@
   "files": [
     "/dist"
   ],
-  "main": "dist/ui-components-books.umd.csj",
-  "module": "./dist/ui-components-books.js",
+  "main": "dist/books-ui.umd.csj",
+  "module": "./dist/books-ui.js",
   "exports": {
     ".": {
-      "import": "./dist/ui-components-books.js",
-      "require": "./dist/ui-components-books.umd.cjs"
+      "import": "./dist/books-ui.js",
+      "require": "./dist/books-ui.umd.cjs"
     },
     "./styles": "./dist/style.css"
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/ui-components-books/dist/",
+    "build": "tsc && vite build --base=/books-ui/dist/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",

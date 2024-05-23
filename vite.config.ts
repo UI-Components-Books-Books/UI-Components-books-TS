@@ -9,9 +9,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
-      name: 'UIComponentsBooks',
+      name: 'books-ui',
       // Se agregará la extension apropiada.
-      fileName: 'ui-components-books'
+      fileName: 'books-ui'
     },
     rollupOptions: {
       // Asegúrate de externalizar las dependencias que no deberían estar empaquetadas
