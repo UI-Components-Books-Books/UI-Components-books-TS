@@ -3,6 +3,7 @@
   "version": "0.1.5",
   "license": "MIT",
   "type": "module",
+  "types": "dist/index.d.ts",
   "files": [
     "/dist"
   ],
@@ -74,7 +75,8 @@
     "husky": "9.0.11",
     "storybook": "7.6.16",
     "typescript": "5.2.2",
-    "vite": "5.1.0"
+    "vite": "5.1.0",
+    "vite-plugin-dts": "^3.9.1"
   },
   "config": {
     "commitizen": {
