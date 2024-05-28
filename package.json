@@ -12,7 +12,8 @@
   "exports": {
     ".": {
       "import": "./dist/books-ui.js",
-      "require": "./dist/books-ui.umd.cjs"
+      "require": "./dist/books-ui.umd.cjs",
+      "types": "./dist/index.d.ts"
     },
     "./styles": "./dist/style.css"
   },
