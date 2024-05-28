@@ -3,8 +3,8 @@
 </h1>
 <br />
 <p align="center">
-  <img alt="NPM Downloads" src="https://img.shields.io/npm/dm/ui-components-books-ts">
-  <img alt="NPM Version" src="https://img.shields.io/npm/v/ui-components-books-ts">
+  <img alt="NPM Downloads" src="https://img.shields.io/npm/dm/books-ui">
+  <img alt="NPM Version" src="https://img.shields.io/npm/v/books-ui">
 </p>
 <br />
 
@@ -45,7 +45,7 @@ Para comenzar a usar los componentes, por favor sigue estos pasos:
 
 1. 🧵 Importa el archivo de estilos en el archivo principal de tu aplicación.
    
-   ```jsx
+```jsx
 import "books-ui/styles";
 ```
 
