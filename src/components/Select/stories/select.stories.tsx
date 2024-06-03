@@ -1,39 +1,39 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Item } from "react-stately"
+import type { Meta, StoryObj } from "@storybook/react";
+import { Item } from "react-stately";
 
-import { Select } from '../src/select';
+import { Select } from "../src/select";
 
-const meta = {
-    title: 'Select',
-    component: Select,
-    parameters: {
-        layout: 'centered'
-    },
-    tags: ['autodocs']
-} satisfies Meta<typeof Select>
+const meta: Meta<typeof Select> = {
+  title: "Select",
+  component: Select,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    parameters: {
-        docs: {
-            description: {
-                story: "Uy no mera flojera documentar esto"
-            }
-        }
+  parameters: {
+    docs: {
+      description: {
+        story: "Uy no mera flojera documentar esto",
+      },
     },
-    args: {
-        label: "Select",
-        name: "select",
-        placeholder: "Select the correct answer",
-    },
-    render: (args) => (
-        <Select {...args}>
-            <Item>I Will see the Buckingham palace.</Item>
-            <Item>If you miss the bus?</Item>
-            <Item>I Will go to the beach.</Item>
-            <Item>If you go to France.</Item>
-        </Select>
-    ),
-}
+  },
+  args: {
+    label: "Select",
+    name: "select",
+    placeholder: "Select the correct answer",
+  },
+  render: (args) => (
+    <Select {...args}>
+      <Item>I Will see the Buckingham palace.</Item>
+      <Item>If you miss the bus?</Item>
+      <Item>I Will go to the beach.</Item>
+      <Item>If you go to France.</Item>
+    </Select>
+  ),
+};
