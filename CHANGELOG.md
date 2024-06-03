@@ -1,3 +1,40 @@
+# v0.1.9 (Mon Jun 03 2024)
+
+#### ⚠️ Pushed to `main`
+
+- fix(row): fix row component functonality ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix(package.json): add the 'types' property to the export package configuration ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: add declaration file ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- docs(readme): fix README.md ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- feat(display.css): add new utility classes ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore(package.json): delete the private field ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- 0.1.1 ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: change package name ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- docs(readme): update README.md file ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- 0.1.0 ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- refactor(.storybook): change stoybook configuration ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- feat: add new dependency ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- build: prepare build configuration and folder structure for the first publication (programador2@bookandbooksdigital.com.co)
+- feat: add barrel files to some components (programador2@bookandbooksdigital.com.co)
+- docs: add documentation (programador2@bookandbooksdigital.com.co)
+- docs: add documentation for the components 'DragAndDrop', 'Icon', 'Image' y 'Kbd' (programador2@bookandbooksdigital.com.co)
+- docs: add documentation for the components 'Accordion', 'Audio', and 'Button' (programador2@bookandbooksdigital.com.co)
+- refactor: refactored the components' theme (programador2@bookandbooksdigital.com.co)
+- feat(video): added Video component (programador2@bookandbooksdigital.com.co)
+- feat(interpreter): add the 'interpreter' component (programador2@bookandbooksdigital.com.co)
+- chore(.vscode): add settings.json file (programador2@bookandbooksdigital.com.co)
+- chore: modified husky commitlint implementation (programador2@bookandbooksdigital.com.co)
+- feat: add Tab component (programador2@bookandbooksdigital.com.co)
+- feat: Add base components (programador2@bookandbooksdigital.com.co)
+- feat: first commit (programador2@bookandbooksdigital.com.co)
+
+#### Authors: 2
+
+- alejandro-programador2 (programador2@bookandbooksdigital.com.co)
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v0.1.8 (Fri May 31 2024)
 
 #### ⚠️ Pushed to `main`
