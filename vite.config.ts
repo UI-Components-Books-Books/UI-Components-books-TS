@@ -1,12 +1,22 @@
 import { resolve } from 'path'
 
 import react from '@vitejs/plugin-react'
+import dotenv from 'dotenv';
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
+// Carga las variables de entorno
+dotenv.config();
+
+// Verifica si debemos incluir el plugin `vite-plugin-dts`
+const shouldIncludeDts = process.env.SKIP_DTS !== 'true';
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), dts({ rollupTypes: true })],
+  plugins: [
+    react(),
+    shouldIncludeDts && dts({ rollupTypes: true }),
+  ].filter(Boolean), // Filtra los plugins falsos (null, undefined, false)
   build: {
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
