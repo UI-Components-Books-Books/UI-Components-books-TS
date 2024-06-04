@@ -11,12 +11,14 @@ dotenv.config();
 // Verifica si debemos incluir el plugin `vite-plugin-dts`
 const shouldIncludeDts = process.env.SKIP_DTS !== 'true';
 
+const plugins = [
+  react(),
+  shouldIncludeDts && dts({ rollupTypes: true }),
+].filter(Boolean)
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    shouldIncludeDts && dts({ rollupTypes: true }),
-  ].filter(Boolean), // Filtra los plugins falsos (null, undefined, false)
+  plugins: plugins,
   build: {
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
