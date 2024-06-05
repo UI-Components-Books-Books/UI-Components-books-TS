@@ -1,2 +1,15 @@
 export { Modal } from "./src/modal";
-export * from "./src/modal-context"
+
+export type {
+    ModalProps,
+    ModalSubModules,
+    ModalOverlayProps,
+    ModalContextType,
+    ModalContentProps
+} from './types/types'
+
+export {
+    ModalProvider,
+    useModalContext
+} from "./src/modal-context"
+

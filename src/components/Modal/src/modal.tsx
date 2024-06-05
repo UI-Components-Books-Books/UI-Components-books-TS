@@ -9,24 +9,9 @@ import { ModalContent } from './modal-content'
 import { ModalProvider } from './modal-context'
 import { ModalOverlay } from './modal-overlay'
 import { Portal } from '../../Portal'
+import type { ModalProps, ModalSubModules } from '../types/types';
 
-
-interface Props {
-    id?: string,
-    children: JSX.Element | JSX.Element[],
-    isOpen: boolean,
-    onClose: () => void,
-    finalFocusRef: string | string[]
-}
-
-type subModules = {
-    Content: typeof ModalContent;
-    Overlay: typeof ModalOverlay;
-    CloseButton: typeof ModalCloseButton;
-}
-
-
-const Modal: React.FC<Props> & subModules = ({ id = 'js-modal', children, isOpen = false, onClose, finalFocusRef }) => {
+const Modal: React.FC<ModalProps> & ModalSubModules = ({ id = 'js-modal', children, isOpen = false, onClose, finalFocusRef }) => {
     /**
      * Obtenemos la referencia del modal para
      * agregarle el focus cuando este se abra.

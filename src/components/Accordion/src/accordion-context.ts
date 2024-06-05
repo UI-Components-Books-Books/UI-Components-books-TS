@@ -1,16 +1,5 @@
 import { createContext } from "../../../utils/createcontext";
-
-type AccordionContextType = {
-    isOpen: string[];
-    handleToggle: (value: string) => void;
-    addAccordionId: (uid: string) => void;
-}
-
-type AccordionItemContextType = {
-    uid: string,
-    isExpanded: boolean,
-    handleExpanded: () => void
-}
+import type { AccordionContextType, AccordionItemContextType } from "../types/types";
 
 export const [AccordionProvider, useAccordionContext] = createContext<AccordionContextType>({
     name: 'AccordionContext',

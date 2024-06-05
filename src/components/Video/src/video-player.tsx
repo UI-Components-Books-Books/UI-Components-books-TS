@@ -7,7 +7,7 @@ import { BazelIcon } from './video-bazel-icon'
 import { PlayerDispatchProvider, PlayerProvider } from './video-context'
 import { playerReducer } from './video-reducer'
 import { Toolbar } from './video-toolbar'
-import { CaptionType } from './video-types'
+import type { VideoPlayerProps } from '../types/types'
 
 import './video.css'
 
@@ -24,17 +24,7 @@ const INITIAL_STATE = {
   isActiveAD: false,
 }
 
-interface Props {
-  id?: string;
-  src: string;
-  width?: string;
-  addClass?: string;
-  caption?: CaptionType;
-  poster?: string;
-  audio?: string;
-}
-
-export const VideoPlayer: React.FC<Props> = (
+export const VideoPlayer: React.FC<VideoPlayerProps> = (
   {
     id,
     src,

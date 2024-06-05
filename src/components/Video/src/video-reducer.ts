@@ -1,5 +1,5 @@
-import type { PlayerState, PlayerAction } from './video-types'
-import { PlayerActionKind } from './video-types'
+import type { PlayerState, PlayerAction } from '../types/types'
+import { PlayerActionKind } from '../types/types'
 
 
 const UPDATED_STATE_BY_ACTION = {

@@ -6,22 +6,13 @@ import { usePopper } from 'react-popper'
 
 import { useTourContext } from './tour-context'
 import { CloseIcon, LeftArrowIcon, RightArrowIcon } from './tour-icons';
-import type { ariaType } from './tour-types'
 import { Button } from '../../Button'
 import { Icon } from '../../Icon';
+import type { TourElementProps } from '../types/types'
 
 import './tour.css'
 
-
-interface Props {
-  helpLayerClass?: string;
-  hideCloseButton?: boolean;
-  hideBackButton?: boolean;
-  addClass?: string;
-  ariaAttributes?: ariaType;
-}
-
-export const TourElement: React.FC<Props> = ({
+export const TourElement: React.FC<TourElementProps> = ({
   hideCloseButton = false,
   hideBackButton = false,
   ariaAttributes = {

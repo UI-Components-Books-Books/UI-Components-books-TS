@@ -1,15 +1,10 @@
 import { useRef } from "react"
 
 import { useOption } from "@react-aria/listbox"
-import type { ListState } from "react-stately";
-import type { Node } from "react-stately";
 
-interface Props {
-  state: ListState<object>;
-  item: Node<object>
-}
+import type { SelectOptionProps } from "../types/types";
 
-export const Option: React.FC<Props>  = ({ item, state }) => {
+export const Option: React.FC<SelectOptionProps>  = ({ item, state }) => {
     const ref = useRef<HTMLLIElement>(null)
     const { optionProps, isSelected, isFocused, isDisabled } = useOption(
       { key: item.key },

@@ -2,17 +2,12 @@ import { forwardRef, useEffect, useId, useMemo } from 'react'
 
 import classnames from 'classnames'
 
-import './panel.css'
 import { usePanelContext } from './panel-contex'
+import type { SectionProps } from '../types/types'
 
-interface Props {
-  id?: string;
-  children?: React.ReactNode,
-  addClass?: string,
-}
+import './panel.css'
 
-
-export const Section: React.FC<Props> = forwardRef<HTMLDivElement, Props>(
+export const Section: React.FC<SectionProps> = forwardRef<HTMLDivElement, SectionProps>(
   function Section({ id, children, addClass, ...props }, ref) {
     const { validation, addSectionId, getSectionIndex, type } = usePanelContext();
 

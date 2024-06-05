@@ -1,19 +1,13 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react'
+import {forwardRef } from 'react'
 
 import classnames from 'classnames'
 
+import type { ButtonProps } from '../types/types'
+
 import './button.css'
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-    label?: string;
-    size?: 'small' | 'normal' | 'big';
-    variant?: 'primary' | 'secondary' | 'no-line';
-    hasAriaLabel?: boolean;
-    addClass?: string;
-    children?: React.ReactNode;
-}
 
-export const Button: React.FC<Props> = forwardRef<HTMLButtonElement, Props>(function Button(props, ref) {
+export const Button: React.FC<ButtonProps> = forwardRef<HTMLButtonElement, ButtonProps>(function Button(props, ref) {
     const {
         label,
         size = 'normal',

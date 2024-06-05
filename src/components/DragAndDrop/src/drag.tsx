@@ -5,33 +5,18 @@ import { CSS } from '@dnd-kit/utilities'
 import classnames from 'classnames'
 
 import { useDragAndDropContext } from './drag-and-drop-context'
+import type { DraggableProps } from '../types/types'
 
 import './drag-and-drop.css'
 
-type attributeDragType = {
-  role: string,
-  roleDescription: string,
-  tabIndex: number
-}
-
-interface Props {
-  id?: string;
-  children: React.ReactNode | React.ReactNode[];
-  addClass?: string;
-  dragging?: string;
-  label: string;
-  attribute?: attributeDragType;
-  __TYPE?: 'draggable';
-}
-
-export const Draggable: React.FC<Props> = ({
+export const Draggable: React.FC<DraggableProps> = ({
   id,
   children,
   addClass,
   dragging,
   label,
   attribute,
-  __TYPE = 'draggable',
+  __TYPE,
   ...props
 }) => {
   const reactId = useId();

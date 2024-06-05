@@ -3,6 +3,7 @@ import { forwardRef, useId } from 'react';
 import classNames from 'classnames';
 
 import { NormalIcon, RightIcon, WrongIcon } from './checkbox-icons';
+import type { CheckBoxProps } from '../types/types';
 
 import './checkbox.css';
 
@@ -14,14 +15,7 @@ const ICON_STATE = Object.freeze({
 })
 
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
-    id?: string,
-    label: string,
-    state?: 'normal' | 'right' | 'wrong',
-    addClass?: string
-}
-
-export const CheckBox: React.FC<Props> = forwardRef<HTMLInputElement, Props>(
+export const CheckBox: React.FC<CheckBoxProps> = forwardRef<HTMLInputElement, CheckBoxProps>(
     function CheckBox({ id, label = 'Default checkbox label', state = 'normal', addClass, ...props }, ref) {
 
         /**

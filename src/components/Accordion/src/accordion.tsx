@@ -4,21 +4,9 @@ import { AccordionButton } from "./accordion-button";
 import { AccordionProvider } from "./accordion-context";
 import { AccordionItem } from './accordion-item';
 import { AccordionPanel } from "./accordion-panel";
+import type { AccordionProps, AccordionSubComponents } from "../types/types";
 
-
-interface Props {
-    children: React.ReactNode[] | React.ReactNode,
-    allowMultiple?: boolean,
-    defaultIndex?: number,
-}
-
-type subComponents = {
-    Panel: typeof AccordionPanel;
-    Button: typeof AccordionButton;
-    Item: typeof AccordionItem;
-}
-
-const Accordion: React.FC<Props> & subComponents = ({ children, allowMultiple = false, defaultIndex }) => {
+const Accordion: React.FC<AccordionProps> & AccordionSubComponents = ({ children, allowMultiple = false, defaultIndex }) => {
     // Estado que controla el estado de apertura/cierre de los componentes <AccordionItem>.
     const [isOpen, setIsOpen] = useState<string[]>([]);
 

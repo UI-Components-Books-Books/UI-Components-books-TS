@@ -3,6 +3,7 @@
  */
 export type Duration = number;
 
+
 /**
  * Estado del reproductor de vídeo.
  */
@@ -58,6 +59,7 @@ export interface PlayerState {
     isActiveAD: boolean;
 }
 
+
 /**
  * Tipo para representar un objeto de subtítulos.
  */
@@ -73,6 +75,7 @@ export type CaptionType = {
     lang: "en" | "es";
 }
 
+
 /**
  * Etiquetas para los idiomas de los subtítulos.
  */
@@ -80,6 +83,7 @@ export enum CaptionLangLabel {
     en = "English captions",
     es = "Subtítulos en español"
 }
+
 
 /**
  * Enumeración de los tipos de acciones del reproductor.
@@ -96,6 +100,7 @@ export enum PlayerActionKind {
     AUDIO_DESCRIPTION_CHANGE = 'AUDIO_DESCRIPTION_CHANGE'
 }
 
+
 /**
  * Tipo para representar una acción del reproductor.
  */
@@ -109,4 +114,76 @@ export interface PlayerAction {
      * Carga útil de la acción del reproductor.
      */
     payload?: string | number | boolean | Partial<PlayerState>;
+}
+
+
+/**
+ * Propiedades para el componente VideoPlayer.
+ */
+export interface VideoPlayerProps {
+    /**
+     * Identificador opcional para el reproductor de video.
+     */
+    id?: string;
+    
+    /**
+     * URL de la fuente del video.
+     */
+    src: string;
+    
+    /**
+     * Ancho del video.
+     */
+    width?: string;
+    
+    /**
+     * Clase adicional para aplicar estilos personalizados.
+     */
+    addClass?: string;
+    
+    /**
+     * Configuración de la leyenda del video.
+     */
+    caption?: CaptionType;
+    
+    /**
+     * URL de la imagen del póster del video.
+     */
+    poster?: string;
+    
+    /**
+     * URL de la pista de audio del video.
+     */
+    audio?: string;
+}
+
+
+/**
+ * Tipo para el contexto del VideoPlayer.
+ */
+export interface VideoPlayerContextType extends PlayerState {
+    /**
+     * Identificador único para el reproductor de video.
+     */
+    uid: string;
+
+    /**
+     * URL de la fuente del video.
+     */
+    src: string;
+
+    /**
+     * Configuración de la leyenda del video.
+     */
+    caption?: CaptionType;
+
+    /**
+     * URL de la imagen del póster del video.
+     */
+    poster?: string;
+
+    /**
+     * URL de la pista de audio del video.
+     */
+    audio?: string;
 }

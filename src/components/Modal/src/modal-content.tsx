@@ -3,9 +3,9 @@ import classnames from 'classnames'
 import { motion } from 'framer-motion'
 
 import { useModalContext } from './modal-context'
+import type { ModalContentProps } from '../types/types'
 
 import './modal.css'
-
 
 /**
  * Se crea un objeto que no se puede cambiar para
@@ -13,14 +13,7 @@ import './modal.css'
  */
 const KEYCODE = Object.freeze({
     ESC: 27
-} as const)
-
-
-interface Props {
-    addClass?: string,
-    children: JSX.Element | JSX.Element[]
-}
-
+})
 
 const dropIn = {
     hidden: {
@@ -43,7 +36,7 @@ const dropIn = {
     },
 };
 
-export const ModalContent: React.FC<Props> = ({ addClass, children, ...props }) => {
+export const ModalContent: React.FC<ModalContentProps> = ({ addClass, children, ...props }) => {
     /**
      * Se obtienen las propiedades onClose y refModal
      * del contexto generado por el componente Modal.

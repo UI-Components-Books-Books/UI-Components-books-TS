@@ -2,11 +2,7 @@ import { cloneElement, Children } from 'react'
 
 import { usePopoverContext } from './popover-context'
 
-interface Props {
-  children: JSX.Element
-}
-
-export const PopoverButton: React.FC<Props> = ({ children }) => {
+export const PopoverButton = ({ children }: { children: JSX.Element }) => {
   // Obtenemos la función togglePopover y setPopoverButtonRef del contexto
   const { togglePopover, setPopoverButtonRef, popoverButtonRef, isPopoverOpen } = usePopoverContext();
 

@@ -6,23 +6,11 @@ import { ButtonSection } from './panel-button';
 import { PanelProvider } from './panel-contex'
 import { NavSection } from './panel-nav';
 import { Section } from './panel-section';
+import type { PanelProps, PanelSubComponents } from '../types/types';
 
 import './panel.css'
 
-interface Props {
-    children: React.ReactNode[] | React.ReactNode;
-    defaultIndex?: number;
-    addClass?: string;
-    type?: 'carrousel'
-}
-
-type subComponents = {
-    Button: typeof ButtonSection,
-    Section: typeof Section,
-    Nav: typeof NavSection
-}
-
-const Panel: React.FC<Props> & subComponents = ({ children, defaultIndex = 0, addClass, type }) => {
+const Panel: React.FC<PanelProps> & PanelSubComponents = ({ children, defaultIndex = 0, addClass, type }) => {
     //Estado que controla el estado de apertura/cierre de los componentes <Section>.
     const [isOpen, setIsOpen] = useState<string | null>(null)
 

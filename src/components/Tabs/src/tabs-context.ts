@@ -1,15 +1,5 @@
 import { createContext } from "../../../utils/createcontext";
-
-type TabsContextType = {
-    isOpen: number | null;
-    handleToggle: (value: number) => void;
-    handleValidation: (value: number) => boolean;
-}
-
-type TabListContexType = {
-    addNewTabRef: (ref: HTMLButtonElement) => void;
-    handleNavigationFocus: (e: React.KeyboardEvent) => void;
-}
+import type { TabsContextType, TabListContexType } from "../types/types";
 
 export const [TabsProvider, useTabsContext] = createContext<TabsContextType>({
     name: 'TabsContext',

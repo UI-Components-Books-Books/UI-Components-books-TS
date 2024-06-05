@@ -3,18 +3,11 @@ import { useState, forwardRef } from "react";
 import classnames from "classnames";
 
 import { imageBase } from "./image-base";
+import type { ImageProps } from '../types/types'
+
 import "./image.css";
 
-interface Props {
-  src?: string;
-  alt?: string;
-  title?: string;
-  size?: string;
-  addClass?: string;
-  noCaption?: boolean;
-}
-
-export const Image: React.FC<Props> = forwardRef<HTMLImageElement, Props>(
+export const Image: React.FC<ImageProps> = forwardRef<HTMLImageElement, ImageProps>(
   function Image(
     {
       src = "none",

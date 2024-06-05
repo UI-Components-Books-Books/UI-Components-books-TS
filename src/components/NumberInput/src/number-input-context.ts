@@ -1,15 +1,5 @@
 import { createContext } from "../../../utils/createcontext";
-
-type NumberInputContextType = {
-    counter: number;
-    min: number;
-    max: number;
-    validate: (prop: number) => boolean;
-    onChangeValue: (value: number) => void;
-    onIncrementValue: () => void;
-    onDecrementValue: () => void;
-}
-
+import type { NumberInputContextType } from "../types/types";
 
 export const [NumberInputProvider, useNumberInputContext] = createContext<NumberInputContextType>({
     name: 'NumberInputContext',

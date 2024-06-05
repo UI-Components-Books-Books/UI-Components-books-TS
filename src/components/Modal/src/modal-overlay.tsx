@@ -3,15 +3,11 @@ import classnames from 'classnames'
 import { motion } from 'framer-motion';
 
 import { useModalContext } from './modal-context'
+import type { ModalOverlayProps } from '../types/types';
 
 import "./modal.css"
 
-interface Props {
-    addClass?: string,
-    onClick?: (event: React.MouseEvent) => void;
-}
-
-export const ModalOverlay: React.FC<Props> = ({ addClass, onClick }) => {
+export const ModalOverlay: React.FC<ModalOverlayProps> = ({ addClass, onClick }) => {
     /**
     * Se obtienen las propiedades isOpen y onClose del contexto generado por el componente Modal.
     */

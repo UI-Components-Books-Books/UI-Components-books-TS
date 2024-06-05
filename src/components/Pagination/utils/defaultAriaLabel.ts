@@ -1,4 +1,4 @@
-import type { AriaLabelGenerator } from '../src/pagination-types'
+import type { PaginationAriaLabelGenerator } from '../types/types'
 
 /**
  * Se crea un objeto que no se puede cambiar para
@@ -23,7 +23,7 @@ const getSpanishType = Object.freeze({
  * @param {Boolean} selected - Boolean que informa si está la página seleccionada.
  * @returns {string} Message - Mensaje utiliado en el aria-label
  */
-export const defaultAriaLabel: AriaLabelGenerator = (type, selected, page) => {
+export const defaultAriaLabel: PaginationAriaLabelGenerator = (type, selected, page) => {
     if (type === 'page') {
         return `${selected ? '' : 'Ir a la '}página ${page}`
     }

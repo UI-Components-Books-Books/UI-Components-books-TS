@@ -6,19 +6,11 @@ import { SHOW_VIDEO } from "./const";
 import { PauseIcon, PlayIcon } from "./interpreter-icons";
 import { formatTime } from "../../../utils/converterTime";
 import { Icon } from "../../Icon";
+import type { InterpreterVideoPlayerProps } from '../types/types'
 
 import './interpreter.css'
 
-
-interface Props {
-    displayVideo: string | null;
-    URLs: {
-        accesibilityURL?: string,
-        contentURL?: string
-    },
-}
-
-export const VideoPlayer: React.FC<Props> = ({ displayVideo, URLs }) => {
+export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVideo, URLs }) => {
     const { accesibilityURL, contentURL } = URLs
 
     const uniqueProgressBarId = useId();

@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { usePopper } from 'react-popper'
 
 import { Portal } from '../../Portal'
+import type { ToggletipProps } from '../types/types';
 
 import './toggletip.css'
 
@@ -20,40 +21,9 @@ import './toggletip.css'
  */
 const KEYCODE = Object.freeze({
     ESC: 27
-} as const)
+})
 
-
-type placementsType =
-    | 'auto'
-    | 'auto-start'
-    | 'auto-end'
-    | 'top'
-    | 'top-start'
-    | 'top-end'
-    | 'bottom'
-    | 'bottom-start'
-    | 'bottom-end'
-    | 'right'
-    | 'right-start'
-    | 'right-end'
-    | 'left'
-    | 'left-start'
-    | 'left-end';
-
-
-interface Props {
-    id?: string,
-    label: string,
-    addClass?: string,
-    hasArrow?: boolean,
-    isDisabled?: boolean,
-    distance?: number,
-    placement?: placementsType
-    children: React.ReactNode,
-    disabledInteractOutside?: boolean
-}
-
-export const Toggletip: React.FC<Props> = ({
+export const Toggletip: React.FC<ToggletipProps> = ({
     id,
     label,
     addClass,

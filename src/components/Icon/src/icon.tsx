@@ -1,14 +1,10 @@
 import { Children, cloneElement, isValidElement } from 'react'
 
+import type { IconProps } from '../types/types';
+
 import './icon.css'
 
-
-interface Props {
-    size?: 'small' | 'normal' | 'big';
-    children: React.ReactElement;
-}
-
-export const Icon: React.FC<Props> = ({ children, size = 'normal' }) => {
+export const Icon: React.FC<IconProps> = ({ children, size = 'normal' }) => {
     /**
      * Verificamos si children es un elemento válido antes de procesarlo.
      */

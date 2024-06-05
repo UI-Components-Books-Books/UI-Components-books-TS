@@ -2,9 +2,9 @@ import { useEffect, useMemo } from "react";
 
 import { usePlayerContext } from "./video-context";
 import { usePlayerDispatchContext } from "./video-context";
-import { PlayerActionKind } from "./video-types";
 import { convertTime } from "../../../utils/converterTime";
 import { useResize } from "../hooks/useResize";
+import { PlayerActionKind } from "../types/types";
 
 import './video.css'
 

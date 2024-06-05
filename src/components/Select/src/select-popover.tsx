@@ -3,17 +3,12 @@ import { useRef } from "react"
 import { Overlay } from "@react-aria/overlays"
 import { DismissButton } from "@react-aria/overlays"
 import { usePopover } from "@react-aria/overlays"
-import type { AriaPopoverProps } from "@react-aria/overlays"
-import type { OverlayTriggerState } from "react-stately"
+
+import type { SelectPopoverProps } from '../types/types';
 
 import './select.css'
 
-interface Props extends Omit<AriaPopoverProps, 'popoverRef'> {
-    children: React.ReactNode;
-    state: OverlayTriggerState;
-}
-
-export const Popover: React.FC<Props> = ({ state, children, ...props }) => {
+export const Popover: React.FC<SelectPopoverProps> = ({ state, children, ...props }) => {
     const popoverRef = useRef<HTMLDivElement>(null)
     const { popoverProps, underlayProps } = usePopover(
         {

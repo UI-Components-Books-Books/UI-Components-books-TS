@@ -1,16 +1,11 @@
 import classnames from 'classnames'
 
+import type { KbdProps } from '../types/types'
+
 import './kbd.css'
 
-interface Props {
-    children: React.ReactNode
-    addClass?: string
-}
-
-export const Kbd: React.FC<Props> = ({ addClass, children, ...props }) => {
-    return (
-        <kbd className={classnames('c-kbd', { [addClass ?? ""]: addClass })} {...props} >
-            {children}
-        </kbd>
-    )
-}
+export const Kbd: React.FC<KbdProps> = ({ addClass, children, ...props }) => (
+    <kbd className={classnames('c-kbd', { [addClass ?? ""]: addClass })} {...props} >
+        {children}
+    </kbd>
+)

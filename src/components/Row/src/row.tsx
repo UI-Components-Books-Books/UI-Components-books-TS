@@ -1,22 +1,13 @@
 import { forwardRef } from "react";
 
-import "./row.css";
 import classnames from "classnames";
 
-interface Props extends React.HTMLProps<HTMLDivElement> {
-  addClass?: string;
-  justifyContent?:
-    | "center"
-    | "flex-start"
-    | "flex-end"
-    | "space-between"
-    | "space-around"
-    | "space-evenly";
-  alignItems?: "center" | "flex-start" | "flex-end" | "baseline" | "stretch";
-  flexDirection?: "row" | "row-reverse" | "column" | "column-reverse";
-}
+import { RowProps } from "../types/types";
 
-export const Row = forwardRef<HTMLDivElement, Props>(function Row(
+import "./row.css";
+
+
+export const Row = forwardRef<HTMLDivElement, RowProps>(function Row(
   { addClass, justifyContent, alignItems, flexDirection, ...props },
   ref: React.Ref<HTMLDivElement>
 ) {

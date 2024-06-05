@@ -2,16 +2,11 @@ import classnames from 'classnames'
 
 import { useAccordionItemContext } from './accordion-context';
 import { ExpandLessIcon, ExpandMoreIcon } from './accordion-icons';
+import type { AccordionButtonProps } from '../types/types';
+
 import './accordion.css'
 
-interface Props {
-  children: React.ReactNode;
-  addClass?: string;
-  expandedIcon?: React.ReactNode;
-  closedIcon?: React.ReactNode;
-}
-
-export const AccordionButton: React.FC<Props> = ({
+export const AccordionButton: React.FC<AccordionButtonProps> = ({
   children,
   addClass,
   expandedIcon = <ExpandMoreIcon />,

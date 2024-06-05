@@ -3,45 +3,21 @@ import { cloneElement, useState, Children, isValidElement, useEffect, useRef, us
 import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import type { Over } from '@dnd-kit/core'
-import type { Announcements } from '@dnd-kit/core'
 import { restrictToHorizontalAxis, restrictToVerticalAxis } from '@dnd-kit/modifiers'
-
 
 import { ContainerDrag } from './container-drag'
 import { Draggable } from './drag'
 import { DragAndDropProvider } from './drag-and-drop-context'
-import type { ItemType, ModifiersType } from './drag-and-drop-types'
 import { Droppable } from './drop'
 import { coordinateGetter } from './keyboard-coordinates'
+import type { DragAndDropProps, DragAndDropSubModules, ItemType } from '../types/types'
 import { defaultAnnouncements } from '../utils/announcements'
 import { propertyUseToValidation, screenReaderInstruction } from '../utils/const'
 import { getChildrenByType } from '../utils/getChildrenByType'
 
 import './drag-and-drop.css'
 
-
-interface Props {
-  id: string;
-  children: JSX.Element[] | JSX.Element;
-  multipleDrags?: boolean;
-  onValidate?: ({ validate, active }: { validate: string[]; active: boolean; }) => void;
-  validate?: boolean;
-  propValidate?: string;
-  modifiers?: ModifiersType;
-  screenReaderInstructions?: string;
-  announcements?: Announcements;
-  defaultState?: ItemType;
-  defaultValidate?: string[];
-  onState?: ({ id, state, validateId }: { id: string, state: ItemType, validateId: string[] }) => void;
-}
-
-type subModules = {
-  Container: typeof ContainerDrag;
-  Drag: typeof Draggable;
-  Drop: typeof Droppable;
-}
-
-const DragAndDrop: React.FC<Props> & subModules = ({
+const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
   id: idDragAndDrop,
   children: childrenProps,
   multipleDrags = false,
@@ -446,7 +422,6 @@ const DragAndDrop: React.FC<Props> & subModules = ({
     </DragAndDropProvider>
   )
 }
-
 
 DragAndDrop.Container = ContainerDrag;
 DragAndDrop.Drag = Draggable;

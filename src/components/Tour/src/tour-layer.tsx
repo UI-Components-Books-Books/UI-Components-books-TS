@@ -7,7 +7,6 @@ import { useTourContext } from './tour-context'
 
 import './tour.css'
 
-
 const useResize = (delay: number = 500) => {
   const [isResizing, setIsResizing] = useState<boolean>(false)
 
@@ -49,11 +48,8 @@ const useResize = (delay: number = 500) => {
   return isResizing
 }
 
-interface Props {
-  addClass?: string;
-}
 
-export const TourHelpLayer: React.FC<Props> = ({ addClass }) => {
+export const TourHelpLayer = ({ addClass }: { addClass?: string }) => {
   // Propiedad obtenidas a través del contexto.
   const { id, target } = useTourContext()
 

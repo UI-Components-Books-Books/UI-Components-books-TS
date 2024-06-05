@@ -1,16 +1,11 @@
 import classnames from 'classnames';
 
 import { useTabsContext } from './tabs-context';
+import type { TabPanelProps } from '../types/types';
 
 import './tabs.css'
 
-interface Props {
-  id?: number;
-  children: React.ReactNode | React.ReactNode[];
-  addClass?: string;
-}
-
-export const TabPanel: React.FC<Props> = ({ id, children, addClass, ...props }) => {
+export const TabPanel: React.FC<TabPanelProps> = ({ id, children, addClass, ...props }) => {
   // Obtenemos la función validation del contexto
   const { handleValidation } = useTabsContext();
 

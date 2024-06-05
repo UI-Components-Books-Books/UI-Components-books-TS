@@ -5,24 +5,16 @@ import { HiddenSelect } from "@react-aria/select"
 import classNames from 'classnames';
 import { useSelectState } from "react-stately"
 
-
 import { Button } from "./select-button";
 import { ArrowDownIcon } from "./select-icons"
 import { ListBox } from "./select-list"
 import { Popover } from "./select-popover"
 import { Icon } from "../../Icon"
-
+import type { SelectProps } from "../types/types";
 
 import './select.css'
 
-interface Props {
-  label: string;
-  name: string;
-  placeholder?: string;
-  addClass?: string;
-}
-
-const Select: React.FC<Props> = (props) => {
+const Select: React.FC<SelectProps> = (props) => {
   const { label, name, placeholder = 'Seleccionar', addClass } = props
 
   // Create state based on the incoming props

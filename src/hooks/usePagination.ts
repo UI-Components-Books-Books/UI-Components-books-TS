@@ -13,6 +13,14 @@ export interface usePaginationProps {
     siblingCount?: number;
 }
 
+export interface ItemPaginationType {
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    type: string;
+    page: number | null;
+    selected: boolean;
+    disabled: boolean;
+    'aria-current'?: boolean | "page" | "false" | "true" | "step" | "location" | "date" | "time" | undefined;
+}
 
 /**
  * Hook para crear una Paginación.
@@ -169,7 +177,7 @@ const usePagination = ({
     }
 
     // Convierte la lista de elemento básicos en objetos
-    const items = itemList.map((item) => {
+    const items: ItemPaginationType[] = itemList.map((item) => {
         return typeof item === 'number'
             ? {
                 onClick: (event: React.MouseEvent<HTMLButtonElement>) => {

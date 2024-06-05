@@ -1,17 +1,10 @@
 import { Dispatch } from "react";
 
-import type { PlayerAction, PlayerState, CaptionType } from './video-types'
 import { createContext } from "../../../utils/createcontext";
+import type { PlayerAction, VideoPlayerContextType  } from '../types/types'
 
-interface PlayerContextType extends PlayerState {
-    uid: string;
-    src: string;
-    caption?: CaptionType;
-    poster?: string;
-    audio?: string;
-}
 
-export const [PlayerProvider, usePlayerContext] = createContext<PlayerContextType>({
+export const [PlayerProvider, usePlayerContext] = createContext<VideoPlayerContextType>({
     name: 'PlayerContext',
 })
 

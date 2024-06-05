@@ -7,28 +7,11 @@ import { NumberIncrementStepper } from './number-increment-stepper';
 import { NumberInputProvider } from './number-input-context'
 import { NumberInputField } from './number-input-field';
 import { NumberInputStepper } from './number-input-stepper';
+import type { NumberInputProps, NumberInputSubComponents } from '../types/types';
 
 import './number-input.css'
 
-interface Props {
-  addClass?: string,
-  max?: number,
-  min?: number,
-  defaultValue?: number,
-  step?: number,
-  onValue?: (counter: number) => void,
-  keepWithinRange?: boolean,
-  children: JSX.Element | JSX.Element[]
-}
-
-type subComponents = {
-  IncrementStepper: typeof NumberIncrementStepper,
-  DecrementStepper: typeof NumberDecrementStepper,
-  Field: typeof NumberInputField,
-  Stepper: typeof NumberInputStepper
-}
-
-const NumberInput: React.FC<Props> & subComponents = ({
+const NumberInput: React.FC<NumberInputProps> & NumberInputSubComponents = ({
   children,
   addClass,
   keepWithinRange = false,

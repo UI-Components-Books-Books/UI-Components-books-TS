@@ -1,9 +1,5 @@
 import { createContext } from "../../../utils/createcontext";
-
-type ModalContextType = {
-    onClose: () => void;
-    refModal: React.Ref<HTMLDivElement> | undefined;
-}
+import { ModalContextType } from "../types/types";
 
 export const [ModalProvider, useModalContext] = createContext<ModalContextType>({
     name: 'ModalContext',

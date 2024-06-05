@@ -5,24 +5,11 @@ import { TabList } from './tab-list'
 import { TabPanel } from './tab-panel'
 import { TabPanels } from './tab-panels'
 import { TabsProvider } from './tabs-context'
+import type { TabsProps, TabsSubComponents } from '../types/types'
 
 import './tabs.css'
 
-
-interface Props {
-    children: JSX.Element | JSX.Element[];
-    defaultIndex?: number,
-    addClass?: string
-}
-
-type subComponents = {
-    Tab: typeof Tab;
-    TabList: typeof TabList;
-    TabPanel: typeof TabPanel;
-    TabPanels: typeof TabPanels;
-}
-
-const Tabs: React.FC<Props> & subComponents = ({ children, defaultIndex = 0, addClass, ...props }) => {
+const Tabs: React.FC<TabsProps> & TabsSubComponents = ({ children, defaultIndex = 0, addClass, ...props }) => {
     // Controla el estado de abierto/cerrado del TabPanel.
     const [isOpen, setIsOpen] = useState<number | null>(null);
 

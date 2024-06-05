@@ -3,13 +3,9 @@ import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 
 import { usePortal } from '../../../hooks'
+import type { PortalProps } from '../types/types';
 
-interface Props {
-  id?: string
-  children: React.ReactNode,
-}
-
-export const Portal: React.FC<Props> = ({ children, id }) => {
+export const Portal: React.FC<PortalProps> = ({ children, id }) => {
 
   // Genera un identificador único basado en el prop id o uno aleatorio
   const uid: string = useMemo(() => {

@@ -6,11 +6,11 @@ import { usePlayerContext } from "./video-context";
 import { usePlayerDispatchContext } from "./video-context";
 import { AudioDescription, CloseCaption, FullScreen, FullScreenExit, PauseIcon, PlayIcon } from './video-icons'
 import { Slider } from "./video-slider";
-import { PlayerActionKind } from './video-types'
 import { VolumeControl } from "./video-volume-control";
 import { formatTime } from "../../../utils/converterTime";
 import { Icon } from "../../Icon";
 import { useFullScreen } from "../hooks/useFullScreen";
+import { PlayerActionKind } from '../types/types'
 
 import './video.css'
 

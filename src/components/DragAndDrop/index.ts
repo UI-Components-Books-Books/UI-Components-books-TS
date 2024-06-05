@@ -1,2 +1,16 @@
 export { DragAndDrop } from "./src/drag-and-drop";
-export * from "./src/drag-and-drop-context"
+
+export type {
+    ModifiersType,
+    DroppableProps,
+    DraggableProps,
+    DragAndDropProps,
+    DragAndDropSubModules,
+    DragAndDropContextType,
+    ContainerDragProps
+} from "./types/types"
+
+export { 
+    DragAndDropProvider, 
+    useDragAndDropContext
+} from "./src/drag-and-drop-context"

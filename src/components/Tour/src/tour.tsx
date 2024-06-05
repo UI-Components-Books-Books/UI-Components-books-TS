@@ -1,30 +1,17 @@
 import { useState, useEffect, useMemo } from 'react'
 
 import 'wicg-inert'
+
 import { TourProvider } from './tour-context'
 import { TourElement } from './tour-element'
 import { TourHelpLayer } from './tour-layer'
-import type { stepType } from './tour-types'
-import { TourStateEnum } from './tour-types'
 import { Portal } from '../../Portal'
-
+import type { TourProps, TourSubComponents, StepType } from '../types/types'
+import { TourStateEnum } from '../types/types'
 
 import './tour.css'
 
-interface Props {
-    steps: Array<stepType>;
-    isOpen: boolean;
-    onClose: () => void;
-    finalFocusRef: string | string[];
-    children: JSX.Element[] | JSX.Element;
-}
-
-type subModule = {
-    Layer: typeof TourHelpLayer;
-    Modal: typeof TourElement
-}
-
-const Tour: React.FC<Props> & subModule = ({ steps, isOpen = false, onClose, finalFocusRef, children }) => {
+const Tour: React.FC<TourProps> & TourSubComponents = ({ steps, isOpen = false, onClose, finalFocusRef, children }) => {
     // Estado utilizado para almacenar el id del elemento activado.
     const [activeId, setActiveId] = useState<number>(TourStateEnum.default);
 
@@ -33,7 +20,7 @@ const Tour: React.FC<Props> & subModule = ({ steps, isOpen = false, onClose, fin
      * y además agregamos la prop id.
      */
     const items = useMemo(() => {
-        return steps.reduce((list: stepType[], item: stepType, index: number) => {
+        return steps.reduce((list: StepType[], item: StepType, index: number) => {
             if (!item.target) return list;
 
             const isValidElement = document.querySelector(item.target);
@@ -49,9 +36,9 @@ const Tour: React.FC<Props> & subModule = ({ steps, isOpen = false, onClose, fin
      * Función utilizada para encontrar un objeto a partir de la propiedad id.
      *
      * @param {number} uid - Id del objeto a buscar.
-     * @returns {stepType | object} - Objeto que concuerda con el id.
+     * @returns {StepType | object} - Objeto que concuerda con el id.
      */
-    const findElement = (uid: number): stepType | object => {
+    const findElement = (uid: number): StepType | object => {
         return items
             .filter((item) => item.id === uid)
             .reduce((object, item) => ({ ...object, ...item }), {});

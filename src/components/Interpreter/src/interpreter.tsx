@@ -9,27 +9,11 @@ import { SHOW_VIDEO } from './const'
 import { CloseIcon, DotIcon, HandsIcon, LaptopIcon, MoveArrowIcon } from './interpreter-icons'
 import { VideoPlayer } from './interpreter-video-player'
 import { Icon } from '../../Icon'
+import type { InterpreterProps, InterpreterVideoProps } from '../types/types'
 
 import './interpreter.css'
 
-
-interface Props {
-    accesibilityURL?: string;
-    contentURL?: string;
-    addClass?: string;
-    icon?: JSX.Element;
-}
-
-interface VideoProps {
-    URLs: {
-        accesibilityURL?: string,
-        contentURL?: string
-    },
-    resetDragPosition: () => void;
-    icon: JSX.Element;
-}
-
-export const Interpreter: React.FC<Props> = ({
+export const Interpreter: React.FC<InterpreterProps> = ({
     accesibilityURL,
     contentURL,
     addClass,
@@ -87,7 +71,7 @@ export const Interpreter: React.FC<Props> = ({
 }
 
 
-const Video: React.FC<VideoProps> = ({ URLs, resetDragPosition, icon, ...props }) => {
+const Video: React.FC<InterpreterVideoProps> = ({ URLs, resetDragPosition, icon, ...props }) => {
     const [displayVideo, setDisplayVideo] = useState<string | null>(null);
     const [hidden, setHidden] = useState<boolean>(true);
 

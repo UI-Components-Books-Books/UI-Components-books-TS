@@ -6,6 +6,7 @@ import { usePopper } from 'react-popper'
 import { usePopoverContext } from './popover-context'
 import { useInteractOutside } from '../../../hooks'
 import { Portal } from '../../Portal'
+import type { PopoverContentProps } from '../types/types'
 
 import './popover.css'
 
@@ -16,45 +17,13 @@ import './popover.css'
 const KEYCODE = Object.freeze({
   ESC: 27,
   TAB: 9
-} as const)
-
+})
 
 // Lista de elementos a los cuales se les puede hacer focus.
 const SELECTOR_ELEMENTS =
   'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed [tabindex="0"], [contenteditable], audio:not([tabindex="-1"])' as const
 
-
-type placementsType =
-  | 'auto'
-  | 'auto-start'
-  | 'auto-end'
-  | 'top'
-  | 'top-start'
-  | 'top-end'
-  | 'bottom'
-  | 'bottom-start'
-  | 'bottom-end'
-  | 'right'
-  | 'right-start'
-  | 'right-end'
-  | 'left'
-  | 'left-start'
-  | 'left-end';
-
-
-interface Props {
-  id?: string,
-  children: React.ReactNode,
-  addClass?: string,
-  hasArrow?: boolean,
-  isDisabled?: boolean,
-  distance?: number,
-  placement?: placementsType
-  disabledInteractOutside?: boolean,
-}
-
-
-export const PopoverContent: React.FC<Props> = ({
+export const PopoverContent: React.FC<PopoverContentProps> = ({
   id,
   children,
   addClass,

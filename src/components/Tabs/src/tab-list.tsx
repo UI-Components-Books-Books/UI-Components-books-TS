@@ -3,9 +3,9 @@ import React, { cloneElement, Children, isValidElement, useRef } from 'react'
 import classnames from 'classnames'
 
 import { TabListProvider } from './tabs-context'
+import type { TabListProps } from '../types/types'
 
 import './tabs.css'
-
 
 /**
  * Se crea un objeto que no se puede cambiar para
@@ -16,14 +16,7 @@ const KEYCODE = Object.freeze({
   RIGHT: 39
 })
 
-interface Props {
-  children: JSX.Element | JSX.Element[];
-  addClass?: string;
-  label: string;
-  orientation: "horizontal" | "vertical";
-}
-
-export const TabList: React.FC<Props> = ({
+export const TabList: React.FC<TabListProps> = ({
   children: ChildrenProps,
   addClass,
   label = 'Simple tabs',

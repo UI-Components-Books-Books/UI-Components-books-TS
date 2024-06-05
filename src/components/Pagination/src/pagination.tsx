@@ -1,25 +1,13 @@
 import classnames from 'classnames'
 
 import { PaginationItem } from './pagination-item'
-import type { AriaLabelGenerator, ItemType, TypeElement } from './pagination-types'
 import { usePagination } from '../../../hooks'
-import type { usePaginationProps } from '../../../hooks/usePagination'
+import type { PaginationProps, PaginationSubModules, TypeElement } from '../types/types'
 import { defaultAriaLabel } from '../utils/defaultAriaLabel'
 
 import './pagination.css'
 
-interface Props extends usePaginationProps {
-    renderItem?: (item: ItemType) => React.ReactNode;
-    getItemAriaLabel?: AriaLabelGenerator;
-    addClass?: string;
-    role?: string;
-}
-
-type subModules = {
-    Item: typeof PaginationItem
-}
-
-const Pagination: React.FC<Props> & subModules = ({
+const Pagination: React.FC<PaginationProps> & PaginationSubModules = ({
     renderItem = (item) => <PaginationItem {...item} />,
     getItemAriaLabel = defaultAriaLabel,
     addClass,

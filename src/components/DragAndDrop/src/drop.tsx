@@ -3,26 +3,18 @@ import { useId } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import classnames from 'classnames'
 
+import type { DroppableProps } from '../types/types'
+
 import './drag-and-drop.css'
 
-interface Props {
-  id?: string;
-  children: React.ReactNode | React.ReactNode[];
-  validate: string[];
-  addClass?: string;
-  over?: string; 
-  label: string;
-  __TYPE?: 'droppable'
-}
-
-export const Droppable: React.FC<Props> = ({
+export const Droppable: React.FC<DroppableProps> = ({
   id,
   children,
   validate,
   addClass,
   over = 'c-droppable--active',
   label,
-  __TYPE = 'droppable',
+  __TYPE,
   ...props
 }) => {
   const reactId = useId();

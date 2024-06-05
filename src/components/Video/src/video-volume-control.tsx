@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import { motion } from 'framer-motion';
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context"
-import { PlayerActionKind } from "./video-types"
 import { Icon } from "../../Icon"
+import { PlayerActionKind } from "../types/types"
 
 import './video.css'
 

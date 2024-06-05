@@ -3,6 +3,7 @@ import { forwardRef, useId } from 'react';
 import classNames from 'classnames';
 
 import { RightIcon, WrongIcon } from './radio-icons';
+import type { RadioProps } from '../types/types';
 
 import './radio.css';
 
@@ -11,14 +12,7 @@ const ICON_STATE = Object.freeze({
     wrong: <WrongIcon />
 })
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
-    id?: string,
-    label: string,
-    state?: 'right' | 'wrong',
-    addClass?: string
-}
-
-export const Radio: React.FC<Props> = forwardRef<HTMLInputElement, Props>(
+export const Radio: React.FC<RadioProps> = forwardRef<HTMLInputElement, RadioProps>(
     function Radio({ id, label = 'Default radio label', state, addClass, ...props }, ref) {
 
         /**

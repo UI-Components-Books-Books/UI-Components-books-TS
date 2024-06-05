@@ -1,11 +1,8 @@
 import { useButton } from "@react-aria/button"
-import type { AriaButtonOptions } from "@react-aria/button"
-interface Props extends AriaButtonOptions<'button'> {
-    buttonRef: React.RefObject<HTMLButtonElement>;
-    children: JSX.Element[];
-}
 
-export const Button: React.FC<Props> = (props) => {
+import type { SelectButton } from "../types/types"
+
+export const Button: React.FC<SelectButton> = (props) => {
     const ref = props.buttonRef
     const { buttonProps } = useButton(props, ref)
 

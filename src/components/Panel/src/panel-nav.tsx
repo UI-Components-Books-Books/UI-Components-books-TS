@@ -4,10 +4,9 @@ import classnames from 'classnames'
 
 import { usePanelContext } from './panel-contex'
 import { ArrowLeft, ArrowRight } from './panel-icons'
-import type { AriaLabelGenerator, ListItemButtonType, ItemsType, ListItemType } from './panel-types'
+import type { PanelAriaLabelGenerator, ListItemButtonType, ItemsType, ListItemType, NavSectionProps } from '../types/types'
 
 import './panel.css'
-
 
 /**
  * Se crea un objeto que no se puede cambiar para
@@ -17,7 +16,7 @@ import './panel.css'
 const getSpanishType = Object.freeze({
   previous: 'anterior',
   next: 'siguiente'
-} as const)
+})
 
 /**
  * Se crea un objeto que no se puede cambiar para
@@ -26,7 +25,7 @@ const getSpanishType = Object.freeze({
 const KEYCODE = Object.freeze({
   LEFT: 37,
   RIGHT: 39
-} as const)
+})
 
 
 /**
@@ -39,7 +38,7 @@ const KEYCODE = Object.freeze({
  * @param {Boolean} selected - Boolean que informa si está la sección seleccionada.
  * @returns {string} Message - Mensaje utiliado en el aria-label
  */
-const defaultAriaLabel: AriaLabelGenerator = (type, selected, section) => {
+const defaultAriaLabel: PanelAriaLabelGenerator = (type, selected, section) => {
   if (type === 'section') {
     return `${selected ? '' : 'Ir a la '}sección ${section}`
   }
@@ -57,16 +56,7 @@ const ICONS = {
   next: <ArrowRight />
 }
 
-interface Props {
-  label?: string,
-  showNextButton?: boolean,
-  showPrevButton?: boolean,
-  onValue?: (section: number, sections: number) => void,
-  addClass?: string,
-  getItemAriaLabel?: AriaLabelGenerator
-}
-
-export const NavSection: React.FC<Props> = ({
+export const NavSection: React.FC<NavSectionProps> = ({
   label = 'Lista de secciones',
   showPrevButton,
   showNextButton,

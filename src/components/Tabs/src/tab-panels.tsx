@@ -2,14 +2,11 @@ import { Children, cloneElement, isValidElement } from 'react'
 
 import classnames from 'classnames'
 
+import type { TabPanelsProps } from '../types/types';
+
 import './tabs.css'
 
-interface Props {
-  children: JSX.Element | JSX.Element[];
-  addClass?: string;
-}
-
-export const TabPanels: React.FC<Props> = ({
+export const TabPanels: React.FC<TabPanelsProps> = ({
   children: childrenProp,
   addClass,
   ...props

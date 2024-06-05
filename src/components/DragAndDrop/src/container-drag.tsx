@@ -3,24 +3,17 @@ import { useId } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import classnames from 'classnames'
 
+import type { ContainerDragProps } from '../types/types'
+
 import './drag-and-drop.css'
 
-interface Props {
-  id?: string;
-  children: JSX.Element | JSX.Element[];
-  addClass?: string;
-  over?: string;
-  label: string;
-  __TYPE?: 'general-draggable'
-}
-
-export const ContainerDrag: React.FC<Props> = ({
+export const ContainerDrag: React.FC<ContainerDragProps> = ({
   id,
   children,
   addClass,
   over,
   label = 'contendor inicial',
-  __TYPE = 'general-draggable',
+  __TYPE,
   ...props
 }) => {
 

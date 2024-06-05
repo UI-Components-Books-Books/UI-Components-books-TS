@@ -1,19 +1,13 @@
 import { useRef } from "react"
 
 import { useListBox } from "@react-aria/listbox"
-import type { AriaListBoxOptions } from "@react-aria/listbox"
-import type { ListState } from "react-stately";
 
 import { Option } from "./select-option";
+import type { SelectListBoxProps } from "../types/types";
 
 import './select.css'
 
-interface Props extends AriaListBoxOptions<unknown> {
-  state: ListState<object>;
-  listBoxRef?: React.MutableRefObject<HTMLUListElement | null>;
-}
-
-export const ListBox: React.FC<Props> = (props) => {
+export const ListBox: React.FC<SelectListBoxProps> = (props) => {
   const ref = useRef<HTMLUListElement>(null);
   const { listBoxRef = ref, state, } = props;
 

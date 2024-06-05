@@ -1,3 +1,6 @@
+import { TourElement } from "../src/tour-element";
+import { TourHelpLayer } from "../src/tour-layer";
+
 /**
  * Tipo para las posiciones posibles del elemento step.
  */
@@ -18,6 +21,7 @@ type placementsType =
     | 'left-start'
     | 'left-end';
 
+    
 /**
  * Tipo que define un conjunto de métodos relacionados con las acciones del tour.
  */
@@ -38,10 +42,11 @@ export type MethodsType = {
     onClose: () => void;
 }
 
+
 /**
  * Tipo que representa un paso para el tour.
  */
-export type stepType = {
+export type StepType = {
     /**
      * Identificador numérico del paso (opcional).
      */
@@ -68,10 +73,11 @@ export type stepType = {
     distance?: number;
 }
 
+
 /**
  * Tipo que define atributos ARIA (Accessible Rich Internet Applications) para la accesibilidad.
  */
-export type ariaType = {
+export type AriaType = {
     /**
      * Rol del elemento en la interfaz de usuario (opcional).
      */
@@ -93,6 +99,7 @@ export type ariaType = {
     'aria-modal'?: boolean;
 }
 
+
 /**
  * Enumeración que representa los estados del tour.
  */
@@ -107,3 +114,103 @@ export enum TourStateEnum {
      */
     start = 1,
 }
+
+
+/**
+ * Propiedades para el componente Tour.
+ */
+export interface TourProps {
+    /**
+     * Array de pasos que conforman el tour.
+     */
+    steps: Array<StepType>;
+    
+    /**
+     * Indica si el tour está abierto.
+     */
+    isOpen: boolean;
+    
+    /**
+     * Función que se llama para cerrar el tour.
+     */
+    onClose: () => void;
+    
+    /**
+     * Referencia al elemento que debe recibir el foco al cerrar el tour.
+     */
+    finalFocusRef: string | string[];
+    
+    /**
+     * Elementos hijos que se mostrarán dentro del tour.
+     */
+    children: JSX.Element[] | JSX.Element;
+}
+
+
+/**
+ * Submódulos para el componente Tour.
+ */
+export type TourSubComponents = {
+    /**
+     * Componente para la capa de ayuda del tour.
+     */
+    Layer: typeof TourHelpLayer;
+    
+    /**
+     * Componente para el elemento modal del tour.
+     */
+    Modal: typeof TourElement;
+}
+
+
+/**
+ * Propiedades para el componente TourElement.
+ */
+export interface TourElementProps {
+    /**
+     * Clase adicional para la capa de ayuda del tour.
+     */
+    helpLayerClass?: string;
+    
+    /**
+     * Indica si se oculta el botón de cerrar.
+     */
+    hideCloseButton?: boolean;
+    
+    /**
+     * Indica si se oculta el botón de retroceder.
+     */
+    hideBackButton?: boolean;
+    
+    /**
+     * Clase adicional para aplicar estilos personalizados.
+     */
+    addClass?: string;
+    
+    /**
+     * Atributos ARIA para el elemento del tour.
+     */
+    ariaAttributes?: AriaType;
+}
+
+
+/**
+ * Tipo para el contexto del tour.
+ */
+export interface TourContextType extends StepType {
+    /**
+     * Indica si el tour está abierto.
+     */
+    isOpen: boolean;
+    
+    /**
+     * Identificador del último paso.
+     */
+    lastId: number;
+    
+    /**
+     * Métodos para manejar el tour.
+     */
+    methods: MethodsType;
+}
+

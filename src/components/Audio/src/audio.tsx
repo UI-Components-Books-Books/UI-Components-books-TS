@@ -6,6 +6,7 @@ import { A11yIcon, PauseIcon, PlayIcon, VolumenDownIcon, VolumenOffIcon, Volumen
 import { useInteractOutside } from '../../../hooks'
 import { Button } from '../../Button'
 import { Icon } from '../../Icon'
+import type { AudioProps } from '../types/types'
 
 import './audio.css'
 
@@ -16,7 +17,7 @@ import './audio.css'
 const TYPES = Object.freeze({
   BUTTON: 'button',
   BAR: 'bar'
-} as const);
+});
 
 // Constantes para los umbrales de volumen
 const VOLUME_OFF_THRESHOLD = 0;
@@ -25,17 +26,7 @@ const VOLUME_LOW_THRESHOLD = 0.25;
 // Definir constantes para los números mágicos
 const SECONDS_IN_MINUTE = 60;
 
-interface Props {
-  id?: string,
-  src: string,
-  a11y?: boolean,
-  size?: 'small',
-  type?: typeof TYPES[keyof typeof TYPES],
-  description?: string,
-  addClass?: string,
-}
-
-export const Audio: React.FC<Props> = ({
+export const Audio: React.FC<AudioProps> = ({
   id,
   src,
   a11y = false,

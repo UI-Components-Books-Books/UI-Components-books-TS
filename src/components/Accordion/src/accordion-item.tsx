@@ -4,15 +4,11 @@ import { useEffect, useId, useMemo } from 'react'
 import classnames from 'classnames'
 
 import { useAccordionContext, AccordionItemProvider } from './accordion-context'
+import type { AccordionItemProps } from '../types/types'
+
 import './accordion.css'
 
-interface Props {
-    id?: string
-    children: React.ReactNode,
-    addClass?: string,
-}
-
-export const AccordionItem: React.FC<Props> = ({ id, children, addClass }) => {
+export const AccordionItem: React.FC<AccordionItemProps> = ({ id, children, addClass }) => {
     const { isOpen, handleToggle, addAccordionId } = useAccordionContext();
 
     /**

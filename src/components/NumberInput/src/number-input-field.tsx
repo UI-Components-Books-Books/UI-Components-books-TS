@@ -3,6 +3,7 @@ import { useId, forwardRef } from 'react'
 import classNames from 'classnames'
 
 import { useNumberInputContext } from './number-input-context'
+import type { NumberInputFieldProps } from '../types/types'
 
 import './number-input.css'
 
@@ -15,18 +16,9 @@ const KEYCODE = Object.freeze({
   DOWN: 40,
   END: 35,
   HOME: 36
-} as const)
+})
 
-interface Props {
-  id?: string,
-  name?: string,
-  label: string,
-  pattern?: string,
-  addClass?: string,
-  isLabelVisible?: boolean,
-}
-
-export const NumberInputField: React.FC<Props> = forwardRef<HTMLInputElement, Props>(
+export const NumberInputField: React.FC<NumberInputFieldProps> = forwardRef<HTMLInputElement, NumberInputFieldProps>(
   function NumberInputField({
     id,
     name = 'number-input-field',

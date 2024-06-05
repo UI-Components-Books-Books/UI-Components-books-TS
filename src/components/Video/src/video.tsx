@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 import { usePlayerContext } from "./video-context";
 import { usePlayerDispatchContext } from "./video-context";
-import { CaptionLangLabel, PlayerActionKind } from "./video-types";
+import { CaptionLangLabel, PlayerActionKind } from "../types/types";
 
 import './video.css'
 

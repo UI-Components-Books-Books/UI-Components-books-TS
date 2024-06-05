@@ -1,14 +1,11 @@
 import classnames from 'classnames'
 
 import { useAccordionItemContext } from './accordion-context';
+import type { AccordionPanelProps } from '../types/types';
+
 import './accordion.css'
 
-interface Props {
-    children: React.ReactNode,
-    addClass?: string,
-}
-
-export const AccordionPanel: React.FC<Props> = ({ children, addClass, ...props }) => {
+export const AccordionPanel: React.FC<AccordionPanelProps> = ({ children, addClass, ...props }) => {
     const { uid, isExpanded } = useAccordionItemContext();
 
     return (

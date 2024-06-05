@@ -3,19 +3,11 @@ import { useRef, useEffect } from 'react'
 import classnames from 'classnames'
 
 import { useTabListContext, useTabsContext } from './tabs-context'
+import type { TabProps } from '../types/types'
 
 import './tabs.css'
 
-interface Props {
-  id?: number;
-  children: React.ReactNode;
-  selected?: string;
-  addClass?: string;
-  icon?: (isSelected: boolean) => React.ReactNode;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-}
-
-export const Tab: React.FC<Props> = ({
+export const Tab: React.FC<TabProps> = ({
   id,
   children,
   addClass,

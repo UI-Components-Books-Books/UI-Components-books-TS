@@ -1,13 +1,9 @@
 import { Children, cloneElement } from 'react'
 
 import { usePanelContext } from './panel-contex'
+import type { ButtonSectionProps } from '../types/types';
 
-interface Props {
-  children: JSX.Element
-  section: number
-}
-
-export const ButtonSection: React.FC<Props> = ({ children, section }) => {
+export const ButtonSection: React.FC<ButtonSectionProps> = ({ children, section }) => {
   const { sectionsId, handleToggle } = usePanelContext()
 
   /**

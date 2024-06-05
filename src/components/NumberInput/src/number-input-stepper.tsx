@@ -1,13 +1,10 @@
 import classNames from 'classnames'
 
+import type { NumberInputStepperProps } from '../types/types'
+
 import './number-input.css'
 
-interface Props {
-  children: JSX.Element[],
-  addClass?: string
-}
-
-export const NumberInputStepper: React.FC<Props> = ({ children, addClass }) => {
+export const NumberInputStepper: React.FC<NumberInputStepperProps> = ({ children, addClass }) => {
   return (
     <div className={classNames('c-number-input__stepper', { [addClass ?? ""]: addClass })}>
       {children}

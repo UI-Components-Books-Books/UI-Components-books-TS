@@ -1,23 +1,22 @@
-import classNames from 'classnames'
+import classNames from "classnames";
 
-import { useNumberInputContext } from './number-input-context'
-import { ArrowUpIcons } from './number-input-icons'
-import { Icon } from '../../Icon'
+import { useNumberInputContext } from "./number-input-context";
+import { ArrowUpIcons } from "./number-input-icons";
+import { Icon } from "../../Icon";
+import type { NumberIncrementStepperProps } from "../types/types";
 
-import './number-input.css'
+import "./number-input.css";
 
-interface Props {
-  addClass?: string,
-  label?: string,
-  children?: React.ReactNode
-}
-
-export const NumberIncrementStepper: React.FC<Props> = ({ children, addClass, label = 'Incrementar valor' }) => {
+export const NumberIncrementStepper: React.FC<NumberIncrementStepperProps> = ({
+  children,
+  addClass,
+  label = "Incrementar valor",
+}) => {
   /**
-    * Se obtienen las propiedades onDecrementValue, validate y min
-    * del contexto generado por el componente NumberInput.
-    */
-  const { onIncrementValue, validate, max } = useNumberInputContext()
+   * Se obtienen las propiedades onDecrementValue, validate y min
+   * del contexto generado por el componente NumberInput.
+   */
+  const { onIncrementValue, validate, max } = useNumberInputContext();
 
   return (
     <button
@@ -25,13 +24,15 @@ export const NumberIncrementStepper: React.FC<Props> = ({ children, addClass, la
       onClick={onIncrementValue}
       disabled={validate(max)}
       aria-label={label}
-      className={classNames('c-number-input__button', { [addClass ?? ""]: addClass })}
+      className={classNames("c-number-input__button", {
+        [addClass ?? ""]: addClass,
+      })}
     >
-      {children ||
+      {children || (
         <Icon>
           <ArrowUpIcons />
         </Icon>
-      }
+      )}
     </button>
-  )
-}
+  );
+};

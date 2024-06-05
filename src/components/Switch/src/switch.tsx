@@ -1,17 +1,12 @@
 import { useId, forwardRef } from 'react'
 
 import classNames from 'classnames'
+
+import type { SwitchProps } from '../types/types';
+
 import './switch.css'
 
-interface Props extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-    id?: string;
-    size?: 'small' | 'normal' | 'big';
-    label: string;
-    addClass?: string;
-    isLabelVisible?: boolean;
-}
-
-export const Switch: React.FC<Props> = forwardRef<HTMLInputElement, Props>(
+export const Switch: React.FC<SwitchProps> = forwardRef<HTMLInputElement, SwitchProps>(
     function Switch({ id, size = 'normal', label = 'Default switch label', addClass, isLabelVisible = false, ...props }, ref) {
         /**
         * Genera identificadores únicos para el componente.

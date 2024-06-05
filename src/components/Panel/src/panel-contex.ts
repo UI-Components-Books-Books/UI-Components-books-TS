@@ -1,14 +1,5 @@
 import { createContext } from "../../../utils/createcontext";
-
-type PanelContextType = {
-    isOpen: string | null,
-    validation: (uid: string) => boolean;
-    handleToggle: (uid: string) => void;
-    sectionsId: string[];
-    getSectionIndex: (uid: string) => number;
-    addSectionId: (uid: string) => void;
-    type?: string;
-}
+import type { PanelContextType } from "../types/types";
 
 export const [PanelProvider, usePanelContext] = createContext<PanelContextType>({
     name: 'PanelContext'

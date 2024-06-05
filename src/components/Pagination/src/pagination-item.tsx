@@ -2,18 +2,13 @@ import { cloneElement } from 'react'
 
 import classnames from 'classnames'
 
-import './pagination.css'
 import { ArrowLeftIcon, ArrowRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from './pagination-icons';
-import type { IconType, ItemType } from './pagination-types';
 import { Icon } from '../../Icon';
+import type { PaginationItemProps } from '../types/types';
 
-interface Props extends ItemType {
-    addClass?: string;
-    element?: JSX.Element;
-    icons?: IconType;
-}
+import './pagination.css'
 
-export const PaginationItem: React.FC<Props> = ({
+export const PaginationItem: React.FC<PaginationItemProps> = ({
     page,
     type,
     addClass,

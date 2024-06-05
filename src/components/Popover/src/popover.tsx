@@ -3,18 +3,9 @@ import { useRef, useState, useEffect } from 'react'
 import { PopoverButton } from './popover-button'
 import { PopoverContent } from './popover-content'
 import { PopoverProvider } from './popover-context'
+import type { PopoverProps, PopoverSubComponents } from '../types/types'
 
-interface Props {
-    children: JSX.Element,
-    isVisible?: boolean
-}
-
-type subComponents = {
-    Content: typeof PopoverContent,
-    Button: typeof PopoverButton
-}
-
-const Popover: React.FC<Props> & subComponents = ({ children, isVisible = false }) => {
+const Popover: React.FC<PopoverProps> & PopoverSubComponents = ({ children, isVisible = false }) => {
     // Estado que controla la apertura o cierre del popover
     const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 

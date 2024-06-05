@@ -1,2 +1,13 @@
 export { Popover } from "./src/popover";
-export * from "./src/popover-context"
+
+export type {
+    PopoverProps,
+    PopoverSubComponents,
+    PopoverContextType,
+    PopoverContentProps
+} from './types/types'
+
+export {
+    PopoverProvider,
+    usePopoverContext
+} from "./src/popover-context"
