@@ -35,7 +35,7 @@ export interface DroppableProps {
     /**
      * Hijos del droppable.
      */
-    children: React.ReactNode | React.ReactNode[];
+    children?: React.ReactNode | React.ReactNode[];
 
     /**
      * Validaciones asociadas.
@@ -97,7 +97,7 @@ export interface DraggableProps {
     /**
      * Hijos del draggable.
      */
-    children: React.ReactNode | React.ReactNode[];
+    children?: React.ReactNode | React.ReactNode[];
 
     /**
      * Clase CSS adicional.
@@ -256,7 +256,7 @@ export interface ContainerDragProps {
     /**
      * Hijos del contenedor.
      */
-    children: JSX.Element | JSX.Element[];
+    children?: JSX.Element | JSX.Element[];
 
     /**
      * Clase CSS adicional.
