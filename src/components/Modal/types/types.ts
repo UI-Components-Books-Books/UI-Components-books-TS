@@ -14,7 +14,7 @@ export interface ModalProps {
     /**
      * Elementos hijos que se mostrarán dentro del modal.
      */
-    children: JSX.Element | JSX.Element[];
+    children?: JSX.Element | JSX.Element[];
 
     /**
      * Indica si el modal está abierto.
@@ -98,7 +98,7 @@ export interface ModalContentProps {
     /**
      * Elementos hijos que se mostrarán dentro del contenido del modal.
      */
-    children: JSX.Element | JSX.Element[];
+    children?: JSX.Element | JSX.Element[];
 }
 
 

@@ -21,7 +21,7 @@ const dropIn = {
         opacity: 0,
     },
     visible: {
-        y: "0",
+        y: "-50%",
         opacity: 1,
         transition: {
             duration: 0.1,

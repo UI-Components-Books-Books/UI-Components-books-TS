@@ -12,11 +12,13 @@
 
 :where(.c-modal) {
     position: fixed;
-    inset: 0;
+    top: 50%;
+    left: 0;
+    right: 0;
     width: 80vw;
-    margin: auto;
+    margin-inline: auto;
     max-inline-size: var(--modal-max-width, 59.375rem);
-    block-size: 80%;
+    block-size: var(--modal-height, 80%);
     background-color: hsl(229, 0%, 94%);
     border-radius: 0.625rem;
     z-index: 100;
