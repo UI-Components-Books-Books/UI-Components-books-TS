@@ -80,7 +80,7 @@ export const TourElement: React.FC<TourElementProps> = ({
     if (isValidElement(content)) {
       return content
     }
-    return createElement('p', { className: 'tour-description' }, [
+    return createElement('p', { role: 'status', 'aria-live': 'polite', className: 'tour-description' }, [
       content
     ])
   }

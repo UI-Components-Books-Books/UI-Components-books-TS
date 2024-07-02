@@ -1,7 +1,7 @@
 /**
  * Propiedades para el componente Image.
  */
-export interface ImageProps {
+export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     /**
      * URL de la imagen.
      */
