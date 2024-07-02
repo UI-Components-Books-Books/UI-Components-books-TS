@@ -7,7 +7,7 @@ import type { SectionProps } from '../types/types'
 
 import './panel.css'
 
-export const Section: React.FC<SectionProps> = forwardRef<HTMLDivElement, SectionProps>(
+export const Section = forwardRef<HTMLDivElement, SectionProps>(
   function Section({ id, children, addClass, ...props }, ref) {
     const { validation, addSectionId, getSectionIndex, type } = usePanelContext();
 

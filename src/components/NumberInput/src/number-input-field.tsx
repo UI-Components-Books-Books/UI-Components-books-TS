@@ -18,7 +18,7 @@ const KEYCODE = Object.freeze({
   HOME: 36
 })
 
-export const NumberInputField: React.FC<NumberInputFieldProps> = forwardRef<HTMLInputElement, NumberInputFieldProps>(
+export const NumberInputField = forwardRef<HTMLInputElement, NumberInputFieldProps>(
   function NumberInputField({
     id,
     name = 'number-input-field',

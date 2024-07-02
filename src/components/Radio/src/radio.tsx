@@ -1,46 +1,47 @@
-import { forwardRef, useId } from 'react';
+import { forwardRef, useId } from "react";
 
-import classNames from 'classnames';
+import classNames from "classnames";
 
-import { RightIcon, WrongIcon } from './radio-icons';
-import type { RadioProps } from '../types/types';
+import { RightIcon, WrongIcon } from "./radio-icons";
+import type { RadioProps } from "../types/types";
 
-import './radio.css';
+import "./radio.css";
 
 const ICON_STATE = Object.freeze({
-    right: <RightIcon />,
-    wrong: <WrongIcon />
-})
+  right: <RightIcon />,
+  wrong: <WrongIcon />,
+});
 
-export const Radio: React.FC<RadioProps> = forwardRef<HTMLInputElement, RadioProps>(
-    function Radio({ id, label = 'Default radio label', state, addClass, ...props }, ref) {
+export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
+  { id, label = "Default radio label", state, addClass, ...props },
+  ref
+) {
+  /**
+   * Genera identificadores únicos para el componente.
+   */
+  const reactId: string = useId();
+  const uid = id ?? reactId;
 
-        /**
-         * Genera identificadores únicos para el componente.
-         */
-        const reactId: string = useId();
-        const uid = id ?? reactId;
+  return (
+    <div
+      className={classNames("c-input-radio", { [addClass ?? ""]: addClass })}
+      data-state={state}
+    >
+      <label htmlFor={uid} data-state={state} className="c-input-radio__label">
+        {label}
+      </label>
 
-        return (
-            <div className={classNames('c-input-radio', { [addClass ?? ""]: addClass })} data-state={state}>
-                <label htmlFor={uid} data-state={state} className='c-input-radio__label'>
-                    {label}
-                </label>
-
-                <div className="c-input-radio__box">
-                    <input
-                        id={uid}
-                        ref={ref}
-                        type="radio"
-                        data-state={state}
-                        className="c-input-radio__check"
-                        {...props}
-                    />
-                    <div className="c-input-radio__icon">
-                        {state && ICON_STATE[state]}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-);
+      <div className="c-input-radio__box">
+        <input
+          id={uid}
+          ref={ref}
+          type="radio"
+          data-state={state}
+          className="c-input-radio__check"
+          {...props}
+        />
+        <div className="c-input-radio__icon">{state && ICON_STATE[state]}</div>
+      </div>
+    </div>
+  );
+});
