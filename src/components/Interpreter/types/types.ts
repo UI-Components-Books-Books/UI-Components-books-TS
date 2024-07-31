@@ -37,14 +37,14 @@ export interface InterpreterVideoProps {
     };
 
     /**
-     * Función para reiniciar la posición de arrastre.
+     * Booleano para mostrar el interprete.
      */
-    resetDragPosition: () => void;
-
+    show: boolean;
+    
     /**
-     * Elemento JSX que representa el ícono del video.
+     * Función para cerrar el interprete.
      */
-    icon: JSX.Element;
+    onClose: () => void;
 }
 
 

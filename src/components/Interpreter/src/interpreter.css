@@ -10,12 +10,17 @@
 
 :where(.c-interpreter) {
     --interpreter-clr-list: #00294a;
-    --interpreter-size-svg: 1.8rem;
+    --interpreter-size-svg: 1.6rem;
     --interpreter-border-radious: .732rem;
 
     display: grid;
     grid-template-columns: 6ch 30ch;
     place-content: center;
+}
+
+
+.c-interpreter__zoom {
+    transform: scale(var(--scale, 1));
 }
 
 :where(.c-interpreter__list) {
@@ -38,12 +43,12 @@
     position: relative;
 }
 
-.c-interpreter__list li:is(:nth-child(2), :nth-child(4))::after {
+.c-interpreter__list li:is(:nth-child(2), :nth-child(4), :nth-child(5))::after {
     content: '';
     position: absolute;
-    inset: 0 0 -1px 50%;
+    inset: 0 0 1px 50%;
     width: 90%;
-    border-bottom: 2px solid #e3e3e3;
+    border-bottom: 1px solid #e3e3e3;
     transform: translate(-50%);
     pointer-events: none;
 }
@@ -126,12 +131,14 @@
 
 /* Video player */
 .c-video {
+    --padding: .2rem;
+
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    row-gap: var(--padding);
     box-shadow: 2px 2px 2px 1px #e3e3e3;
-    padding: .2rem;
+    padding: var(--padding);
     border-radius: var(--interpreter-border-radious);
 }
 
@@ -153,7 +160,7 @@
 .c-video__group-video video {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 10;
 }
 
 .c-video__video--hidden {
@@ -179,6 +186,7 @@
     place-items: center;
     width: auto;
     color: #fff;
+    padding: 0;
     border: 0.125rem solid transparent;
     background-color: transparent;
     border-radius: 0.2rem;
