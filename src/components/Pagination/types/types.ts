@@ -70,9 +70,9 @@ export interface PaginationProps extends usePaginationProps {
     addClass?: string;
     
     /**
-     * Rol del elemento en la interfaz de usuario.
+     * Aria label del elemento en la interfaz de usuario.
      */
-    role?: string;
+    label?: string;
 }
 
 
