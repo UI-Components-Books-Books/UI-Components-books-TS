@@ -10,7 +10,7 @@ export const BazelIcon = () => {
     const { isPlaying } = usePlayerContext();
 
     const containerRef = useRef<HTMLDivElement>(null);
-    const flagFirstRender = useRef<boolean>(false)
+    const flagFirstRender = useRef<boolean>(true)
 
     useEffect(() => {
         if (flagFirstRender.current) {

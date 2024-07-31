@@ -70,7 +70,7 @@
 
 /* Bezel */
 .video-player__bezel {
-  display: block;
+  display: none;
   position: absolute;
   top: 50%;
   color: var(--video-color);
@@ -261,6 +261,11 @@
   margin: 0;
   width: 100%;
   font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.video-player__time {
+  text-align: left;
 }
 
 :where(.video-player__time span) {
