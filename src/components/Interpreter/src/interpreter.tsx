@@ -1,11 +1,11 @@
-import { useState, useRef, useId } from "react";
+import { useState, useRef, useId, useEffect } from "react";
 
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import Draggable from "react-draggable";
 import type { DraggableEventHandler } from "react-draggable";
 
-import { SHOW_VIDEO, ZOOM_LEVELS } from "./const";
+import { EVENT, SHOW_VIDEO, ZOOM_LEVELS } from "./const";
 import {
   AudioDescription,
   AudioTextIcon,
@@ -17,18 +17,25 @@ import {
 } from "./interpreter-icons";
 import { VideoPlayer } from "./interpreter-video-player";
 import { Icon } from "../../Icon";
-import type { InterpreterProps, InterpreterVideoProps } from "../types/types";
+import type {
+  InterpreterProps,
+  InterpreterVideoProps,
+  URLs,
+} from "../types/types";
 
 import "./interpreter.css";
 
+
 export const Interpreter: React.FC<InterpreterProps> = ({
-  accesibilityURL,
-  contentURL,
   addClass,
   icon = <HandsIcon />,
   ...props
 }) => {
   const [hidden, setHidden] = useState<boolean>(true);
+  const [URLs, setURls] = useState<URLs>({
+    accesibilityURL: undefined,
+    contentURL: undefined,
+  });
 
   /**
    * Función para alternar el estado de "hidden" y mostrar u ocultar el video.
@@ -37,6 +44,26 @@ export const Interpreter: React.FC<InterpreterProps> = ({
     // Alternar el estado de "hidden"
     setHidden(!hidden);
   };
+
+  useEffect(() => {
+    /**
+     * Manejador del evento personalizado para actualizar URLs.
+     * @param {CustomEvent<URLs>} event - El evento que contiene las URLs actualizadas en su propiedad 'detail'.
+     */
+    const handleUpdateURLs = ({ detail }: CustomEvent<URLs>) => {
+      // Actualiza el estado con las nuevas URLs recibidas del evento
+      setURls({ ...detail });
+    };
+  
+    // Añade un listener para el evento personalizado definido por 'EVENT'
+    document.addEventListener(EVENT, handleUpdateURLs as EventListener);
+  
+    return () => {
+      // Remueve el listener cuando el componente se desmonte
+      document.removeEventListener(EVENT, handleUpdateURLs as EventListener);
+    };
+  }, []);
+  
 
   return (
     <div
@@ -57,11 +84,7 @@ export const Interpreter: React.FC<InterpreterProps> = ({
         </Icon>
       </button>
 
-      <Video
-        URLs={{ accesibilityURL, contentURL }}
-        show={hidden}
-        onClose={toggleHidden}
-      />
+      <Video URLs={URLs} show={hidden} onClose={toggleHidden} />
     </div>
   );
 };

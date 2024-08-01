@@ -6,7 +6,7 @@ import { SHOW_VIDEO } from "./const";
 import { PauseIcon, PlayIcon } from "./interpreter-icons";
 import { formatTime } from "../../../utils/converterTime";
 import { Icon } from "../../Icon";
-import type { InterpreterVideoPlayerProps } from '../types/types'
+import type { InterpreterVideoPlayerProps, TooglePlayButtonProps } from '../types/types'
 
 import './interpreter.css'
 
@@ -168,7 +168,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
             </div>
 
             <div className="c-video__controls">
-                <TooglePlayButton isPlaying={isPlaying} onPlay={onTogglePlay} />
+                <TooglePlayButton isPlaying={isPlaying} disabled={!displayVideo} onPlay={onTogglePlay} />
                 <label className="u-sr-only" htmlFor={uniqueProgressBarId}>
                     Tiempo transcurrido
                 </label>
@@ -181,6 +181,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
                         type="range"
                         aria-valuetext={`${formatTime(currentTime)}`}
                         className="input-progress"
+                        disabled={!displayVideo}
                         onChange={onPlayTimeChange}
                     />
                 </div>
@@ -189,11 +190,11 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
     );
 };
 
-const TooglePlayButton = ({ isPlaying, onPlay }: { isPlaying: boolean, onPlay: () => void }) => {
+const TooglePlayButton: React.FC<TooglePlayButtonProps> = ({ isPlaying, onPlay, ...props }) => {
     const label = isPlaying ? 'Pausar video' : 'Reproducir video';
 
     return (
-        <button className="c-video__toggle-button" aria-label={label} onClick={onPlay}>
+        <button className="c-video__toggle-button" aria-label={label} onClick={onPlay} {...props}>
             <Icon>
                 {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </Icon>

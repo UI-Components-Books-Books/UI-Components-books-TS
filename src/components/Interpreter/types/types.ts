@@ -1,17 +1,20 @@
-/**
- * Propiedades para el componente Interpreter.
- */
-export interface InterpreterProps {
+export type URLs = {
     /**
-     * URL de accesibilidad para el intérprete.
-     */
+    * URL de accesibilidad para el intérprete.
+    */
     accesibilityURL?: string;
 
     /**
      * URL del contenido para el intérprete.
      */
-    contentURL?: string;
+    contentURL?: string
+}
 
+
+/**
+ * Propiedades para el componente Interpreter.
+ */
+export interface InterpreterProps {
     /**
      * Clases adicionales para el componente.
      */
@@ -31,16 +34,13 @@ export interface InterpreterVideoProps {
     /**
      * URLs asociadas al video.
      */
-    URLs: {
-        accesibilityURL?: string;
-        contentURL?: string;
-    };
+    URLs: URLs;
 
     /**
      * Booleano para mostrar el interprete.
      */
     show: boolean;
-    
+
     /**
      * Función para cerrar el interprete.
      */
@@ -60,8 +60,14 @@ export interface InterpreterVideoPlayerProps {
     /**
      * URLs asociadas al video.
      */
-    URLs: {
-        accesibilityURL?: string;
-        contentURL?: string;
-    };
+    URLs: URLs;
+}
+
+
+/**
+ * Propiedades para el componente TooglePlayButton
+ */
+export interface TooglePlayButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    isPlaying: boolean,
+    onPlay: () => void
 }

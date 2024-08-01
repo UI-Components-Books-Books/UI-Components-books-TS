@@ -193,6 +193,10 @@
     cursor: pointer;
 }
 
+.c-video__toggle-button:disabled {
+    cursor: not-allowed;
+}
+
 .c-video__toggle-button svg {
     --icon-size: 1.52rem;
 }
@@ -213,4 +217,8 @@
     width: 100%;
     accent-color: var(--interpreter-input-clr, #ffffff);
     color: #ffffff;
+}
+
+.c-video__controls-progress input:disabled {
+    cursor: not-allowed;
 }

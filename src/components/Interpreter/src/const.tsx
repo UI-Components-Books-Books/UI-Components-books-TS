@@ -8,3 +8,5 @@ export const ZOOM_LEVELS = {
   INITIAL: 1.1,
   MAX: 1.2,
 };
+
+export const EVENT = "changeInterpreteVideoSources";

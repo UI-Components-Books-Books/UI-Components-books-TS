@@ -19,10 +19,5 @@ export const Default: Story = {
       },
     },
   },
-  args: {
-    accesibilityURL:
-      "https://demos.booksandbooksdigital.com.co/120-ovas/ova-98/assets/videos/interprete/vid_int_ova-98_sld-1-contents.mp4",
-    contentURL: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4",
-  },
-  render: (args) => <Interpreter {...args} />,
+  render: () => <Interpreter />,
 };
