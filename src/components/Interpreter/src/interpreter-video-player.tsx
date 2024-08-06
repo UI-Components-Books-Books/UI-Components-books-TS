@@ -151,6 +151,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
                 <video
                     ref={refContentVideo}
                     preload='none'
+                    muted
                     src={contentURL}
                     className={classNames({
                         'c-video__video--hidden': displayVideo !== SHOW_VIDEO.CONTENT
@@ -160,6 +161,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
                 <video
                     ref={refAccesibilityVideo}
                     preload='none'
+                    muted
                     src={accesibilityURL}
                     className={classNames({
                         'c-video__video--hidden': displayVideo !== SHOW_VIDEO.ACCESIBILITY

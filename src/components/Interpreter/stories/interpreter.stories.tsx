@@ -15,7 +15,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story: "No lo he terminado asi que no moleste 🤬",
+        story: "No lo he terminado asi que no moleste 🤬 (ya casi)",
       },
     },
   },

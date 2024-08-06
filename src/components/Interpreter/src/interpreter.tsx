@@ -25,7 +25,6 @@ import type {
 
 import "./interpreter.css";
 
-
 export const Interpreter: React.FC<InterpreterProps> = ({
   addClass,
   icon = <HandsIcon />,
@@ -54,16 +53,15 @@ export const Interpreter: React.FC<InterpreterProps> = ({
       // Actualiza el estado con las nuevas URLs recibidas del evento
       setURls({ ...detail });
     };
-  
+
     // Añade un listener para el evento personalizado definido por 'EVENT'
     document.addEventListener(EVENT, handleUpdateURLs as EventListener);
-  
+
     return () => {
       // Remueve el listener cuando el componente se desmonte
       document.removeEventListener(EVENT, handleUpdateURLs as EventListener);
     };
   }, []);
-  
 
   return (
     <div
@@ -178,6 +176,20 @@ const Video: React.FC<InterpreterVideoProps> = ({
     toggleDisplayVideo();
   };
 
+  useEffect(() => {
+    // Si 'show' está activo o no hay URLs disponibles, no hacer nada
+    if (show || (!accesibilityURL && !contentURL)) return;
+
+    // Determina el tipo de video a mostrar basado en la URL disponible
+    const currentVideo = accesibilityURL
+      ? SHOW_VIDEO.ACCESIBILITY
+      : contentURL
+      ? SHOW_VIDEO.CONTENT
+      : null;
+
+    setDisplayVideo(currentVideo);
+  }, [show, accesibilityURL, contentURL]);
+
   return (
     <Draggable
       handle=".js-c-interpreter-draggable"
@@ -200,39 +212,28 @@ const Video: React.FC<InterpreterVideoProps> = ({
                 exit={{ opacity: 0, scale: 0 }}
               >
                 <ul role="list" className="c-interpreter__list">
-                  <li>
-                    {/* // Show the current video */}
+                  {/*  Show the current video */}
+                  <li
+                    hidden={!contentURL && !accesibilityURL}
+                    aria-hidden={!contentURL && !accesibilityURL}
+                  >
                     <button
                       className={classNames("c-interpreter__button", {
                         "c-interpreter__button--hidden":
-                          !contentURL || !accesibilityURL,
+                          !contentURL && !accesibilityURL,
                       })}
                       aria-label="Intérprete de lenguaje de señas"
                     >
                       <DotIcon />
                       <small>
                         {displayVideo &&
-                          (displayVideo === SHOW_VIDEO.CONTENT ? "1" : "2")}
+                          (displayVideo === SHOW_VIDEO.CONTENT ? "2" : "1")}
                       </small>
                     </button>
                   </li>
 
-                  <li>
-                    {/* Content video */}
-                    <button
-                      className={classNames("c-interpreter__button", {
-                        "c-interpreter__button--hidden": !contentURL,
-                      })}
-                      aria-label="Video de contenido"
-                      onClick={() => toggleDisplayVideo(SHOW_VIDEO.CONTENT)}
-                    >
-                      <small>1</small>
-                      <AudioDescription />
-                    </button>
-                  </li>
-
-                  <li>
-                    {/* Accesibility video */}
+                  {/* Accesibility video */}
+                  <li hidden={!accesibilityURL} aria-hidden={!accesibilityURL}>
                     <button
                       className={classNames("c-interpreter__button", {
                         "c-interpreter__button--hidden": !accesibilityURL,
@@ -242,13 +243,27 @@ const Video: React.FC<InterpreterVideoProps> = ({
                         toggleDisplayVideo(SHOW_VIDEO.ACCESIBILITY)
                       }
                     >
+                      <small>1</small>
+                      <AudioDescription />
+                    </button>
+                  </li>
+
+                  {/* Content video */}
+                  <li hidden={!contentURL} aria-hidden={!contentURL}>
+                    <button
+                      className={classNames("c-interpreter__button", {
+                        "c-interpreter__button--hidden": !contentURL,
+                      })}
+                      aria-label="Video de contenido"
+                      onClick={() => toggleDisplayVideo(SHOW_VIDEO.CONTENT)}
+                    >
                       <small>2</small>
                       <AudioTextIcon />
                     </button>
                   </li>
 
+                  {/* Zoom button */}
                   <li>
-                    {/* Zoom button */}
                     <button
                       className="c-interpreter__button"
                       aria-label="Incrementar zoom del interprete"
@@ -258,8 +273,8 @@ const Video: React.FC<InterpreterVideoProps> = ({
                     </button>
                   </li>
 
+                  {/* Move button */}
                   <li>
-                    {/* Move button */}
                     <button
                       className="c-interpreter__button c-interpreter__button--drag js-c-interpreter-draggable"
                       aria-label="Arrastrar video"
@@ -268,8 +283,8 @@ const Video: React.FC<InterpreterVideoProps> = ({
                     </button>
                   </li>
 
+                  {/* Close button */}
                   <li>
-                    {/* Close button */}
                     <button
                       className="c-interpreter__button interpreter-btn--close"
                       onClick={handleClose}
