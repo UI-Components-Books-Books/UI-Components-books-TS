@@ -42,7 +42,7 @@ export const useResize = <T extends HTMLElement>({
     onMouseDown,
     onMouseUp,
     hasElementLoad
-}: props): [string, (node: T) => void, (currentPercentage: number) => void] => {
+}: props): [string, (node: T) => void, (currentPercentage: number) => void, () => void] => {
 
     // Estado para los estilos del contenedor redimensionado
     const [styles, setStyles] = useState<string>("0px");
@@ -93,6 +93,11 @@ export const useResize = <T extends HTMLElement>({
 
 
     const updatedSlider = (event: MouseEvent) => {
+        // Actualizamos la posición inicial del puntero antes de realizar el calculo, 
+        // dado que se puede desactualizar si el elemento que se esta redimensionado 
+        // se esta actualizando constantemente, por ejemplo: El slider de un reproductor de video.
+        startXRef.current = size.current.width + size.current.leftOffset;
+
         // Obtener la posición actual del puntero
         const x = event.clientX;
         const deltaX = x - startXRef.current;
@@ -101,15 +106,15 @@ export const useResize = <T extends HTMLElement>({
         const newWidth = size.current.width + deltaX
 
         if (newWidth <= size.current.base && newWidth >= 0) {
-            const currentPercetage = ((newWidth / size.current.base) * 100).toFixed(3);
+            const currentPercetage = ((newWidth / size.current.base) * 100).toFixed(4);
 
-            size.current.percentage = parseFloat(currentPercetage)
             size.current.width = newWidth;
+            size.current.percentage = parseFloat(currentPercetage)
 
             setStyles(`${size.current.width}px`);
 
             // Actualizar la posición inicial del puntero para la próxima vez
-            startXRef.current = x;
+            startXRef.current = size.current.width + size.current.leftOffset;
         }
     }
 
@@ -193,6 +198,19 @@ export const useResize = <T extends HTMLElement>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [container, hasElementLoad]);
 
+    /**
+     * Inicializa o restablece el tamaño del contenedor redimensionable.
+     * Esta función calcula el tamaño inicial del contenedor y
+     * actualiza el ancho del slider en base al porcentaje almacenado en `size.current.percentage`.
+    */
+    const initializeResize = () => {
+        // Calcula y establece las medidas iniciales del contenedor
+        calculateInitialContainerSize();
 
-    return [styles, getContinerRef, updateSliderWidth]
+        // Actualiza el ancho del slider según el porcentaje de tamaño actual
+        updateSliderWidth(size.current.percentage);
+    };
+
+
+    return [styles, getContinerRef, updateSliderWidth, initializeResize]
 }

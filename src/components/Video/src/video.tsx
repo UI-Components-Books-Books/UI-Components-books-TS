@@ -41,6 +41,7 @@ export const Video = () => {
         }
     }
 
+    // Actualiza el tiempo actual del video en el estado
     const handleTimeUpdate = () => {
         if (videoRef.current && isPlaying && !isSeeking) {
             dispatch({
@@ -50,6 +51,7 @@ export const Video = () => {
         }
     };
 
+    // Actualiza el estado cuando se carga el video.
     const handleLoadedData = (event: React.SyntheticEvent<HTMLVideoElement>) => {
         const videoElement = event.target as HTMLVideoElement;
 
@@ -62,14 +64,15 @@ export const Video = () => {
         });
     }
 
+    // Pausa el video cuando termina si está en reproducción.
     const handleEndedVideo = () => {
         if (isPlaying) {
             togglePlayVideo();
         }
     }
 
-    // Manejar la lógica común para el video y la descripción de audio
-    const handleMedia = useCallback(
+    // Sincroniza el video y el audio descriptivo con los valores de volumen, muteo y reproducción.
+    const manageMediaPlayback = useCallback(
         (mediaElement: HTMLMediaElement, enableToMuted?: boolean) => {
             if (!mediaElement) return;
 
@@ -88,16 +91,17 @@ export const Video = () => {
     useEffect(() => {
         if (!videoRef.current) return;
 
-        // Manejar video
-        handleMedia(videoRef.current, isActiveAD);
+        // Controla la reproducción y muteo del video.
+        manageMediaPlayback(videoRef.current, isActiveAD);
 
-        // Manejar descripción de audio si está activa
+        // Controla la reproducción y muteo del audio descriptivo si está activo.
         if (isActiveAD && audioDescriptionRef.current) {
-            handleMedia(audioDescriptionRef.current);
+            manageMediaPlayback(audioDescriptionRef.current);
         }
-    }, [isPlaying, muted, volume, isActiveAD, handleMedia]);
+    }, [isPlaying, muted, volume, isActiveAD, manageMediaPlayback ]);
 
 
+    // Sincroniza los tiempos actuales de video y audio cuando se busca un nuevo tiempo.
     useEffect(() => {
         if (videoRef.current && (isSeeking || !isPlaying)) {
             videoRef.current.currentTime = currentTime;
@@ -115,17 +119,27 @@ export const Video = () => {
 
         if (!audioDescriptionElement || !videoElement) return;
 
-        // Mutea el video y reproduce el audio descriptivo
+        // Si el audio descriptivo está activado y el video está en reproducción:
         if (isActiveAD && isPlaying) {
             audioDescriptionElement.play();
             const currentVideoTime = videoElement.currentTime
 
-            // Coloca el tiempo actual del video al audio para que no hay un desfase. 
+            // Sincroniza el tiempo del audio descriptivo con el tiempo del video
+            // para evitar un desfase en la reproducción.
             audioDescriptionElement.currentTime = currentVideoTime
+            // Mutea el video para que solo se escuche el audio descriptivo.
             videoElement.muted = true;
         } else {
+            // Si el audio descriptivo no está activo o el video no está en reproducción:
+            // Pausa el audio descriptivo y reactiva el sonido del video.
             audioDescriptionElement.pause();
             videoElement.muted = false;
+        }
+
+        return () => {
+            if (isActiveAD && isPlaying) {
+                audioDescriptionElement.pause();
+            }
         }
     }, [isActiveAD, isPlaying]);
 

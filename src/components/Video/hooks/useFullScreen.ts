@@ -29,7 +29,7 @@ export const useFullScreen = (uid: string): [boolean, () => void] => {
     }
 
     // Función para alternar el estado de pantalla completa del elemento
-    const handleFullScreen = () => {
+    const handleFullScreen = async () => {
         const element = getElement(uid);
 
         if (!element) {
@@ -42,12 +42,12 @@ export const useFullScreen = (uid: string): [boolean, () => void] => {
         // Comprobar si el documento está actualmente en modo de pantalla completa
         if (!document.fullscreenElement) {
             // Si no está en pantalla completa, solicitar pantalla completa para el elemento
-            element.requestFullscreen();
+            await element.requestFullscreen();
             changeFullScreen = true;
 
         } else {
             // Si ya está en pantalla completa, salir de pantalla completa
-            document.exitFullscreen();
+            await document.exitFullscreen();
             changeFullScreen = false;
         }
 

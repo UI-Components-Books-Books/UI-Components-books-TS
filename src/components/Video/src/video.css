@@ -37,6 +37,10 @@
   }
 }
 
+.video-player[data-vpf="true"]:not(:fullscreen) {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
 :where(.video-player__wrapper) {
   position: relative;
   display: grid;
@@ -102,7 +106,7 @@
 
 /* Slider */
 .video-player__slider {
-  --slider-fill: 0%;
+  --slider-fill: 0px;
 
   position: relative;
   display: flex;
