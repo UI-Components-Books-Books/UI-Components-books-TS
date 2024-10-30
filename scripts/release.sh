@@ -12,6 +12,6 @@ if [ ! -z "$VERSION" ]; then
   npm publish --access=public
 
   ## Create GitHub Release
-  git push --follow-tags --set-upstream origin $branch
+  git push --follow-tags origin main
   auto release
 fi
