@@ -28,7 +28,7 @@
     "build-storybook-docs": "storybook build --docs",
     "prepare": "husky",
     "cz": "cz",
-    "release": "auto shipit"
+    "release": "./scripts/release.sh"
   },
   "dependencies": {
     "@dnd-kit/core": "6.1.0",
