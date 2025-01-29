@@ -1,3 +1,15 @@
+# v0.1.19 (Wed Jan 29 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat(Interpreter): enhance event handling and add visibility toggle for interpreter ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v0.1.18 (Wed Oct 30 2024)
 
 #### ⚠️ Pushed to `main`
