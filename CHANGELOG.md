@@ -1,3 +1,15 @@
+# v0.1.21 (Wed Jan 29 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(interpreter): invert visibility event for video toggle (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.20 (Wed Jan 29 2025)
 
 #### ⚠️ Pushed to `main`
