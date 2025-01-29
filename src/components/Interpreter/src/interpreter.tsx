@@ -41,7 +41,22 @@ export const Interpreter: React.FC<InterpreterProps> = ({
    */
   const toggleHidden = () => {
     // Alternar el estado de "hidden"
-    setHidden(!hidden);
+    const newHidden = !hidden;
+    setHidden(newHidden);
+    eventInterpreterVideoVisibility(newHidden);
+  };
+
+  /**
+   * Función para despachar un evento personalizado que informa sobre la visibilidad del intérprete.
+   */
+  const eventInterpreterVideoVisibility = (hidden: boolean): void => {
+    // Crear un evento personalizado con el estado de visibilidad del intérprete
+    const event = new CustomEvent(EVENT.VISIBILITY, {
+      detail: { hidden }, // Indica si el intérprete está oculto o visible
+    });
+
+    // Despachar el evento a nivel del documento
+    document.dispatchEvent(event);
   };
 
   useEffect(() => {
@@ -55,11 +70,14 @@ export const Interpreter: React.FC<InterpreterProps> = ({
     };
 
     // Añade un listener para el evento personalizado definido por 'EVENT'
-    document.addEventListener(EVENT, handleUpdateURLs as EventListener);
+    document.addEventListener(EVENT.SOURCES, handleUpdateURLs as EventListener);
 
     return () => {
       // Remueve el listener cuando el componente se desmonte
-      document.removeEventListener(EVENT, handleUpdateURLs as EventListener);
+      document.removeEventListener(
+        EVENT.SOURCES,
+        handleUpdateURLs as EventListener
+      );
     };
   }, []);
 
@@ -217,19 +235,29 @@ const Video: React.FC<InterpreterVideoProps> = ({
                     hidden={!contentURL && !accesibilityURL}
                     aria-hidden={!contentURL && !accesibilityURL}
                   >
-                    <button
-                      className={classNames("c-interpreter__button", {
-                        "c-interpreter__button--hidden":
-                          !contentURL && !accesibilityURL,
-                      })}
-                      aria-label="Intérprete de lenguaje de señas"
+                    <div
+                      className={classNames(
+                        "c-interpreter__button c-interpreter__button--fake",
+                        {
+                          "c-interpreter__button--hidden":
+                            !contentURL && !accesibilityURL,
+                        }
+                      )}
+                      aria-label={`Intérprete de lenguaje de señas, presentando video ${
+                        displayVideo === SHOW_VIDEO.CONTENT
+                          ? "2 (contenido)"
+                          : "1 (descriptivo)"
+                      }`}
+                      aria-live="polite"
                     >
                       <DotIcon />
-                      <small>
-                        {displayVideo &&
-                          (displayVideo === SHOW_VIDEO.CONTENT ? "2" : "1")}
-                      </small>
-                    </button>
+                      <p>
+                        <small>
+                          {displayVideo &&
+                            (displayVideo === SHOW_VIDEO.CONTENT ? "2" : "1")}
+                        </small>
+                      </p>
+                    </div>
                   </li>
 
                   {/* Accesibility video */}

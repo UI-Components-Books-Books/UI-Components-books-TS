@@ -112,6 +112,10 @@
     font-weight: bold;
 }
 
+.c-interpreter__button--fake {
+    cursor: default;
+}
+
 .c-interpreter__button--drag {
     cursor: grab;
 }
