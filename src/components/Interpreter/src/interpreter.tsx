@@ -43,7 +43,7 @@ export const Interpreter: React.FC<InterpreterProps> = ({
     // Alternar el estado de "hidden"
     const newHidden = !hidden;
     setHidden(newHidden);
-    eventInterpreterVideoVisibility(newHidden);
+    eventInterpreterVideoVisibility(!newHidden);
   };
 
   /**
