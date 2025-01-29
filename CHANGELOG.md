@@ -1,3 +1,15 @@
+# v0.1.20 (Wed Jan 29 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(release): ensure build step runs before release script (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.19 (Wed Jan 29 2025)
 
 #### ⚠️ Pushed to `main`
