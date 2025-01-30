@@ -1,3 +1,15 @@
+# v0.1.22 (Thu Jan 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat(video): add video transcription feature and update player state management (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.21 (Wed Jan 29 2025)
 
 #### ⚠️ Pushed to `main`
