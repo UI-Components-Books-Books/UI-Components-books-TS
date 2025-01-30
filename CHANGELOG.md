@@ -1,3 +1,15 @@
+# v0.1.23 (Thu Jan 30 2025)
+
+#### ⚠️ Pushed to `main`
+
+- refactor(video): improve time parsing logic and update transcription component structure (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.22 (Thu Jan 30 2025)
 
 #### ⚠️ Pushed to `main`
