@@ -25,7 +25,7 @@ export const Default: Story = {
   },
   args: {
     width: "600px",
-    src: "https://demos.booksandbooksdigital.com.co/120-ovas/ova-98/assets/videos/slide3-1.mp4",
+    src: "https://demos.booksandbooksdigital.com.co/120-ovas-2023/ova-41/assets/videos/120 OVAS-24 - OVA_41 - SLD 3.mp4",
   },
   render: (args) => <VideoPlayer {...args} />,
 };
@@ -58,7 +58,7 @@ export const Captions: Story = {
   args: {
     ...Default.args,
     caption: {
-      src: "https://demos.booksandbooksdigital.com.co/120-ovas/ova-98/assets/videos/slide3-1.vtt",
+      src: "./120 OVAS-24 - OVA_41 - SLD 3.vtt",
       lang: "es",
     },
   },

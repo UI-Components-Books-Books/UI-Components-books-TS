@@ -1,7 +1,6 @@
 import type { PlayerState, PlayerAction } from '../types/types'
 import { PlayerActionKind } from '../types/types'
 
-
 const UPDATED_STATE_BY_ACTION = {
     [PlayerActionKind.PLAY_PAUSE]: (state: PlayerState, action: PlayerAction) => {
         return {
@@ -58,6 +57,12 @@ const UPDATED_STATE_BY_ACTION = {
         return {
             ...state,
             isActiveAD: action.payload as boolean
+        };
+    },
+    [PlayerActionKind.TOGGLE_VIDEO_TRANSCRIPTION]: (state: PlayerState, action: PlayerAction) => {
+        return {
+            ...state,
+            activeVideoTranscription: action.payload as boolean
         };
     },
 }

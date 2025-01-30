@@ -57,6 +57,11 @@ export interface PlayerState {
      * Indica si el audio descripción está activo.
      */
     isActiveAD: boolean;
+
+    /**
+     * Indica si el video transcription esta activo.
+     */
+    activeVideoTranscription: boolean;
 }
 
 
@@ -97,7 +102,8 @@ export enum PlayerActionKind {
     HAS_VIDEO_LOADED = 'HAS_VIDEO_LOADED',
     TOGGLE_CAPTION = 'TOGGLE_CAPTION',
     FULLSCREEN = 'FULLSCREEN',
-    AUDIO_DESCRIPTION_CHANGE = 'AUDIO_DESCRIPTION_CHANGE'
+    AUDIO_DESCRIPTION_CHANGE = 'AUDIO_DESCRIPTION_CHANGE',
+    TOGGLE_VIDEO_TRANSCRIPTION = 'TOGGLE_VIDEO_TRANSCRIPTION',
 }
 
 
