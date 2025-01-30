@@ -58,14 +58,14 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
   return (
     <AnimatePresence>
       {activeVideoTranscription && (
-        <motion.article
+        <motion.div
           className="video-player__transcription"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <header className="video-player__transcription-header">
-            <h3>Transcripción</h3>
+          <div className="video-player__transcription-header">
+            <p>Transcripción</p>
             <div className="video-player__transcription-badge">
               <Icon>
                 <svg
@@ -85,7 +85,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
               </Icon>
               <p>{formatTime(currentTime)}</p>
             </div>
-          </header>
+          </div>
 
           <ul className="video-player__transcription__segment-list">
             {transcript.map((cue, index) => (
@@ -113,7 +113,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
               </li>
             ))}
           </ul>
-        </motion.article>
+        </motion.div>
       )}
     </AnimatePresence>
   );

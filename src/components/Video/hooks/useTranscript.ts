@@ -24,7 +24,7 @@ interface Cue {
  * @returns {number | null} return.currentCueId - Índice del cue actualmente activo, o `null` si no hay ninguno.
  */
 export const useTranscript = (uid: string, caption?: string) => {
-    const [transcript, setTranscript] = useState<Cue[]>([]); 
+    const [transcript, setTranscript] = useState<Cue[]>([]);
     const [currentCueId, setCurrentCueId] = useState<number | null>(null);
 
     // Cargar y parsear el archivo .vtt
@@ -105,10 +105,27 @@ export const useTranscript = (uid: string, caption?: string) => {
 
     // Convierte el tiempo del formato VTT a segundos
     const parseTime = (timeString: string): number => {
-        const [hours, minutes, seconds] = timeString
-            .split(":")
-            .map((part) => parseFloat(part.replace(",", ".")));
-        return hours * 3600 + minutes * 60 + seconds;
+        const timeParts = timeString.split(":");
+
+        let hours = "0";    
+        let minutes = "0";
+        let seconds = "0";
+
+        if (timeParts.length === 3) {
+            // Formato: HH:MM:SS.MS
+            [hours, minutes, seconds] = timeParts;
+        } else if (timeParts.length === 2) {
+            // Formato: MM:SS.MS
+            [minutes, seconds] = timeParts;
+        } else {
+            // Formato solo SS.MS
+            seconds = timeParts[0];
+        }
+
+        const [sec, ms] = seconds.split(".");
+        const parsedSeconds = parseFloat(sec) + (ms ? parseFloat(`0.${ms}`) : 0);
+
+        return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parsedSeconds;
     };
 
     return { transcript, currentCueId };
