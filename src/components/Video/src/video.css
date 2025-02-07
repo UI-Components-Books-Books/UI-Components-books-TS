@@ -10,13 +10,13 @@
   --video-transcription-cue-hover: #49494d; 
   --video-transcription-cue-active: #6b6b75; 
   --video-transcription-color: #e0e0e0; 
+  margin-inline: auto;
 }
 
 :where(.video-player__container) {
   display: grid;
   grid-template-rows: auto .375rem 2.8125rem;
   color: var(--video-color);
-  margin-inline: auto;
   box-shadow: 0px 0px 1px 0px var(--video-bg);
 }
 
