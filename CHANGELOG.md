@@ -1,3 +1,15 @@
+# v0.1.24 (Fri Feb 07 2025)
+
+#### ⚠️ Pushed to `main`
+
+- style(video): adjust margin properties for improved layout (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.23 (Thu Jan 30 2025)
 
 #### ⚠️ Pushed to `main`
