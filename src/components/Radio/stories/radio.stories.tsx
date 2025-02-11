@@ -31,7 +31,7 @@ export const Default: Story = {
     },
   },
   args: {
-    label: "Default radio label",
+    label: "Default radio <strong>label</strong>",
   },
   render: (args) => <Radio {...args}></Radio>,
 };

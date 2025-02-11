@@ -31,7 +31,7 @@ export const Default: Story = {
     },
   },
   args: {
-    label: "Default checkbox label",
+    label: "Default <strong>checkbox</strong> label",
   },
   render: (args) => <CheckBox {...args}></CheckBox>,
 };

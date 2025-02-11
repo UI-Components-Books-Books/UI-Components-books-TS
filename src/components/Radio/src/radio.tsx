@@ -27,9 +27,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       className={classNames("c-input-radio", { [addClass ?? ""]: addClass })}
       data-state={state}
     >
-      <label htmlFor={uid} data-state={state} className="c-input-radio__label">
-        {label}
-      </label>
+      <label
+        htmlFor={uid}
+        data-state={state}
+        dangerouslySetInnerHTML={{ __html: label }}
+        className="c-input-radio__label"
+      ></label>
 
       <div className="c-input-radio__box">
         <input

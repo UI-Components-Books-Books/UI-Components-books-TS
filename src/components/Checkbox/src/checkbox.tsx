@@ -39,8 +39,8 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
           htmlFor={uid}
           data-state={state}
           className="c-input-check__label"
+          dangerouslySetInnerHTML={{ __html: label }}
         >
-          {label}
         </label>
 
         <div className="c-input-check__box">
