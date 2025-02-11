@@ -1,3 +1,15 @@
+# v0.1.25 (Tue Feb 11 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat(checkbox, radio): allow HTML in label prop for enhanced formatting (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.24 (Fri Feb 07 2025)
 
 #### ⚠️ Pushed to `main`
