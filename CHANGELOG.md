@@ -1,3 +1,15 @@
+# v0.1.26 (Tue Mar 18 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat(modal): add support for custom modal content component (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.25 (Tue Feb 11 2025)
 
 #### ⚠️ Pushed to `main`
