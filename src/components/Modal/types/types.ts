@@ -30,6 +30,13 @@ export interface ModalProps {
      * Referencia al elemento que debe recibir el foco al cerrar el modal.
      */
     finalFocusRef: string | string[];
+
+  
+    /**
+     * Indica si el modal tiene un contenido personalizado.
+     * Si es verdadero, el modal no tendrá un contenido por defecto.
+     */
+    hasCustomModalContentComponent?: boolean;
 }
 
 
