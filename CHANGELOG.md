@@ -1,3 +1,15 @@
+# v0.1.27 (Wed Mar 19 2025)
+
+#### ⚠️ Pushed to `main`
+
+- refactor(useMedia): improve code readability and structure ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v0.1.26 (Tue Mar 18 2025)
 
 #### ⚠️ Pushed to `main`
