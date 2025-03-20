@@ -45,12 +45,16 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
     const currentCueId = transcript.findIndex(
       (cue) => currentTime >= cue.start && currentTime < cue.end
     );
-
+  
     if (currentCueId !== -1) {
-      // Obtiene el elemento del cue activo y lo desplaza al centro de la vista
+      // Obtiene el elemento del cue activo y su contenedor
       const cueElement = document.getElementById(`cue-${currentCueId}`);
-      if (cueElement) {
-        cueElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      const container = cueElement?.parentElement;
+  
+      if (cueElement && container) {
+        // Calcula la posición de desplazamiento relativa al contenedor
+        const offsetTop = cueElement.offsetTop - container.offsetTop;
+        container.scrollTo({ top: offsetTop - container.clientHeight / 2, behavior: "smooth" });
       }
     }
   }, [transcript, currentTime]);
