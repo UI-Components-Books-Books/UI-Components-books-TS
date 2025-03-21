@@ -58,7 +58,7 @@ export const Captions: Story = {
   args: {
     ...Default.args,
     caption: {
-      src: "./120 OVAS-24 - OVA_41 - SLD 3.vtt",
+      src: "./assets/120 OVAS-24 - OVA_41 - SLD 3.vtt",
       lang: "es",
     },
   },

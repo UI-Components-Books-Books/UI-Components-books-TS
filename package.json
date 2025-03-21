@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/books-ui/dist/",
+    "build": "tsc && vite build --base=/books-ui/dist/ && rm -rf dist/assets",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
