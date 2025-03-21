@@ -1,3 +1,17 @@
+# v0.1.28 (Fri Mar 21 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(build): remove assets directory after build process and update caption source path (coor_frontend@booksandbooksdigital.com.co)
+- feat(VideoPlayer): add audio description controls and volume management (coor_frontend@booksandbooksdigital.com.co)
+- refactor(VideoTranscription): enhance scrolling behavior for active cue (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.27 (Wed Mar 19 2025)
 
 #### ⚠️ Pushed to `main`
