@@ -1,3 +1,15 @@
+# v0.1.30 (Fri Mar 21 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(styles): adjust flex basis for video control button (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.29 (Fri Mar 21 2025)
 
 #### ⚠️ Pushed to `main`
