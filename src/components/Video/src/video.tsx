@@ -22,6 +22,7 @@ export const Video = () => {
     isSeeking,
     activeCaption,
     isActiveAD,
+    volumeAD,
   } = usePlayerContext();
   const dispatch = usePlayerDispatchContext();
 
@@ -74,11 +75,17 @@ export const Video = () => {
 
   // Sincroniza el video y el audio descriptivo con los valores de volumen, muteo y reproducción.
   const manageMediaPlayback = useCallback(
-    (mediaElement: HTMLMediaElement, enableToMuted?: boolean) => {
+    ({
+      mediaElement,
+      customVolume,
+    }: {
+      mediaElement: HTMLMediaElement;
+      customVolume?: number;
+    }) => {
       if (!mediaElement) return;
 
-      mediaElement.volume = volume;
-      mediaElement.muted = enableToMuted || muted;
+      mediaElement.volume = customVolume === undefined ? volume : customVolume;
+      mediaElement.muted = muted;
 
       if (isPlaying) {
         mediaElement.play();
@@ -93,13 +100,13 @@ export const Video = () => {
     if (!videoRef.current) return;
 
     // Controla la reproducción y muteo del video.
-    manageMediaPlayback(videoRef.current, isActiveAD);
+    manageMediaPlayback({ mediaElement: videoRef.current });
 
     // Controla la reproducción y muteo del audio descriptivo si está activo.
     if (isActiveAD && audioDescriptionRef.current) {
-      manageMediaPlayback(audioDescriptionRef.current);
+      manageMediaPlayback({ mediaElement: audioDescriptionRef.current, customVolume: volumeAD });
     }
-  }, [isPlaying, muted, volume, isActiveAD, manageMediaPlayback]);
+  }, [isPlaying, muted, volume, isActiveAD, volumeAD, manageMediaPlayback]);
 
   // Sincroniza los tiempos actuales de video y audio cuando se busca un nuevo tiempo.
   useEffect(() => {
@@ -126,13 +133,10 @@ export const Video = () => {
       // Sincroniza el tiempo del audio descriptivo con el tiempo del video
       // para evitar un desfase en la reproducción.
       audioDescriptionElement.currentTime = currentVideoTime;
-      // Mutea el video para que solo se escuche el audio descriptivo.
-      videoElement.muted = true;
     } else {
       // Si el audio descriptivo no está activo o el video no está en reproducción:
-      // Pausa el audio descriptivo y reactiva el sonido del video.
+      // Pausa el audio descriptivo.
       audioDescriptionElement.pause();
-      videoElement.muted = false;
     }
 
     return () => {

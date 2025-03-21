@@ -1,16 +1,17 @@
 /* Container */
 .video-player {
-  --video-color: #f5f5f5; 
-  --video-bg: #181818; 
-  --video-caption-bg: #242424; 
-  --video-slider-bg: #eb2517; 
+  --video-color: #f5f5f5;
+  --video-bg: #181818;
+  --video-caption-bg: #242424;
+  --video-slider-bg: #eb2517;
   --video-track-bg: #8a8a8a;
-  --video-transcription-border-color: #525255; 
-  --video-transcription-badge: #323235; 
-  --video-transcription-cue-hover: #49494d; 
-  --video-transcription-cue-active: #6b6b75; 
-  --video-transcription-color: #e0e0e0; 
+  --video-transcription-border-color: #525255;
+  --video-transcription-badge: #323235;
+  --video-transcription-cue-hover: #49494d;
+  --video-transcription-cue-active: #6b6b75;
+  --video-transcription-color: #e0e0e0;
   margin-inline: auto;
+  position: relative;
 }
 
 :where(.video-player__container) {
@@ -221,6 +222,10 @@
   transform: rotate(135deg);
 }
 
+.video-player__button>svg {
+  --icon-size: 1.5rem;
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -231,14 +236,22 @@
   }
 }
 
+@media screen and (max-width: 768px) {
+  .video-player__button {
+    aspect-ratio: initial;
+    padding: .1rem;
+  }
+
+  .video-player__button>svg {
+    --icon-size: 1.2rem;
+  }
+
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .video-player__button--disabled::after {
     animation: fadeIn 120ms ease;
   }
-}
-
-.video-player__button>svg {
-  --icon-size: 1.5rem;
 }
 
 :where(.video-player__volume) {
@@ -393,4 +406,132 @@
   background-color: transparent;
   text-align: left;
   color: inherit;
+}
+
+/* Audio description */
+.video-audio-description {
+  --box-shadow: 0 0 0 .0313rem color-mix(in srgb, var(--video-color) 40%, var(--video-bg) 30%);
+
+  position: absolute;
+  top: 0;
+  width: 100%;
+  color: var(--video-transcription-color);
+  padding: clamp(1rem, 3%, 1.5rem);
+  isolation: isolate;
+  z-index: 2;
+}
+
+@media screen and (max-width: 959px) {
+  .video-audio-description {
+    position: relative;
+    margin-block-end: 0.625rem;
+  }
+
+  .video-audio-description__overlay {
+    border-radius: .5rem;
+  }
+}
+
+.video-audio-description__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: color-mix(in srgb, var(--video-bg) 85%, transparent);
+  backdrop-filter: blur(.375rem);
+  z-index: -1;
+}
+
+.video-audio-description__header,
+.video-audio-description__content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.325rem;
+}
+
+.video-audio-description__header {
+  flex-wrap: wrap;
+}
+
+.video-audio-description__header p {
+  font-weight: bold;
+  flex: 2 0 auto;
+}
+
+button.video-audio-description__button--close {
+  flex: 1 1 fit-content;
+}
+
+:is(.video-audio-description__header, .video-audio-description__content-header) p {
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: .5em;
+}
+
+:is(.video-audio-description__header, .video-audio-description__content-header) p>svg {
+  --icon-size: 2em;
+  background-color: var(--video-bg);
+  border-radius: .4375rem;
+  padding: .3125rem;
+}
+
+.video-audio-description__content {
+  border-radius: .5rem;
+  box-shadow: var(--box-shadow);
+  padding: 1.1rem;
+}
+
+.video-audio-description__switch {
+  --switch-bg: var(--video-track-bg);
+}
+
+.video-audio-description__switch input:checked {
+  --switch-bg: var(--video-slider-bg);
+}
+
+.video-audio-description__slider {
+  width: 100%;
+  --outline-color: var(--video-color)
+}
+
+@media screen and (max-width: 500px) {
+  :where(.video-audio-description__volume) {
+    display: block;
+  }
+}
+
+.video-audio-description__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.video-audio-description__button {
+  --outline-color: var(--video-color);
+  border-radius: .25rem;
+  border: 1px solid transparent;
+  background-color: var(--video-bg);
+  color: inherit;
+  padding-block: .25rem;
+  padding-inline: .3rem;
+  transition: color 200ms ease, background-color 200ms ease-in-out;
+}
+
+.video-audio-description__button:hover {
+  background-color: var(--video-slider-bg);
+  color: var(--video-color);
+}
+
+.video-audio-description__button:has(svg) {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+}
+
+.video-audio-description__button--control {
+  width: 100%;
+  flex: 1 1 30ch;
 }

@@ -3,6 +3,7 @@ import { useId, useReducer } from "react";
 import classNames from "classnames";
 
 import { Video } from "./video";
+import { VideoAudioDescriptionToolbar } from "./video-audio-description-toolbar";
 import { BazelIcon } from "./video-bazel-icon";
 import { PlayerDispatchProvider, PlayerProvider } from "./video-context";
 import { playerReducer } from "./video-reducer";
@@ -23,6 +24,8 @@ const INITIAL_STATE = {
   activeCaption: false,
   isFullScreen: false,
   isActiveAD: false,
+  volumeAD: 1,
+  showAD: false,
   activeVideoTranscription: false,
 };
 
@@ -49,6 +52,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             [addClass ?? ""]: addClass,
           })}
         >
+          <VideoAudioDescriptionToolbar />
           <div
             id={uid}
             className="video-player__container"

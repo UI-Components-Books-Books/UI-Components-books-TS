@@ -59,6 +59,16 @@ export interface PlayerState {
     isActiveAD: boolean;
 
     /**
+     * Indica si el anuncio de audio está activo.
+     */
+    showAD: boolean;
+
+    /**
+     * Volumen del audio descripción.
+     */
+    volumeAD: number;
+
+    /**
      * Indica si el video transcription esta activo.
      */
     activeVideoTranscription: boolean;
@@ -103,7 +113,11 @@ export enum PlayerActionKind {
     TOGGLE_CAPTION = 'TOGGLE_CAPTION',
     FULLSCREEN = 'FULLSCREEN',
     AUDIO_DESCRIPTION_CHANGE = 'AUDIO_DESCRIPTION_CHANGE',
+    VOLUME_AUDIO_DESCRIPTION_CHANGE = 'VOLUME_AUDIO_DESCRIPTION_CHANGE',
+    SHOW_AUDIO_DESCRIPTION = 'SHOW_AUDIO_DESCRIPTION',
     TOGGLE_VIDEO_TRANSCRIPTION = 'TOGGLE_VIDEO_TRANSCRIPTION',
+    VIDEO_SKIP_BACKWARD = 'VIDEO_SKIP_BACKWARD',
+    VIDEO_SKIP_FORWARD = 'VIDEO_SKIP_FORWARD',
 }
 
 

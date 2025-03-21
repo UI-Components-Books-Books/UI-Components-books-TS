@@ -154,10 +154,14 @@ const FullScreenButton = () => {
 };
 
 const AudioDescriptionButton = () => {
-  const { isActiveAD, audio } = usePlayerContext();
+  const { showAD, isActiveAD , audio } = usePlayerContext();
   const dispatch = usePlayerDispatchContext();
 
   const toogleAudioDescription = () => {
+    dispatch({
+      type: PlayerActionKind.SHOW_AUDIO_DESCRIPTION,
+      payload: !showAD,
+    });
     dispatch({
       type: PlayerActionKind.AUDIO_DESCRIPTION_CHANGE,
       payload: !isActiveAD,
@@ -166,11 +170,11 @@ const AudioDescriptionButton = () => {
 
   return audio ? (
     <button
-      aria-pressed={isActiveAD}
+      aria-pressed={showAD}
       aria-label="Audio descriptivo"
       onClick={toogleAudioDescription}
       className={classNames("video-player__button", {
-        "video-player__button--disabled": !isActiveAD,
+        "video-player__button--disabled": !showAD,
       })}
     >
       <Icon>

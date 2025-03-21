@@ -59,12 +59,42 @@ const UPDATED_STATE_BY_ACTION = {
             isActiveAD: action.payload as boolean
         };
     },
+    [PlayerActionKind.VOLUME_AUDIO_DESCRIPTION_CHANGE]: (state: PlayerState, action: PlayerAction) => {
+        return {
+            ...state,
+            volumeAD: action.payload as number,
+        };
+    },
+    [PlayerActionKind.SHOW_AUDIO_DESCRIPTION]: (state: PlayerState, action: PlayerAction) => {
+        return {
+            ...state,
+            showAD: action.payload as boolean,
+        };
+    },
     [PlayerActionKind.TOGGLE_VIDEO_TRANSCRIPTION]: (state: PlayerState, action: PlayerAction) => {
         return {
             ...state,
             activeVideoTranscription: action.payload as boolean
         };
     },
+    [PlayerActionKind.VIDEO_SKIP_BACKWARD]: (state: PlayerState, action: PlayerAction) => {
+        const payload = action.payload as number | undefined;
+        const newCurrenTime = typeof payload === 'number' ? state.currentTime - payload : state.currentTime;
+
+        return {
+            ...state,
+            currentTime: newCurrenTime < 0 ? 0 : newCurrenTime
+        };
+    },
+    [PlayerActionKind.VIDEO_SKIP_FORWARD]: (state: PlayerState, action: PlayerAction) => {
+        const payload = action.payload as number | undefined;
+        const newCurrenTime = typeof payload === 'number' ? state.currentTime + payload : state.currentTime;
+
+        return {
+            ...state,
+            currentTime: newCurrenTime > state.totalDuration ? state.totalDuration : newCurrenTime
+        };
+    }
 }
 
 export const playerReducer = (state: PlayerState, action: PlayerAction) => {
