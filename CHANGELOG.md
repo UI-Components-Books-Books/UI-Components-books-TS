@@ -1,3 +1,15 @@
+# v0.1.29 (Fri Mar 21 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(styles): update switch check class and video transcription color variables ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v0.1.28 (Fri Mar 21 2025)
 
 #### ⚠️ Pushed to `main`
