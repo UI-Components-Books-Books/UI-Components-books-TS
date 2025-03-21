@@ -22,7 +22,7 @@
     --switch-tumb: 1.5rem;
 }
 
-:where(.c-switch__check) {
+.c-switch__check {
     position: relative;
     padding: 0.125rem;
     display: inline-flex;
