@@ -1,3 +1,15 @@
+# v0.1.31 (Fri Mar 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat(video): enhance accessibility with keyboard controls and descriptive audio information (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.30 (Fri Mar 21 2025)
 
 #### ⚠️ Pushed to `main`
