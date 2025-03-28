@@ -67,6 +67,18 @@ export const VideoAudioDescriptionToolbar = () => {
     });
   };
 
+  // Maneja los eventos de teclado para los botónes que están en el menu de audio descriptivo
+  const handleControlButtonKeyDown = (
+    event: React.KeyboardEvent,
+    callback: () => void
+  ) => {
+    // Si se presiona Enter o la barra espaciadora, ejecuta el callback asociado
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      callback();
+    }
+  };
+
   const handleToolbarKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (!refElement.current) return;
 
@@ -147,8 +159,19 @@ export const VideoAudioDescriptionToolbar = () => {
             </button>
           </div>
 
+          <p>
+            El audio descriptivo añade una narración extra para describir lo que
+            aparece en el video, haciéndolo más accesible.
+          </p>
+
+          <p>
+            <strong>Importante:</strong> El control de volumen en este menú solo
+            ajusta el volumen del audio descriptivo. Si deseas modificar el
+            volumen del video principal, utiliza el control de volumen presente
+            en la barra inferior del reproductor.
+          </p>
+
           <div
-           
             aria-labelledby="audio-description-header"
             className="video-audio-description__content u-flow"
           >
@@ -179,10 +202,16 @@ export const VideoAudioDescriptionToolbar = () => {
             className="video-audio-description__controls"
           >
             <button
+              aria-label="Retroceder 10 segundos del video"
+              className="video-audio-description__button video-audio-description__button--control"
               onMouseDown={rewindVideoBy10Seconds}
               onMouseUp={stopSeeking}
-              className="video-audio-description__button video-audio-description__button--control"
-              aria-label="Retroceder 10 segundos del video"
+              onKeyDown={(event) =>
+                handleControlButtonKeyDown(event, rewindVideoBy10Seconds)
+              }
+              onKeyUp={(event) =>
+                handleControlButtonKeyDown(event, stopSeeking)
+              }
             >
               <Icon>
                 <SkipPreviousIcon />
@@ -198,10 +227,16 @@ export const VideoAudioDescriptionToolbar = () => {
               {isPlaying ? "Pausar" : "Reproducir"}
             </button>
             <button
+              aria-label="Avanzar 10 segundos del video"
+              className="video-audio-description__button video-audio-description__button--control"
               onMouseDown={fastForwardVideoBy10Seconds}
               onMouseUp={stopSeeking}
-              className="video-audio-description__button video-audio-description__button--control"
-              aria-label="Avanzar 10 segundos del video"
+              onKeyDown={(event) =>
+                handleControlButtonKeyDown(event, fastForwardVideoBy10Seconds)
+              }
+              onKeyUp={(event) =>
+                handleControlButtonKeyDown(event, stopSeeking)
+              }
             >
               10s Adelante&nbsp;
               <Icon>
@@ -241,8 +276,13 @@ const VolumenSlider = () => {
   return (
     <div>
       <p>Volumen del audio descriptivo ({(volumeAD * 100).toFixed(0)}%)</p>
-      <label className="video-player__volume video-audio-description__volume" htmlFor="volume-audio-description-slider">
-        <span className="u-sr-only">Controlar volumen del audio descriptivo</span>
+      <label
+        className="video-player__volume video-audio-description__volume"
+        htmlFor="volume-audio-description-slider"
+      >
+        <span className="u-sr-only">
+          Controlar volumen del audio descriptivo
+        </span>
         <input
           id="volume-audio-description"
           className="video-player__volume-slider video-audio-description__slider"
