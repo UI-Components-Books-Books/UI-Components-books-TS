@@ -1,3 +1,15 @@
+# v0.1.32 (Mon Mar 31 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(tour): ensure steps are processed safely and assign unique IDs correctly (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.31 (Fri Mar 28 2025)
 
 #### ⚠️ Pushed to `main`
