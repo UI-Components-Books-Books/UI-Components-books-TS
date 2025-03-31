@@ -20,16 +20,16 @@ const Tour: React.FC<TourProps> & TourSubComponents = ({ steps, isOpen = false, 
      * y además agregamos la prop id.
      */
     const items = useMemo(() => {
-        return steps.reduce((list: StepType[], item: StepType, index: number) => {
+        return (steps || []).reduce((list: StepType[], item: StepType) => {
             if (!item.target) return list;
 
             const isValidElement = document.querySelector(item.target);
 
             if (isValidElement) {
-                list.push({ id: index + 1, ...item });
+                list.push({...item });
             }
             return list;
-        }, []);
+        }, []).map((item: StepType, index: number) => ({ id: index + 1, ...item}) );
     }, [steps]);
 
     /**
