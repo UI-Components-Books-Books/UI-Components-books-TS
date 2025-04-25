@@ -1,3 +1,16 @@
+# v0.1.33 (Fri Apr 25 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(modal): add console log for listElements and delay focus setting on modal close (coor_frontend@booksandbooksdigital.com.co)
+- fix(popover): update togglePopover to use functional state update (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.32 (Mon Mar 31 2025)
 
 #### ⚠️ Pushed to `main`
