@@ -18,7 +18,7 @@ const Popover: React.FC<PopoverProps> & PopoverSubComponents = ({ children, isVi
      * Función para abrir y cerrar el popover
      */
     const togglePopover = () => {
-        setIsPopoverOpen(!isPopoverOpen)
+        setIsPopoverOpen(prevState => !prevState);
     };
 
 
