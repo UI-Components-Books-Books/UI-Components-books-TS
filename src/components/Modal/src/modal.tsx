@@ -62,6 +62,10 @@ const Modal: React.FC<ModalProps> & ModalSubModules = ({
     const listElements = document.querySelectorAll<HTMLElement>(
       elements.toString()
     );
+    console.log(
+      "🚀 ~ setElementFocusOnModalClose ~ listElements:",
+      listElements
+    );
 
     // Iteramos sobre los elementos y los enfocamos
     listElements.forEach((element) => {
@@ -93,11 +97,13 @@ const Modal: React.FC<ModalProps> & ModalSubModules = ({
     if (flagUpdatedState.current) {
       flagUpdatedState.current = isOpen;
 
-      // Establecemos el enfoque en los elementos que queremos cuando el modal se cierra
-      setElementFocusOnModalClose(finalFocusRef);
-
       // Quitamos el estado inert del #root
       inertToggle(isOpen);
+
+      setTimeout(() => {
+        // Establecemos el enfoque en los elementos que queremos cuando el modal se cierra
+        setElementFocusOnModalClose(finalFocusRef);
+      }, 100);
     }
   }, [isOpen, refModal, finalFocusRef]);
 

@@ -120,6 +120,7 @@ export const FinalFocusModal: Story = {
 
     return (
       <>
+        <Button>No open modal</Button>
         <Button addClass="js-button" onClick={toggleModal}>
           Open modal
         </Button>
