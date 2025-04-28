@@ -62,10 +62,6 @@ const Modal: React.FC<ModalProps> & ModalSubModules = ({
     const listElements = document.querySelectorAll<HTMLElement>(
       elements.toString()
     );
-    console.log(
-      "🚀 ~ setElementFocusOnModalClose ~ listElements:",
-      listElements
-    );
 
     // Iteramos sobre los elementos y los enfocamos
     listElements.forEach((element) => {
