@@ -1,3 +1,15 @@
+# v0.1.34 (Mon Apr 28 2025)
+
+#### ⚠️ Pushed to `main`
+
+- fix(modal): remove console log from setElementFocusOnModalClose function (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.33 (Fri Apr 25 2025)
 
 #### ⚠️ Pushed to `main`
