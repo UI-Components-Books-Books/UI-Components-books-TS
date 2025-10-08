@@ -11,9 +11,21 @@ export const AccordionButton: React.FC<AccordionButtonProps> = ({
   addClass,
   expandedIcon = <ExpandMoreIcon />,
   closedIcon = <ExpandLessIcon />,
+  onClick, 
   ...props
 }) => {
   const { uid, isExpanded, handleExpanded } = useAccordionItemContext();
+
+  /**
+   * Maneja el evento de clic en el botón.
+   * @param event El evento de clic.
+   */
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) {
+      onClick(event);
+    }
+    handleExpanded();
+  };
 
   return (
     <button
@@ -21,7 +33,7 @@ export const AccordionButton: React.FC<AccordionButtonProps> = ({
       aria-controls={`accordion-panel-${uid}`}
       aria-expanded={isExpanded}
       className={classnames('c-accordion__button', { [addClass ?? ""]: addClass })}
-      onClick={handleExpanded}
+      onClick={handleClick}
       {...props}
     >
       {children}

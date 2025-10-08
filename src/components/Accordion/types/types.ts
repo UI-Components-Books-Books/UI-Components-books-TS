@@ -147,4 +147,10 @@ export interface AccordionButtonProps {
      * Icono que se muestra cuando el item está cerrado.
      */
     closedIcon?: React.ReactNode;
+
+    /**
+     * Función que se ejecuta al hacer clic en el botón.
+     * @param event El evento de clic.
+     */
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
