@@ -1,3 +1,15 @@
+# v0.1.35 (Wed Oct 08 2025)
+
+#### ⚠️ Pushed to `main`
+
+- feat(accordion): add onClick prop to AccordionButton and handle click event ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v0.1.34 (Mon Apr 28 2025)
 
 #### ⚠️ Pushed to `main`
