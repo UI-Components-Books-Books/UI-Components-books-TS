@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { Button ,Col , Row , DragAndDrop } from "@components";
-import type { StoryObj, Meta } from "@storybook/react";
+import type { StoryObj, Meta } from "@storybook/react-vite";
 
 import { useDragAndDropContext } from "../src/drag-and-drop-context";
 

@@ -1,5 +1,5 @@
 import { Button, Panel } from "@components";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof Panel> = {
   title: "Panel",

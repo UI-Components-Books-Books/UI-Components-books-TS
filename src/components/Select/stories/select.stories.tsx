@@ -1,5 +1,5 @@
 import { Select } from "@components";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Item } from "react-stately";
 
 const meta: Meta<typeof Select> = {

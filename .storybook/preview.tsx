@@ -1,5 +1,5 @@
-import type { Preview } from "@storybook/react";
-import type { Decorator } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
+import type { Decorator } from "@storybook/react-vite";
 import "../src/styles/index.css";
 
 /**
@@ -16,7 +16,6 @@ const withRootDiv: Decorator = (Story) => (
 const preview: Preview = {
   decorators: [withRootDiv],
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
         color: /(background|color)$/i,

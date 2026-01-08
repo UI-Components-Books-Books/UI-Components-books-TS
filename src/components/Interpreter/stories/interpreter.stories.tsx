@@ -1,5 +1,5 @@
 import { Interpreter } from "@components";
-import type { StoryObj, Meta } from "@storybook/react";
+import type { StoryObj, Meta } from "@storybook/react-vite";
 
 const meta: Meta<typeof Interpreter> = {
   title: "Interpreter",
