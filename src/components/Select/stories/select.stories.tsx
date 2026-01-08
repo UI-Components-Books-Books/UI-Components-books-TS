@@ -1,7 +1,6 @@
+import { Select } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Item } from "react-stately";
-
-import { Select } from "../src/select";
 
 const meta: Meta<typeof Select> = {
   title: "Select",

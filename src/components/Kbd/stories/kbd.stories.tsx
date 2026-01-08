@@ -1,6 +1,6 @@
+import { Kbd } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Kbd } from "../src/kbd";
 import "../assets/docs.css";
 
 const meta: Meta<typeof Kbd> = {

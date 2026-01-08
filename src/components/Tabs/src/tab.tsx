@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { useTabListContext, useTabsContext } from './tabs-context'
 import type { TabProps } from '../types/types'
@@ -64,9 +64,7 @@ export const Tab: React.FC<TabProps> = ({
       aria-selected={isSelected}
       onKeyDown={handleNavigationFocus}
       onClick={handleClick}
-      className={classnames('c-tab__button', {
-        [addClass ?? ""]: addClass,
-      })}
+      className={cn('c-tab__button', addClass)}
       {...props}
     >
       {children}

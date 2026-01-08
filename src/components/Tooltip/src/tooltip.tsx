@@ -7,10 +7,10 @@ import {
   useId
 } from 'react'
 
-import classNames from 'classnames'
+import { Portal } from '@components'
+import { cn } from '@utils/cn'
 import { usePopper } from 'react-popper'
 
-import { Portal } from '../../Portal'
 import type { TooltipProps } from '../types/types'
 
 import './tooltip.css'
@@ -180,7 +180,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           onMouseEnter={onMouseEnterTooltip}
           onMouseLeave={onMouseLeave}
           style={styles.popper}
-          className={classNames('c-tooltip', {
+          className={cn('c-tooltip', {
             'c-tooltip--active': isOpen ,
             [addClass ?? ""]: addClass
           })}

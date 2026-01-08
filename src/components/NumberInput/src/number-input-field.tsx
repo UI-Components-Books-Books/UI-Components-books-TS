@@ -1,6 +1,6 @@
 import { useId, forwardRef } from 'react'
 
-import classNames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { useNumberInputContext } from './number-input-context'
 import type { NumberInputFieldProps } from '../types/types'
@@ -109,7 +109,7 @@ export const NumberInputField = forwardRef<HTMLInputElement, NumberInputFieldPro
     return (
       <label
         htmlFor={uid}
-        className={classNames('c-number-input__label', { [addClass ?? ""]: addClass })}
+        className={cn('c-number-input__label', addClass)}
       >
         <span className={`${!isLabelVisible && 'u-sr-only'}`}> {label} </span>
         <input

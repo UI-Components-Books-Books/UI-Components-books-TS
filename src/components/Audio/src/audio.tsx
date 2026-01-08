@@ -1,11 +1,10 @@
 import { useState, useRef, useId } from 'react'
 
-import classnames from 'classnames'
+import { Button, Icon } from '@components'
+import { useInteractOutside } from '@hooks'
+import { cn } from '@utils/cn'
 
 import { A11yIcon, PauseIcon, PlayIcon, VolumenDownIcon, VolumenOffIcon, VolumenOnIcon } from './audio-icons'
-import { useInteractOutside } from '../../../hooks'
-import { Button } from '../../Button'
-import { Icon } from '../../Icon'
 import type { AudioProps } from '../types/types'
 
 import './audio.css'
@@ -258,7 +257,7 @@ export const Audio: React.FC<AudioProps> = ({
           data-a11y={a11y}
           onClick={togglePlay}
           hasAriaLabel
-          addClass={classnames(`c-audio__button c-audio__button--${size}`,
+          addClass={cn(`c-audio__button c-audio__button--${size}`,
             {
               'is-button-playing': play,
               'is-button-paused': !play,
@@ -354,7 +353,7 @@ export const Audio: React.FC<AudioProps> = ({
         ref={refAudio}
         preload='metadata'
         controls
-        className={classnames('c-audio', { [addClass ?? ""]: addClass })}
+        className={cn('c-audio', addClass)}
         onLoadedMetadata={onLoadedMetadata}
         onTimeUpdate={onTimeUpdate}
         onPlay={() => setPlay(true)}

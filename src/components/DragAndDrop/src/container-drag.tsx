@@ -1,7 +1,7 @@
 import { useId } from 'react'
 
 import { useDroppable } from '@dnd-kit/core'
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import type { ContainerDragProps } from '../types/types'
 
@@ -38,7 +38,7 @@ export const ContainerDrag: React.FC<ContainerDragProps> = ({
       id={uid}
       ref={setNodeRef}
       data-type-component={__TYPE}
-      className={classnames(`c-droppable`, {
+      className={cn(`c-droppable`, {
         [over ?? '']: isOver,
         [addClass ?? ""]: addClass
       })}

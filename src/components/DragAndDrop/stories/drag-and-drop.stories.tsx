@@ -1,11 +1,8 @@
 import { useState } from "react";
 
+import { Button ,Col , Row , DragAndDrop } from "@components";
 import type { StoryObj, Meta } from "@storybook/react";
 
-import { Button } from "../../Button";
-import { Col } from "../../Col";
-import { Row } from "../../Row";
-import { DragAndDrop } from "../src/drag-and-drop";
 import { useDragAndDropContext } from "../src/drag-and-drop-context";
 
 import "../assets/docs.css";

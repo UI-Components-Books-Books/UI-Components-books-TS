@@ -1,11 +1,11 @@
 import { useState, useId, useRef, useMemo, useEffect } from "react";
 
-import classNames from 'classnames'
+import { Icon } from "@components";
+import { cn } from '@utils/cn'
+import { formatTime } from "@utils/converterTime";
 
 import { SHOW_VIDEO } from "./const";
 import { PauseIcon, PlayIcon } from "./interpreter-icons";
-import { formatTime } from "../../../utils/converterTime";
-import { Icon } from "../../Icon";
 import type { InterpreterVideoPlayerProps, TooglePlayButtonProps } from '../types/types'
 
 import './interpreter.css'
@@ -153,7 +153,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
                     preload='none'
                     muted
                     src={contentURL}
-                    className={classNames({
+                    className={cn({
                         'c-video__video--hidden': displayVideo !== SHOW_VIDEO.CONTENT
                     })}
                 />
@@ -163,7 +163,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
                     preload='none'
                     muted
                     src={accesibilityURL}
-                    className={classNames({
+                    className={cn({
                         'c-video__video--hidden': displayVideo !== SHOW_VIDEO.ACCESIBILITY
                     })}
                 />

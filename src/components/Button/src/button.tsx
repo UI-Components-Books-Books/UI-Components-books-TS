@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import classnames from "classnames";
+import { cn } from '@utils/cn';
 
 import type { ButtonProps } from "../types/types";
 
@@ -21,13 +21,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={classnames(
+        className={cn(
           "c-button",
           `c-button--${variant}`,
           `c-button--${size}`,
-          {
-            [addClass ?? ""]: addClass,
-          }
+          addClass
         )}
         {...(hasAriaLabel && { "aria-label": `${label}` })}
         {...others}

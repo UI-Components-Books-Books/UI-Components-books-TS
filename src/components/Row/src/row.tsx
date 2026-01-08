@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import classnames from "classnames";
+import { cn } from '@utils/cn';
 
 import { RowProps } from "../types/types";
 
@@ -14,7 +14,7 @@ export const Row = forwardRef<HTMLDivElement, RowProps>(function Row(
   return (
     <div
       ref={ref}
-      className={classnames("c-row", {
+      className={cn("c-row", {
         [addClass ?? ""]: addClass,
         [`c-row--align-items-${alignItems}`]: alignItems,
         [`c-row--justify-content-${justifyContent}`]: justifyContent,

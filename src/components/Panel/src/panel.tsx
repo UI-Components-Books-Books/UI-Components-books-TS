@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { ButtonSection } from './panel-button';
 import { PanelProvider } from './panel-contex'
@@ -93,7 +93,7 @@ const Panel: React.FC<PanelProps> & PanelSubComponents = ({ children, defaultInd
             }}
         >
             <div
-                className={classnames('c-panel', { [addClass ?? ""]: addClass })}
+                className={cn('c-panel', addClass)}
                 data-value={isOpen}
                 {...(type === 'carrousel' && {
                     role: 'group',

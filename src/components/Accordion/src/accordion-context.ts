@@ -1,4 +1,5 @@
-import { createContext } from "../../../utils/createcontext";
+import { createContext } from "@utils/createcontext";
+
 import type { AccordionContextType, AccordionItemContextType } from "../types/types";
 
 export const [AccordionProvider, useAccordionContext] = createContext<AccordionContextType>({

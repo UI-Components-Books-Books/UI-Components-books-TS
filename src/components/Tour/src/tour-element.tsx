@@ -1,13 +1,12 @@
 import { createElement, isValidElement, useRef } from 'react'
 
-import classnames from 'classnames'
+import { Button,  Icon } from '@components';
+import { cn } from '@utils/cn'
 import gsap from 'gsap';
 import { usePopper } from 'react-popper'
 
 import { useTourContext } from './tour-context'
 import { CloseIcon, LeftArrowIcon, RightArrowIcon } from './tour-icons';
-import { Button } from '../../Button'
-import { Icon } from '../../Icon';
 import type { TourElementProps } from '../types/types'
 
 import './tour.css'
@@ -104,7 +103,7 @@ export const TourElement: React.FC<TourElementProps> = ({
         }}
         id={`unique-id-tour-element-${id}`}
         style={styles.popper}
-        className={classnames('c-tour-content', { [addClass ?? ""]: addClass })}
+        className={cn('c-tour-content', addClass)}
         {...ariaAttributes}
         {...attributes.popper}
       >

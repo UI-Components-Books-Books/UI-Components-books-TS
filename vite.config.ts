@@ -18,6 +18,15 @@ const plugins = [
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+      '@components': resolve(__dirname, './src/components/index.ts'),
+      '@utils': resolve(__dirname, './src/utils'),
+      '@hooks': resolve(__dirname, './src/hooks/index.ts'),
+      '@styles': resolve(__dirname, './src/styles'),
+    },
+  },
   plugins: plugins,
   build: {
     lib: {

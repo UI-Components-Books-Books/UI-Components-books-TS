@@ -2,7 +2,8 @@ import {  useId } from 'react'
 
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import classnames from 'classnames'
+
+import { cn } from '@utils/cn'
 
 import { useDragAndDropContext } from './drag-and-drop-context'
 import type { DraggableProps } from '../types/types'
@@ -51,7 +52,7 @@ export const Draggable: React.FC<DraggableProps> = ({
       id={uid}
       ref={setNodeRef}
       data-type-component={__TYPE}
-      className={classnames('c-draggable', {
+      className={cn('c-draggable', {
         [dragging ?? ""]: isDraggingElement,
         [addClass ?? ""]: addClass
       })}

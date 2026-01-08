@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 import gsap from 'gsap';
 
 import { useTourContext } from './tour-context'
@@ -93,7 +93,7 @@ export const TourHelpLayer = ({ addClass }: { addClass?: string }) => {
           );
         }
       }}
-      className={classnames('c-tour-help', { [addClass ?? ""]: addClass })}
+      className={cn('c-tour-help', addClass)}
       style={getPosition}
     >
       <p className='c-tour-number' data-class='c-tour-number'>

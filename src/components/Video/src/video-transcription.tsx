@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
+import { Icon } from "@components";
+import { formatTime } from "@utils/converterTime";
 import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
-import { formatTime } from "../../../utils/converterTime";
-import { Icon } from "../../Icon";
 import { useTranscript } from "../hooks/useTranscript";
 import { PlayerActionKind } from "../types/types";
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import classNames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { NumberDecrementStepper } from './number-decrement-stepper';
 import { NumberIncrementStepper } from './number-increment-stepper';
@@ -91,7 +91,7 @@ const NumberInput: React.FC<NumberInputProps> & NumberInputSubComponents = ({
         onDecrementValue
       }}
     >
-      <div className={classNames('c-number-input', { [addClass ?? ""]: addClass })}>{children}</div>
+      <div className={cn('c-number-input', addClass)}>{children}</div>
     </NumberInputProvider>
   )
 }

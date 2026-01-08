@@ -1,6 +1,6 @@
 import { useId, forwardRef } from "react";
 
-import classNames from "classnames";
+import { cn } from '@utils/cn';
 
 import type { SwitchProps } from "../types/types";
 
@@ -25,9 +25,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
 
   return (
     <div
-      className={classNames(`c-switch c-switch--${size}`, {
-        [addClass ?? ""]: addClass,
-      })}
+      className={cn(`c-switch c-switch--${size}`, addClass)}
     >
       <label htmlFor={uid}>
         <span className={`${!isLabelVisible && "u-sr-only"}`}> {label} </span>

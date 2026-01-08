@@ -1,4 +1,4 @@
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { useAccordionItemContext } from './accordion-context';
 import type { AccordionPanelProps } from '../types/types';
@@ -14,7 +14,7 @@ export const AccordionPanel: React.FC<AccordionPanelProps> = ({ children, addCla
             role='region'
             aria-hidden={!isExpanded}
             aria-labelledby={`accordion-button-${uid}`}
-            className={classnames('c-accordion__panel', { [addClass ?? ""]: addClass })}
+            className={cn('c-accordion__panel', addClass)}
             {...props}
         >
             <div

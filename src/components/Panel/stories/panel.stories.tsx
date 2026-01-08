@@ -1,7 +1,5 @@
+import { Button, Panel } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
-
-import { Button } from "../../Button";
-import { Panel } from "../src/panel";
 
 const meta: Meta<typeof Panel> = {
   title: "Panel",

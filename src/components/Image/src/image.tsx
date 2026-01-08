@@ -1,6 +1,6 @@
 import { useState, forwardRef } from "react";
 
-import classnames from "classnames";
+import { cn } from '@utils/cn';
 
 import { imageBase } from "./image-base";
 import type { ImageProps } from "../types/types";
@@ -39,7 +39,7 @@ export const Image = forwardRef<HTMLImageElement, ImageProps>(function Image(
 
   return (
     <Element
-      className={classnames("c-image", { [addClass ?? ""]: addClass })}
+      className={cn("c-image", addClass)}
       {...(size && {
         style: { "--image-max-width": size } as React.CSSProperties,
       })}

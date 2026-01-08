@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 
-import classNames from "classnames";
+import { Icon } from "@components";
+import { cn } from '@utils/cn';
+import { formatTime } from "@utils/converterTime";
 
 import { usePlayerContext } from "./video-context";
 import { usePlayerDispatchContext } from "./video-context";
@@ -15,8 +17,6 @@ import {
 } from "./video-icons";
 import { Slider } from "./video-slider";
 import { VolumeControl } from "./video-volume-control";
-import { formatTime } from "../../../utils/converterTime";
-import { Icon } from "../../Icon";
 import { useFullScreen } from "../hooks/useFullScreen";
 import { PlayerActionKind } from "../types/types";
 
@@ -87,7 +87,7 @@ const TranscriptButton = () => {
       aria-pressed={activeVideoTranscription}
       aria-label="Transcripción"
       onClick={toggleTranscription}
-      className={classNames("video-player__button", {
+      className={cn("video-player__button", {
         "video-player__button--disabled": !activeVideoTranscription,
       })}
     >
@@ -114,7 +114,7 @@ const CaptionButton = () => {
       aria-pressed={activeCaption}
       aria-label="Subtítulos"
       onClick={toggleCaptions}
-      className={classNames("video-player__button", {
+      className={cn("video-player__button", {
         "video-player__button--disabled": !activeCaption,
       })}
     >
@@ -173,7 +173,7 @@ const AudioDescriptionButton = () => {
       aria-pressed={showAD}
       aria-label="Audio descriptivo"
       onClick={toogleAudioDescription}
-      className={classNames("video-player__button", {
+      className={cn("video-player__button", {
         "video-player__button--disabled": !showAD,
       })}
     >

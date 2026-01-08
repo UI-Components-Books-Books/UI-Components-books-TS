@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from "react";
 
-import classNames from "classnames";
+import { cn } from '@utils/cn';
 
 import { usePlayerContext } from "./video-context";
 import { usePlayerDispatchContext } from "./video-context";
@@ -159,7 +159,7 @@ export const Video = () => {
       onTimeUpdate={handleTimeUpdate}
       onEnded={handleEndedVideo}
       // preload='none' <--- it's important for the lazy load.
-      className={classNames(`video-player__video`, {
+      className={cn(`video-player__video`, {
         "video-player__no-captions": !activeCaption,
       })}
       {...(poster && { poster })}

@@ -1,7 +1,7 @@
 
 import { useEffect, useId, useMemo } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { useAccordionContext, AccordionItemProvider } from './accordion-context'
 import type { AccordionItemProps } from '../types/types'
@@ -45,7 +45,7 @@ export const AccordionItem: React.FC<AccordionItemProps> = ({ id, children, addC
 
     return (
         <AccordionItemProvider value={{ uid, isExpanded, handleExpanded }}>
-            <div className={classnames(`c-accordion__item`, { [addClass ?? ""]: addClass })}>
+            <div className={cn('c-accordion__item', addClass)}>
                 {children}
             </div>
         </AccordionItemProvider>

@@ -1,6 +1,7 @@
 import { useState, useRef, useId, useEffect } from "react";
 
-import classNames from "classnames";
+import { Icon } from "@components";
+import { cn } from '@utils/cn';
 import gsap from "gsap";
 import Draggable from "react-draggable";
 import type { DraggableEventHandler } from "react-draggable";
@@ -16,7 +17,6 @@ import {
   ZoomInIcon,
 } from "./interpreter-icons";
 import { VideoPlayer } from "./interpreter-video-player";
-import { Icon } from "../../Icon";
 import type {
   InterpreterProps,
   InterpreterVideoProps,
@@ -83,9 +83,7 @@ export const Interpreter: React.FC<InterpreterProps> = ({
 
   return (
     <div
-      className={classNames("c-interpreter__container", {
-        [addClass ?? ""]: addClass,
-      })}
+      className={cn("c-interpreter__container", addClass)}
       {...props}
     >
       <button
@@ -241,7 +239,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                     aria-hidden={!contentURL && !accesibilityURL}
                   >
                     <div
-                      className={classNames(
+                      className={cn(
                         "c-interpreter__button c-interpreter__button--fake",
                         {
                           "c-interpreter__button--hidden":
@@ -268,7 +266,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                   {/* Accesibility video */}
                   <li hidden={!accesibilityURL} aria-hidden={!accesibilityURL}>
                     <button
-                      className={classNames("c-interpreter__button", {
+                      className={cn("c-interpreter__button", {
                         "c-interpreter__button--hidden": !accesibilityURL,
                       })}
                       aria-label="Video descriptivo"
@@ -284,7 +282,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                   {/* Content video */}
                   <li hidden={!contentURL} aria-hidden={!contentURL}>
                     <button
-                      className={classNames("c-interpreter__button", {
+                      className={cn("c-interpreter__button", {
                         "c-interpreter__button--hidden": !contentURL,
                       })}
                       aria-label="Video de contenido"

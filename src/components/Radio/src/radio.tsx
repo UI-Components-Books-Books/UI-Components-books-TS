@@ -1,6 +1,6 @@
 import { forwardRef, useId } from "react";
 
-import classNames from "classnames";
+import { cn } from '@utils/cn';
 
 import { RightIcon, WrongIcon } from "./radio-icons";
 import type { RadioProps } from "../types/types";
@@ -24,7 +24,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
 
   return (
     <div
-      className={classNames("c-input-radio", { [addClass ?? ""]: addClass })}
+      className={cn("c-input-radio", addClass)}
       data-state={state}
     >
       <label

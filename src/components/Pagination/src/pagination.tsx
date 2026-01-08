@@ -1,7 +1,7 @@
-import classnames from "classnames";
+import { usePagination } from "@hooks";
+import { cn } from "@utils/cn";
 
 import { PaginationItem } from "./pagination-item";
-import { usePagination } from "../../../hooks";
 import type {
   PaginationProps,
   PaginationSubModules,
@@ -27,7 +27,7 @@ const Pagination: React.FC<PaginationProps> & PaginationSubModules = ({
   return (
     <nav
       role="navigation"
-      className={classnames("c-pagination", { [addClass ?? ""]: addClass })}
+      className={cn("c-pagination", addClass)}
       {...(label && { "aria-label": label })}
     >
       <ul className="c-pagination__ul">

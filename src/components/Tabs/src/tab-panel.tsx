@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import { cn } from '@utils/cn';
 
 import { useTabsContext } from './tabs-context';
 import type { TabPanelProps } from '../types/types';
@@ -20,7 +20,7 @@ export const TabPanel: React.FC<TabPanelProps> = ({ id, children, addClass, ...p
       aria-hidden={!isSelected}
       hidden={!isSelected}
       aria-labelledby={`tab-${id}`}
-      className={classnames('c-tab__panel', {
+      className={cn('c-tab__panel', {
         'c-tab__panel--active': isSelected,
         [addClass ?? ""]: addClass
       })}

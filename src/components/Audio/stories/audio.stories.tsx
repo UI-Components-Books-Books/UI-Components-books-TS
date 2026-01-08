@@ -1,6 +1,6 @@
+import { Audio } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Audio } from "../src/audio";
 import "../assets/docs.css";
 
 const meta: Meta<typeof Audio> = {

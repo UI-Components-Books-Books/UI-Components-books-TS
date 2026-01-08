@@ -1,8 +1,9 @@
 import { useRef, useEffect } from "react";
 
+import { Icon } from "@components";
+
 import { usePlayerContext } from "./video-context";
 import { PauseIcon, PlayIcon } from './video-icons'
-import { Icon } from "../../Icon";
 
 import './video.css'
 

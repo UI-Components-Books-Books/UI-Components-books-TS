@@ -1,4 +1,5 @@
-import { createContext } from "../../../utils/createcontext";
+import { createContext } from "@utils/createcontext";
+
 import type { TabsContextType, TabListContexType } from "../types/types";
 
 export const [TabsProvider, useTabsContext] = createContext<TabsContextType>({

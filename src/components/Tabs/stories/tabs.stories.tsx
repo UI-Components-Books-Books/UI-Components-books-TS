@@ -1,6 +1,6 @@
+import { Tabs } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Tabs } from "../src/tabs";
 import "../assets/docs.css";
 
 const meta: Meta<typeof Tabs> = {

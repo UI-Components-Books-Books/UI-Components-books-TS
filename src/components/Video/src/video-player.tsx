@@ -1,6 +1,6 @@
 import { useId, useReducer } from "react";
 
-import classNames from "classnames";
+import { cn } from '@utils/cn';
 
 import { Video } from "./video";
 import { VideoAudioDescriptionToolbar } from "./video-audio-description-toolbar";
@@ -48,9 +48,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       <PlayerDispatchProvider value={dispatch}>
         <div
           style={{ maxWidth: width }}
-          className={classNames("video-player", {
-            [addClass ?? ""]: addClass,
-          })}
+          className={cn("video-player", addClass)}
         >
           <VideoAudioDescriptionToolbar />
           <div

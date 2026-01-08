@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
+import { usePortal } from '@hooks'
 import { createPortal } from 'react-dom'
 
-import { usePortal } from '../../../hooks'
 import type { PortalProps } from '../types/types';
 
 export const Portal: React.FC<PortalProps> = ({ children, id }) => {

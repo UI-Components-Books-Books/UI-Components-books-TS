@@ -1,11 +1,7 @@
 import { useState } from "react";
 
+import { Button, Col,Row, Tour } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
-
-import { Button } from "../../Button";
-import { Col } from "../../Col";
-import { Row } from "../../Row";
-import { Tour } from "../src/tour";
 
 const meta: Meta<typeof TourWithHooks> = {
   title: "Tour",

@@ -39,7 +39,7 @@
     "@react-aria/listbox": "3.11.5",
     "@react-aria/overlays": "3.21.1",
     "@react-aria/select": "3.14.3",
-    "classnames": "2.5.1",
+    "clsx": "^2.1.1",
     "commitizen": "4.3.0",
     "gsap": "^3.14.2",
     "react": "18.2.0",

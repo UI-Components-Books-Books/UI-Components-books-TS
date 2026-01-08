@@ -1,6 +1,6 @@
 import React, { cloneElement, Children, isValidElement, useRef } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { TabListProvider } from './tabs-context'
 import type { TabListProps } from '../types/types'
@@ -95,9 +95,7 @@ export const TabList: React.FC<TabListProps> = ({
         role='tablist'
         aria-label={label}
         aria-orientation={orientation}
-        className={classnames('c-tab__list', {
-          [addClass ?? ""]: addClass
-        })}
+        className={cn('c-tab__list', addClass)}
         {...props}
       >
         {children}

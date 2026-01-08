@@ -1,6 +1,6 @@
+import { Button, Icon } from "@components"
+
 import { useModalContext } from "./modal-context"
-import { Button } from "../../Button";
-import { Icon } from "../../Icon";
 
 import './modal.css'
 

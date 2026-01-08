@@ -1,4 +1,5 @@
-import classnames from 'classnames'
+
+import { cn } from '@utils/cn';
 
 import { useAccordionItemContext } from './accordion-context';
 import { ExpandLessIcon, ExpandMoreIcon } from './accordion-icons';
@@ -32,7 +33,7 @@ export const AccordionButton: React.FC<AccordionButtonProps> = ({
       id={`accordion-button-${uid}`}
       aria-controls={`accordion-panel-${uid}`}
       aria-expanded={isExpanded}
-      className={classnames('c-accordion__button', { [addClass ?? ""]: addClass })}
+      className={cn('c-accordion__button',  addClass )}
       onClick={handleClick}
       {...props}
     >

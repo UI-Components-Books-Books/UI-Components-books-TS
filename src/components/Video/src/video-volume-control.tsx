@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 
-import classNames from 'classnames';
+import { Icon } from "@components"
+import { cn } from '@utils/cn';
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context"
-import { Icon } from "../../Icon"
 import { PlayerActionKind } from "../types/types"
 
 import './video.css'
@@ -30,7 +30,7 @@ const ToogleMutedButton = () => {
 
     return (
         <button
-            className={classNames('video-player__button js-button-video-volumen', {
+            className={cn('video-player__button js-button-video-volumen', {
                 'video-player__button--disabled': muted
             })}
             aria-label={muted ? 'Mutear video' : 'Volumen'}

@@ -1,6 +1,7 @@
 import { Dispatch } from "react";
 
-import { createContext } from "../../../utils/createcontext";
+import { createContext } from "@utils/createcontext";
+
 import type { PlayerAction, VideoPlayerContextType  } from '../types/types'
 
 

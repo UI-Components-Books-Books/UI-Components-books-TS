@@ -1,6 +1,6 @@
 import { forwardRef, useId } from "react";
 
-import classNames from "classnames";
+import { cn } from '@utils/cn';
 
 import { NormalIcon, RightIcon, WrongIcon } from "./checkbox-icons";
 import type { CheckBoxProps } from "../types/types";
@@ -32,7 +32,7 @@ export const CheckBox = forwardRef<HTMLInputElement, CheckBoxProps>(
 
     return (
       <div
-        className={classNames("c-input-check", { [addClass ?? ""]: addClass })}
+        className={cn("c-input-check", addClass)}
         data-state={state}
       >
         <label

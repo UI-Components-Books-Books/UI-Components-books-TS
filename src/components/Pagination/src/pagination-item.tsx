@@ -1,9 +1,9 @@
 import { cloneElement } from 'react'
 
-import classnames from 'classnames'
+import { Icon } from '@components';
+import { cn } from '@utils/cn'
 
 import { ArrowLeftIcon, ArrowRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from './pagination-icons';
-import { Icon } from '../../Icon';
 import type { PaginationItemProps } from '../types/types';
 
 import './pagination.css'
@@ -49,7 +49,7 @@ export const PaginationItem: React.FC<PaginationItemProps> = ({
                 element,
                 {
                     disabled,
-                    className: classnames('c-pagination-item', {
+                    className: cn('c-pagination-item', {
                         'c-pagination-item--selected': selected,
                         [addClass ?? ""]: addClass
                     }),

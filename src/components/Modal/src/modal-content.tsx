@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 
-import classnames from "classnames";
+import { cn } from '@utils/cn';
 import gsap from "gsap";
 
 import { useModalContext } from "./modal-context";
@@ -73,7 +73,7 @@ export const ModalContent: React.FC<ModalContentProps> = ({
       tabIndex={-1}
       aria-modal="true"
       onKeyDown={handleKeyDown}
-      className={classnames("c-modal", { [addClass ?? ""]: addClass })}
+      className={cn("c-modal", addClass)}
       {...props}
     >
       <div className="c-modal-container">{children}</div>

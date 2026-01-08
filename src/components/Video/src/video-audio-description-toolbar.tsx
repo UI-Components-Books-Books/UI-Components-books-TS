@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 
+import { Icon , Switch } from "@components";
 import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
@@ -10,8 +11,6 @@ import {
   PlayIcon,
   SkipPreviousIcon,
 } from "./video-icons";
-import { Icon } from "../../Icon";
-import { Switch } from "../../Switch";
 import { PlayerActionKind } from "../types/types";
 
 export const VideoAudioDescriptionToolbar = () => {

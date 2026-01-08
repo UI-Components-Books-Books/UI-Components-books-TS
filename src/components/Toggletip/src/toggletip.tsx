@@ -7,10 +7,10 @@ import {
     useId
 } from 'react'
 
-import classNames from 'classnames';
+import { Portal } from '@components'
+import { cn } from '@utils/cn';
 import { usePopper } from 'react-popper'
 
-import { Portal } from '../../Portal'
 import type { ToggletipProps } from '../types/types';
 
 import './toggletip.css'
@@ -148,7 +148,7 @@ export const Toggletip: React.FC<ToggletipProps> = ({
                     ref={refToggletip}
                     role='status'
                     style={styles.popper}
-                    className={classNames('c-toggletip', {
+                    className={cn('c-toggletip', {
                         'c-toggletip--active': isOpen,
                         [addClass ?? ""]: addClass
                     })}

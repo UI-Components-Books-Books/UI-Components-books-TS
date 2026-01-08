@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import classnames from "classnames";
+import { cn } from '@utils/cn';
 import gsap from "gsap";
 
 import { useModalContext } from "./modal-context";
@@ -48,7 +48,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({
   return (
     <div
       ref={overlayRef}
-      className={classnames("c-layout", { [addClass ?? ""]: addClass })}
+      className={cn("c-layout", addClass)}
       onClick={handleClick}
     />
   );

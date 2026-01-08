@@ -1,15 +1,15 @@
 import { useRef } from "react"
 
+import { Icon } from "@components"
 import { useSelect } from "@react-aria/select"
 import { HiddenSelect } from "@react-aria/select"
-import classNames from 'classnames';
+import { cn } from '@utils/cn';
 import { useSelectState } from "react-stately"
 
 import { Button } from "./select-button";
 import { ArrowDownIcon } from "./select-icons"
 import { ListBox } from "./select-list"
 import { Popover } from "./select-popover"
-import { Icon } from "../../Icon"
 import type { SelectProps } from "../types/types";
 
 import './select.css'
@@ -29,7 +29,7 @@ const Select: React.FC<SelectProps> = (props) => {
   )
 
   return (
-    <div className={classNames('c-select', { [addClass ?? ""]: addClass })}>
+    <div className={cn('c-select', addClass)}>
       <div {...labelProps} className='u-sr-only'>
         {label}
       </div>

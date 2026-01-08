@@ -1,8 +1,8 @@
-import classNames from "classnames";
+import { Icon } from "@components";
+import { cn } from '@utils/cn';
 
 import { useNumberInputContext } from "./number-input-context";
 import { ArrowDownIcons } from "./number-input-icons";
-import { Icon } from "../../Icon";
 import type { NumberDecrementStepperProps } from "../types/types";
 
 import "./number-input.css";
@@ -24,9 +24,7 @@ export const NumberDecrementStepper: React.FC<NumberDecrementStepperProps> = ({
       onClick={onDecrementValue}
       disabled={validate(min)}
       aria-label={label}
-      className={classNames("c-number-input__button", {
-        [addClass ?? ""]: addClass,
-      })}
+      className={cn("c-number-input__button", addClass)}
     >
       {children || (
         <Icon>

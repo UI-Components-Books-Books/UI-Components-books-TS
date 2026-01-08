@@ -1,6 +1,5 @@
+import { Interpreter } from "@components";
 import type { StoryObj, Meta } from "@storybook/react";
-
-import { Interpreter } from "../src/interpreter";
 
 const meta: Meta<typeof Interpreter> = {
   title: "Interpreter",

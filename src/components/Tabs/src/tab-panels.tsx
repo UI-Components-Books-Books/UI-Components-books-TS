@@ -1,6 +1,6 @@
 import { Children, cloneElement, isValidElement } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import type { TabPanelsProps } from '../types/types';
 
@@ -26,7 +26,7 @@ export const TabPanels: React.FC<TabPanelsProps> = ({
 
   return (
     <div
-      className={classnames('c-tab__panels', { [addClass ?? ""]: addClass })}
+      className={cn('c-tab__panels', addClass)}
       {...props}
     >
       {children}

@@ -1,11 +1,11 @@
 import { useRef, useEffect, useId } from 'react'
 
-import classnames from 'classnames'
+import { Portal } from '@components'
+import { useInteractOutside } from '@hooks'
+import { cn } from '@utils/cn'
 import { usePopper } from 'react-popper'
 
 import { usePopoverContext } from './popover-context'
-import { useInteractOutside } from '../../../hooks'
-import { Portal } from '../../Portal'
 import type { PopoverContentProps } from '../types/types'
 
 import './popover.css'
@@ -169,7 +169,7 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
         role='status'
         tabIndex={-1}
         style={styles.popper}
-        className={classnames('c-popover-modal', {
+        className={cn('c-popover-modal', {
           'c-popover-modal--active': isPopoverOpen,
           [addClass ?? ""]: addClass
         })}

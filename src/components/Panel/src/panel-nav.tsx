@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useMemo } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { usePanelContext } from './panel-contex'
 import { ArrowLeft, ArrowRight } from './panel-icons'
@@ -239,7 +239,7 @@ export const NavSection: React.FC<NavSectionProps> = ({
         role='tablist'
         aria-labelledby='section-list-navigation'
         aria-orientation="horizontal"
-        className={classnames('c-navigation', { [addClass ?? ""]: addClass })}
+        className={cn('c-navigation', addClass)}
       >
         {
           items.map(({ section, type, selected, ...others }, index) => (

@@ -2,11 +2,12 @@ import { useEffect, useRef } from "react";
 
 import "wicg-inert";
 
+import { Portal } from "@components";
+
 import { ModalCloseButton } from "./modal-close-button";
 import { ModalContent } from "./modal-content";
 import { ModalProvider } from "./modal-context";
 import { ModalOverlay } from "./modal-overlay";
-import { Portal } from "../../Portal";
 import type { ModalProps, ModalSubModules } from "../types/types";
 
 const Modal: React.FC<ModalProps> & ModalSubModules = ({

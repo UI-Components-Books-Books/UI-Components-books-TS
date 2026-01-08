@@ -1,7 +1,5 @@
+import { Button,  Toggletip } from "@components";
 import type { Meta, StoryObj } from "@storybook/react";
-
-import { Button } from "../../Button";
-import { Toggletip } from "../src/toggletip";
 
 const meta: Meta<typeof Toggletip> = {
   title: "Toggletip",

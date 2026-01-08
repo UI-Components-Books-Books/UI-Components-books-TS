@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useId, useMemo } from 'react'
 
-import classnames from 'classnames'
+import { cn } from '@utils/cn'
 
 import { usePanelContext } from './panel-contex'
 import type { SectionProps } from '../types/types'
@@ -60,7 +60,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
         aria-hidden={!isSelected}
         data-value={uid}
         aria-labelledby={`section-${uid}`}
-        className={classnames('c-section', { [addClass ?? ""]: addClass })}
+        className={cn('c-section', addClass)}
         {...(type === 'carrousel' && {
           'aria-roledescription': 'Sección'
         })}
