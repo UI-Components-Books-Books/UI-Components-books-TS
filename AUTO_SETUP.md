@@ -2,10 +2,36 @@
 
 Este proyecto usa [auto](https://intuit.github.io/auto/) para gestionar versiones, changelog y releases de forma automatizada.
 
+## ⚠️ Configuración Inicial Requerida
+
+Antes de usar `auto`, necesitas configurar tu token de GitHub:
+
+### 1. Crear Token de GitHub
+1. Ve a https://github.com/settings/tokens/new
+2. Dale un nombre: `auto-release-token`
+3. Selecciona permisos: **repo** (todos los scopes)
+4. Genera el token y cópialo
+
+### 2. Configurar Variables de Entorno
+```bash
+# Copia el archivo de ejemplo
+cp .env.example .env
+```
+
+Edita `.env` y agrega tu token:
+```
+GITHUB_TOKEN=ghp_tu_token_aqui
+NPM_TOKEN=tu_npm_token_aqui  # Solo si vas a publicar
+```
+
+### 3. Verificar Configuración
+```bash
+npm run version  # Debería funcionar sin errores
+```
+
 ## Plugins Instalados
 
 - **npm**: Publica automáticamente a npm
-- **conventional-commits**: Genera changelog basado en commits convencionales
 - **released**: Marca PRs y issues como released
 - **first-time-contributor**: Agradece a nuevos contribuidores
 
@@ -63,26 +89,20 @@ Cuando crees un PR, añade la label apropiada según el tipo de cambio:
 
 ### 3. Release
 
-El release se puede hacer de dos formas:
+Usa el script de release que incluye build:
 
-#### Opción A: Automático con shipit
-```bash
-npm run shipit
-```
-
-Esto:
-1. Calcula la nueva versión
-2. Actualiza el CHANGELOG.md
-3. Hace commit y tag
-4. Publica a npm
-5. Crea release en GitHub
-
-#### Opción B: Manual (recomendado para CI/CD)
 ```bash
 npm run release
 ```
 
-Usa el script personalizado `./scripts/release.sh`
+Este script:
+1. Compila el proyecto (`npm run build`)
+2. Ejecuta `./scripts/release.sh` que:
+   - Calcula la nueva versión con `auto version`
+   - Genera el CHANGELOG con `auto changelog`
+   - Hace commit y tag
+   - Publica a npm
+   - Crea release en GitHub con `auto release`
 
 ## Configuración CI/CD
 
@@ -136,14 +156,23 @@ auto create-labels
 
 ## Troubleshooting
 
-### Error: "No token found"
-Asegúrate de tener configurado `GITHUB_TOKEN` en las variables de entorno.
+### Error: "Received 404!" o "No token found"
+**Solución**: Crea el archivo `.env` con tu `GITHUB_TOKEN`:
+```bash
+cp .env.example .env
+# Edita .env y agrega tu token de GitHub
+```
 
 ### Error: "Cannot publish"
-Verifica que `NPM_TOKEN` esté configurado y que tengas permisos de publicación.
+Verifica que `NPM_TOKEN` esté configurado en `.env` y que tengas permisos de publicación.
+
+### Error: Repositorio no encontrado
+Verifica que el `owner` y `repo` en `.autorc` coincidan con tu repositorio de GitHub.
 
 ### No se genera versión
-Verifica que tus PRs tengan las labels correctas y que los commits sigan el formato convencional.
+El versionado se basa en las **labels de GitHub** en los commits/PRs. Asegúrate de:
+- Usar labels como `patch`, `minor`, `major` en tus PRs
+- O hacer push directo a main (se detectará como patch por defecto)
 
 ## Más Información
 
