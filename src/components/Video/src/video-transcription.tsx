@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
 import { formatTime } from "../../../utils/converterTime";
@@ -60,13 +60,19 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
   }, [transcript, currentTime]);
 
   return (
-    <AnimatePresence>
+    <>
       {activeVideoTranscription && (
-        <motion.div
+        <div
+          ref={(el) => {
+            if (el) {
+              gsap.fromTo(
+                el,
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+              );
+            }
+          }}
           className="video-player__transcription"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <div className="video-player__transcription-header">
             <p>Transcripción</p>
@@ -117,8 +123,8 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
               </li>
             ))}
           </ul>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 };

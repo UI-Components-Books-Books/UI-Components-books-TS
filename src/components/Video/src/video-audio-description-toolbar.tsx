@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
 import {
@@ -126,18 +126,23 @@ export const VideoAudioDescriptionToolbar = () => {
   }, [showAD, refElement]);
 
   return (
-    <AnimatePresence>
+    <>
       {showAD && (
-        <motion.div
-          ref={refElement}
+        <div
+          ref={(el) => {
+            if (el && refElement.current !== el) {
+              refElement.current = el as HTMLDivElement;
+              gsap.fromTo(
+                el,
+                { opacity: 0, y: -20 },
+                { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+              );
+            }
+          }}
           tabIndex={-1}
           aria-label="Controles del audio descriptivo"
           className="video-audio-description u-flow"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
           onKeyDown={handleToolbarKeyDown}
-          transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <div
             className="video-audio-description__overlay"
@@ -244,9 +249,9 @@ export const VideoAudioDescriptionToolbar = () => {
               </Icon>
             </button>
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 };
 

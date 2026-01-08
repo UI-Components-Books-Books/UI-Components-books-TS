@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 
 import classNames from 'classnames';
-import { motion } from 'framer-motion';
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context"
 import { Icon } from "../../Icon"
@@ -39,15 +38,15 @@ const ToogleMutedButton = () => {
         >
             <Icon>
                 <svg xmlns='http://www.w3.org/2000/svg' height='48' width='48' viewBox='0 -3 24 30'>
-                    <motion.path
+                    <path
                         d="M16 21c3.527-1.547 5.999-4.909 5.999-9S19.527 4.547 16 3v2c2.387 1.386 3.999 4.047 3.999 7S18.387 17.614 16 19v2z"
-                        animate={{ opacity: volume <= 0.5 ? 0 : 1 }}
+                        style={{ opacity: volume <= 0.5 ? 0 : 1, transition: 'opacity 0.2s' }}
                     />
-                    <motion.path
+                    <path
                         d="M16 7v10c1.225-1.1 2-3.229 2-5s-.775-3.9-2-5z"
-                        animate={{ opacity: volume <= 0.3 ? 0 : 1 }}
+                        style={{ opacity: volume <= 0.3 ? 0 : 1, transition: 'opacity 0.2s' }}
                     />
-                    <motion.path d="M4 17h2.697L14 21.868V2.132L6.697 7H4c-1.103 0-2 .897-2 2v6c0 1.103.897 2 2 2z" />
+                    <path d="M4 17h2.697L14 21.868V2.132L6.697 7H4c-1.103 0-2 .897-2 2v6c0 1.103.897 2 2 2z" />
                 </svg>
             </Icon>
         </button>
