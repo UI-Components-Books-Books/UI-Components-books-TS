@@ -1,6 +1,7 @@
 {
   "name": "books-ui",
   "version": "0.1.39",
+  "description": "Modern React component library with TypeScript - 40+ accessible, customizable UI components",
   "license": "MIT",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -33,6 +34,9 @@
     "component-library",
     "ui-library",
     "react-components"
+  ],
+  "sideEffects": [
+    "*.css"
   ],
   "scripts": {
     "dev": "vite",
