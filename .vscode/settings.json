@@ -11,9 +11,20 @@
     "package-lock.json": true,
     "**setupTest.js": true,
     "**/commitlint.config.js": true,
+    "**/dist": true,
+    "**/storybook-static": true,
+    "**/.vite": true,
+    "**/.husky": true,
+    "**/debug-storybook.log": true,
+    "**/.npmignore": true,
+    "**/tsconfig.node.json": true,
+    "**/.prettierrc": true,
+    "**/.eslintrc.cjs": true,
+    "**/AUTO_SETUP.md": true,
+    ".autorc": true,
+    "**/scripts": true
   },
   "workbench.colorCustomizations": {
-		"titleBar.activeBackground": "#0b5088",
     "titleBar.inactiveBackground": "#083b64"
-	},
+  }
 }
