@@ -1,3 +1,17 @@
+# v0.1.36 (Thu Jan 08 2026)
+
+#### ⚠️ Pushed to `main`
+
+- fix: update owner field in .autorc to match the correct repository (coor_frontend@booksandbooksdigital.com.co)
+- fix: update repository name in .autorc and add example environment variables in .env.example (coor_frontend@booksandbooksdigital.com.co)
+- feat: add auto versioning and changelog scripts to package.json (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.35 (Wed Oct 08 2025)
 
 #### ⚠️ Pushed to `main`
