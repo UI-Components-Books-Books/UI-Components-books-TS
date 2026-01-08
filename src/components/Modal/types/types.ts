@@ -28,15 +28,9 @@ export interface ModalProps {
 
     /**
      * Referencia al elemento que debe recibir el foco al cerrar el modal.
+     * Si no se especifica, el focus volverá al elemento que lo tenía antes de abrir el modal.
      */
-    finalFocusRef: string | string[];
-
-  
-    /**
-     * Indica si el modal tiene un contenido personalizado.
-     * Si es verdadero, el modal no tendrá un contenido por defecto.
-     */
-    hasCustomModalContentComponent?: boolean;
+    finalFocusRef?: string | string[];
 }
 
 
@@ -87,9 +81,9 @@ export type ModalContextType = {
     onClose: () => void;
 
     /**
-     * Referencia al elemento del modal.
+     * Referencia al elemento del overlay del modal (opcional).
      */
-    refModal: React.Ref<HTMLDivElement> | undefined;
+    refOverlay?: React.Ref<HTMLDivElement> | undefined;
 }
 
 
