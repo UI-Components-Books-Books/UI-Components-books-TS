@@ -4,8 +4,9 @@ module.exports = {
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react-hooks/recommended', 'plugin:storybook/recommended'],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh', 'eslint-plugin-import'],
+  plugins: ['react-refresh', 'eslint-plugin-import', 'unused-imports', 'jsx-a11y'],
   rules: {
+    "@typescript-eslint/no-explicit-any": "off",
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
@@ -33,7 +34,8 @@ module.exports = {
           "caseInsensitive": true // Ordena alfabéticamente las importaciones dentro de cada grupo.
         }
       }
-    ]
-    
+    ],
+    "unused-imports/no-unused-imports": "warn",
+    'jsx-a11y/alt-text': 'warn',
   },
 }
