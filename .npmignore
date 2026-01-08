@@ -1,0 +1,54 @@
+# Source files
+src/
+public/
+.storybook/
+
+# Development files
+*.stories.tsx
+*.stories.ts
+*.stories.jsx
+*.stories.js
+*.test.tsx
+*.test.ts
+*.spec.tsx
+*.spec.ts
+
+# Config files
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+.eslintrc.cjs
+commitlint.config.js
+
+# Build artifacts
+node_modules/
+.vite/
+storybook-static/
+
+# Environment and logs
+.env
+.env.*
+*.log
+debug-storybook.log
+
+# Git
+.git/
+.gitignore
+.github/
+
+# CI/CD
+scripts/
+
+# Documentation source (keep CHANGELOG.md and README.md)
+AUTO_SETUP.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Misc
+.DS_Store
+Thumbs.db
