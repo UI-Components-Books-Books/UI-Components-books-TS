@@ -1,7 +1,7 @@
 import { createElement, isValidElement, useRef } from 'react'
 
 import classnames from 'classnames'
-import { motion } from 'framer-motion';
+import gsap from 'gsap';
 import { usePopper } from 'react-popper'
 
 import { useTourContext } from './tour-context'
@@ -91,14 +91,20 @@ export const TourElement: React.FC<TourElementProps> = ({
         className='c-layout'
         data-class='c-layout'
       />
-      <motion.div
-        ref={refContainer}
+      <div
+        ref={(el) => {
+          if (el && refContainer.current !== el) {
+            refContainer.current = el as HTMLDivElement;
+            gsap.fromTo(
+              el,
+              { opacity: 0 },
+              { opacity: 1, duration: 1, ease: 'power2.out' }
+            );
+          }
+        }}
         id={`unique-id-tour-element-${id}`}
         style={styles.popper}
         className={classnames('c-tour-content', { [addClass ?? ""]: addClass })}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
         {...ariaAttributes}
         {...attributes.popper}
       >
@@ -163,7 +169,7 @@ export const TourElement: React.FC<TourElementProps> = ({
             </Icon>
           </Button>
         </div>
-      </motion.div>
+      </div>
     </>
   )
 }

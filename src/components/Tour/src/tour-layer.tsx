@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 
 import classnames from 'classnames'
-import { motion } from 'framer-motion';
+import gsap from 'gsap';
 
 import { useTourContext } from './tour-context'
 
@@ -83,16 +83,22 @@ export const TourHelpLayer = ({ addClass }: { addClass?: string }) => {
   }, [target, isResizing])
 
   return (
-    <motion.div
+    <div
+      ref={(el) => {
+        if (el) {
+          gsap.fromTo(
+            el,
+            { opacity: 0 },
+            { opacity: 1, duration: 1, ease: 'power2.out' }
+          );
+        }
+      }}
       className={classnames('c-tour-help', { [addClass ?? ""]: addClass })}
       style={getPosition}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
     >
       <p className='c-tour-number' data-class='c-tour-number'>
         {id}
       </p>
-    </motion.div>
+    </div>
   )
 }
