@@ -35,13 +35,13 @@ Books UI es una biblioteca completa de componentes de interfaz de usuario diseñ
 
 ```bash
 # Usando npm
-npm install books-ui @popperjs/core
+npm install books-ui @popperjs/core gsap
 
 # Usando yarn
-yarn add books-ui @popperjs/core
+yarn add books-ui @popperjs/core gsap
 
 # Usando pnpm
-pnpm add books-ui @popperjs/core
+pnpm add books-ui @popperjs/core gsap
 ```
 
 ### Peer Dependencies
@@ -156,5 +156,5 @@ npm run build
 ## ❤️ Hecho con el 💙 en Books&Books  
 
 Nos enorgullece desarrollar este proyecto como parte del compromiso de **Books&Books** con la educación y la innovación tecnológica. 🌟 
- 
+
 Gracias por visitar nuestro proyecto. ¡Juntos podemos hacer del aprendizaje una experiencia increíble! 🥳✨

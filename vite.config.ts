@@ -38,7 +38,7 @@ export default defineConfig({
     rollupOptions: {
       // Asegúrate de externalizar las dependencias que no deberían estar empaquetadas
       // en tu librería
-      external: ['react', 'react-dom', 'framer-motion'],
+      external: ['react', 'react-dom', 'gsap', '@popperjs/core'],
       output: {
         // Proporciona variables globales para usar en la compilación UMD
         // para dependencias externalizadas
