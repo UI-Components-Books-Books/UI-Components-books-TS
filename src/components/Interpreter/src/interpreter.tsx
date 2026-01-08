@@ -1,7 +1,7 @@
 import { useState, useRef, useId, useEffect } from "react";
 
 import classNames from "classnames";
-import { AnimatePresence, motion } from "framer-motion";
+import gsap from "gsap";
 import Draggable from "react-draggable";
 import type { DraggableEventHandler } from "react-draggable";
 
@@ -220,15 +220,20 @@ const Video: React.FC<InterpreterVideoProps> = ({
           className="c-interpreter__zoom"
           style={{ "--scale": zoomIn } as React.CSSProperties}
         >
-          <AnimatePresence initial={false} onExitComplete={resetDragPosition}>
-            {!show ? (
-              <motion.div
-                key={uid}
-                className="c-interpreter"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0 }}
-              >
+          {!show ? (
+            <div
+              key={uid}
+              ref={(el) => {
+                if (el) {
+                  gsap.fromTo(
+                    el,
+                    { opacity: 0, scale: 0 },
+                    { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.2)' }
+                  );
+                }
+              }}
+              className="c-interpreter"
+            >
                 <ul role="list" className="c-interpreter__list">
                   {/*  Show the current video */}
                   <li
@@ -329,9 +334,8 @@ const Video: React.FC<InterpreterVideoProps> = ({
                   URLs={URLs}
                   {...props}
                 />
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+            </div>
+          ) : null}
         </div>
       </div>
     </Draggable>
