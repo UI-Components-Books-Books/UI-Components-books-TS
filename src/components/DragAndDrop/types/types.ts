@@ -1,15 +1,8 @@
-import type { Announcements } from '@dnd-kit/core'
+
 
 import { ContainerDrag } from '../src/container-drag'
 import { Draggable } from '../src/drag'
 import { Droppable } from '../src/drop'
-
-/**
- * Tipo que representa los modificadores permitidos por el componente.
- * 
- * @typedef {'restrictToVerticalAxis' | 'restrictToHorizontalAxis'} ModifiersType
- */
-export type ModifiersType = 'restrictToVerticalAxis' | 'restrictToHorizontalAxis';
 
 
 /**
@@ -56,11 +49,6 @@ export interface DroppableProps {
      * Etiqueta del droppable.
      */
     label: string;
-
-    /**
-     * Tipo del droppable.
-     */
-    __TYPE?: 'droppable';
 }
 
 
@@ -72,12 +60,12 @@ type AttributeDragType = {
      * Rol ARIA del elemento.
      */
     role: string;
-    
+
     /**
      * Descripción del rol ARIA.
      */
     roleDescription: string;
-    
+
     /**
      * Índice de tabulación del elemento.
      */
@@ -120,9 +108,35 @@ export interface DraggableProps {
     attribute?: AttributeDragType;
 
     /**
-     * Tipo del draggable.
+     * Función para manejar el movimiento del elemento.
      */
-    __TYPE?: 'draggable';
+    handleDrag?: (dragId: string, targetDropId: string) => void;
+
+    /**
+     * Deshabilita la funcionalidad de arrastre.
+     */
+    dragDisabled?: boolean;
+}
+
+
+/**
+ * Propiedades para el componente DragMoveButton.
+ */
+export interface DragMoveButtonProps {
+    /**
+     * Función para manejar el movimiento del elemento.
+     */
+    handleMove: (targetDropId: string) => void;
+
+    /**
+     * Contenido del botón.
+     */
+    children: React.ReactNode;
+
+    /**
+     * Etiqueta descriptiva del elemento arrastrable.
+     */
+    label: string;
 }
 
 
@@ -156,24 +170,9 @@ export interface DragAndDropProps {
     validate?: boolean;
 
     /**
-     * Propiedad de validación.
-     */
-    propValidate?: string;
-
-    /**
-     * Modificadores del DragAndDrop.
-     */
-    modifiers?: ModifiersType;
-
-    /**
-     * Instrucciones para lectores de pantalla.
-     */
-    screenReaderInstructions?: string;
-
-    /**
      * Anuncios ARIA.
      */
-    announcements?: Announcements;
+    announcements?: () => void;
 
     /**
      * Estado por defecto del DragAndDrop.
@@ -223,11 +222,6 @@ export type DragAndDropContextType = {
     listId: string[];
 
     /**
-     * Propiedad de validación.
-     */
-    propValidate: string;
-
-    /**
      * Indica si la validación está activa.
      */
     validate: boolean;
@@ -241,8 +235,23 @@ export type DragAndDropContextType = {
      * Función para reiniciar el DragAndDrop.
      */
     handleResetDnd: () => void;
+ 
+    /**
+     * Lista de destinos de drop disponibles.
+     */
+    availableDropTargets: DropTarget[];
+
+    /**
+     * Función para manejar el movimiento de un elemento arrastrable.
+     */
+    handleDragMove?: (dragId: string, targetDropId: string) => void;
 }
 
+
+interface DropTarget {
+    id: string;
+    label?: string;
+}
 
 /**
  * Propiedades para el componente ContainerDrag.
@@ -272,10 +281,5 @@ export interface ContainerDragProps {
      * Etiqueta del contenedor.
      */
     label: string;
-
-    /**
-     * Tipo del contenedor.
-     */
-    __TYPE?: 'general-draggable';
 }
 

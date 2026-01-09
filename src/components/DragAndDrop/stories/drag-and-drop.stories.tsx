@@ -33,7 +33,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          "El componente `DragAndDrop` nos permite usar la HTML Drag and Drop API de una forma más sencilla e intuitiva. Construido a partir del paquete `@dnd-kit`, este componente provee diferentes funcionalidades, tales como la validación de los elementos arrastrables y todos los mecanismos necesarios para que sea accesible para personas con discapacidades. Para su implementación, solo necesitamos importar el componente `<DragAndDrop/>`. Este incluye los componentes `<DragAndDrop.Container/>`, `<DragAndDrop.Drag/>` y `<DragAndDrop.Drop/>`, necesarios para su uso. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+          "El componente `DragAndDrop` permite implementar funcionalidad de arrastrar y soltar de manera sencilla e intuitiva. Construido sobre `@atlaskit/pragmatic-drag-and-drop`, proporciona validación de elementos arrastrables, navegación por teclado con menú contextual, y mecanismos de accesibilidad completos. Para su implementación, importa el componente `<DragAndDrop/>` que incluye los subcomponentes: `<DragAndDrop.Container/>` (contenedor base), `<DragAndDrop.Drag/>` (elemento arrastrable) y `<DragAndDrop.Drop/>` (zona de destino). Puedes arrastrar elementos con el mouse o usar el menú contextual (tres puntos) para moverlos por teclado.",
       },
     },
   },
@@ -169,7 +169,7 @@ export const ResetDrag: Story = {
     docs: {
       description: {
         story:
-          "Continuando con el tema de validación, para reiniciar tu `<DragAndDrop/>`necesitas usar la función `handleResetDnd` proveniente del custom hook `useDragAndDropContext`.",
+          "Para reiniciar el estado del componente y devolver todos los elementos a su posición inicial, utiliza la función `handleResetDnd` del custom hook `useDragAndDropContext`. Este hook debe ser usado dentro de un componente que sea hijo de `<DragAndDrop/>`. El reset también limpia todas las validaciones activas.",
       },
     },
   },
@@ -221,37 +221,57 @@ export const AccesibilityDrag: Story = {
     docs: {
       description: {
         story:
-          "Con respecto al tema de accesibilidad (a11y), puedes utilizar las propiedades `screenReaderInstructions` y `announcement`. Cuando enfocamos un elemento `<DragAndDrop.Drag/>` utilizando un lector de pantalla, la propiedad `screenReaderInstructions` será leída por este. En otras palabras, esta propiedad se encarga de explicar al usuario con discapacidad cómo usar el componente a través del teclado. Por otro lado, cuando interactuamos con un `<DragAndDrop.Drag/>`, el lector de pantalla verbalizará los diferentes estados, tales como: `onDragStart` (cuando se agarra el elemento), `onDragOver` (cuando se mueve), `onDragEnd` (cuando se suelta) y `onDragCancel` (cuando se cancela el arrastre).",
+          "El componente incluye características de accesibilidad integradas: **Navegación por teclado**: Usa Tab para navegar entre elementos arrastrables y Enter/Espacio para abrir el menú contextual de movimiento. **ARIA**: Todos los elementos incluyen roles y etiquetas ARIA apropiadas (buttons tienen `aria-label`, contenedores tienen `role='region'`, menús tienen `role='menu'`). **Anuncios**: Usa la prop `announcements` (una función que se ejecuta después de mover un elemento) para proporcionar feedback auditivo personalizado a lectores de pantalla. El menú contextual permite mover elementos sin necesidad del mouse.",
       },
     },
   },
   args: {
-    ...Default.args,
-    screenReaderInstructions:
-      "He cambiado la instrucción de como se debe usar el DragAndDrop",
-    announcements: {
-      onDragStart({ active }) {
-        return `Se ha agarrado el elemento arrastrable ${active.data.current?.label}.`;
-      },
-      onDragOver({ active, over }) {
-        if (over) {
-          return `El elemento arrastrable ${active.data.current?.label} se movió sobre la área desplegable ${over.data.current?.label}.`;
-        }
-
-        return `El elemento arrastrable ${active.data.current?.label} ya no está sobre una área desplegable.`;
-      },
-      onDragEnd({ active, over }) {
-        if (over) {
-          return `El elemento arrastrable ${active.data.current?.label} se soltó sobre la área desplegable ${over.data.current?.label}.`;
-        }
-
-        return `El elemento arrastrable item ${active.data.current?.label} se eliminó.`;
-      },
-      onDragCancel({ active }) {
-        return `Se cancelo el arrastre. El elemento arrastrable ${active.data.current?.label} se eliminó.`;
-      },
+    id: "accessibility-drag",
+    announcements: () => {
+      // Esta función se ejecuta después de cada movimiento
+      // Aquí podrías activar un anuncio de lector de pantalla
+      console.log('Elemento movido');
     },
+    children: (
+      <Row justify-content="center" align-items="center">
+        <Col xs="11" mm="10" md="9" lg="5" hd="4">
+          <DragAndDrop.Container
+            id="general-1"
+            label="Contenedor principal con elementos arrastrables"
+            addClass="drop-story"
+          >
+            <DragAndDrop.Drag
+              id="A"
+              label="Elemento A"
+              addClass="drag-story"
+              dragging="drag-story--active"
+            >
+              Elemento A (usa Tab y Enter para el menú)
+            </DragAndDrop.Drag>
+            <DragAndDrop.Drag
+              id="B"
+              label="Elemento B"
+              addClass="drag-story"
+              dragging="drag-story--active"
+            >
+              Elemento B
+            </DragAndDrop.Drag>
+          </DragAndDrop.Container>
+        </Col>
+        <Col xs="11" mm="10" md="9" lg="5" hd="4">
+          <DragAndDrop.Drop
+            id="droppable"
+            validate={["A"]}
+            label="Zona de destino para elemento A"
+            addClass="drop-story"
+          >
+            <p>Suelta el elemento aquí</p>
+          </DragAndDrop.Drop>
+        </Col>
+      </Row>
+    ),
   },
+  render: (args) => <DragAndDrop {...args}></DragAndDrop>,
 };
 
 export const DragStyling: Story = {
@@ -259,13 +279,12 @@ export const DragStyling: Story = {
     docs: {
       description: {
         story:
-          "Si necesitas personalizar completamente la apariencia del componente, puedes pasarle tus clases personalizadas de CSS a través de la propiedad `addClass`, la cual es aceptada por los componentes `<DragAndDrop.Container/>`, `<DragAndDrop.Drag/>` y `<DragAndDrop.Drop/>`. En cuanto a la validación, puedes utilizar el valor de la propiedad `propValidate`. Durante la validación, cada elemento `<DragAndDrop.Drag/>` recibirá un valor `true` o `false`. Un valor `true` indica que el `<DragAndDrop.Drag/>` está en el `<DragAndDrop.Drop/>` correcto, mientras que `false` significa lo contrario. Por defecto, `propValidate` tiene el valor de `'data-validation'`, pero puedes modificarlo según tus necesidades.",
+          "Personaliza la apariencia del componente usando la prop `addClass` disponible en `<DragAndDrop.Container/>`, `<DragAndDrop.Drag/>` y `<DragAndDrop.Drop/>`. **Estilos de validación**: Durante la validación, cada `<DragAndDrop.Drag/>` recibe el atributo `data-validation` con valor `true` (está en la posición correcta) o `false` (posición incorrecta). Usa este atributo en tus selectores CSS para aplicar estilos dinámicos: `.drag-story[data-validation='true']` o `.drag-story[data-validation='false']`.",
       },
     },
   },
   args: {
-    ...Default.args,
-    propValidate: "data-drag-validation-ome",
+    id: "styling-drag",
     children: (
       <Row justify-content="center" align-items="center">
         <Col xs="11" mm="10" md="9" lg="5" hd="4">
@@ -296,5 +315,137 @@ export const DragStyling: Story = {
         </Col>
       </Row>
     ),
+  },
+};
+
+export const MultipleDragsAndContextMenu: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "El componente soporta múltiples elementos en un mismo contenedor con la prop `multipleDrags={true}`. **Menú contextual**: Haz clic en el ícono de tres puntos (⋮) o usa el teclado (Tab + Enter) para abrir un menú con opciones de movimiento. Puedes mover elementos a otros contenedores o reordenarlos dentro del mismo contenedor usando las opciones: `top` (al inicio), `up` (una posición arriba), `down` (una posición abajo), `bottom` (al final). Esta funcionalidad mejora significativamente la accesibilidad del componente.",
+      },
+    },
+  },
+  args: {
+    id: "multiple-drags",
+    multipleDrags: true,
+    children: (
+      <Row justify-content="center" align-items="center">
+        <Col xs="11" mm="10" md="9" lg="5" hd="4">
+          <DragAndDrop.Container
+            id="general-1"
+            label="Contenedor con múltiples elementos"
+            addClass="drop-story"
+          >
+            <DragAndDrop.Drag
+              id="A"
+              label="Elemento A"
+              addClass="drag-story"
+            >
+              Elemento A - Haz clic en ⋮
+            </DragAndDrop.Drag>
+            <DragAndDrop.Drag
+              id="B"
+              label="Elemento B"
+              addClass="drag-story"
+            >
+              Elemento B
+            </DragAndDrop.Drag>
+            <DragAndDrop.Drag
+              id="C"
+              label="Elemento C"
+              addClass="drag-story"
+            >
+              Elemento C
+            </DragAndDrop.Drag>
+          </DragAndDrop.Container>
+        </Col>
+        <Col xs="11" mm="10" md="9" lg="5" hd="4">
+          <DragAndDrop.Drop
+            id="droppable"
+            validate={["A", "B", "C"]}
+            label="Zona de destino (acepta múltiples)"
+            addClass="drop-story"
+          >
+            <p>Suelta múltiples elementos aquí</p>
+          </DragAndDrop.Drop>
+        </Col>
+      </Row>
+    ),
+  },
+  render: (args) => <DragAndDrop {...args}></DragAndDrop>,
+};
+
+export const StateManagement: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Controla el estado del DragAndDrop externamente usando `defaultState`, `defaultValidate` y `onState`. **defaultState**: Define la posición inicial de los elementos (objeto donde las keys son IDs de contenedores y los valores son arrays de IDs de draggables). **defaultValidate**: Array de IDs de elementos validados inicialmente. **onState**: Callback que se ejecuta cada vez que el estado cambia, recibe `{id, state, validateId}` permitiéndote sincronizar con tu estado de aplicación.",
+      },
+    },
+  },
+  render: function Render() {
+    const [state, setState] = useState<Record<string, string[]>>({
+      "general-1": ["A", "B"],
+      "droppable": []
+    });
+    const [validatedIds, setValidatedIds] = useState<string[]>([]);
+
+    return (
+      <>
+        <div style={{ marginBottom: "1rem", padding: "1rem", background: "#f5f5f5" }}>
+          <h4>Estado actual:</h4>
+          <pre>{JSON.stringify(state, null, 2)}</pre>
+          <h4>Elementos validados:</h4>
+          <pre>{JSON.stringify(validatedIds, null, 2)}</pre>
+        </div>
+        <DragAndDrop
+          id="state-management"
+          defaultState={state}
+          defaultValidate={validatedIds}
+          onState={({ state: newState, validateId }) => {
+            setState(newState);
+            setValidatedIds(validateId);
+          }}
+        >
+          <Row justify-content="center" align-items="center">
+            <Col xs="11" mm="10" md="9" lg="5" hd="4">
+              <DragAndDrop.Container
+                id="general-1"
+                label="container"
+                addClass="drop-story"
+              >
+                <DragAndDrop.Drag
+                  id="A"
+                  label="Draggable A"
+                  addClass="drag-story"
+                >
+                  Draggable A
+                </DragAndDrop.Drag>
+                <DragAndDrop.Drag
+                  id="B"
+                  label="Draggable B"
+                  addClass="drag-story"
+                >
+                  Draggable B
+                </DragAndDrop.Drag>
+              </DragAndDrop.Container>
+            </Col>
+            <Col xs="11" mm="10" md="9" lg="5" hd="4">
+              <DragAndDrop.Drop
+                id="droppable"
+                validate={["A", "B"]}
+                label="droppable"
+                addClass="drop-story"
+              >
+                <p>Droppable</p>
+              </DragAndDrop.Drop>
+            </Col>
+          </Row>
+        </DragAndDrop>
+      </>
+    );
   },
 };

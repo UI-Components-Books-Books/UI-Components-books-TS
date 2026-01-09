@@ -1,6 +1,6 @@
 :where(.c-droppable) {
-    padding: 1rem;
     box-shadow: inset var(--ui-color-gray-500) 0 0 0 1px;
+    padding: 1rem;
     transition: box-shadow 250ms ease;
 }
 
@@ -10,4 +10,28 @@
 
 .c-draggable {
     cursor: grab;
+}
+
+:where(.c-draggable-content) {
+    justify-self: start;
+    display: grid;
+    align-items: center;
+    gap: 0.5rem;
+    grid-template-columns: auto 1fr;
+    width: 100%;
+    height: 100%;
+}
+
+:where(.c-draggable-menu button) {
+    user-select: none;
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    transition: background-color 0.2s;
+    background: none;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    color: #fff;
+    text-align: left;
 }

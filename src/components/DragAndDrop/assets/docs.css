@@ -1,4 +1,5 @@
 
+/* Elemento arrastrable (Drag) */
 .drag-story {
     --outline-color: var(--ui-color-gray-800);
     
@@ -14,49 +15,215 @@
     background-color: var(--ui-color-gray-800);
     color: #fff;
     border-radius: 5px;
-    box-shadow: var(--box-shadow);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
-    transition: box-shadow 300ms ease;
+    transition: box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease;
     font-weight: bold;
+    cursor: grab;
+    position: relative;
+    user-select: none;
 }
 
+.drag-story:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.drag-story:focus-within {
+    outline: 2px solid #0066ff;
+    outline-offset: 2px;
+}
+
+/* Estado cuando se está arrastrando */
+.drag-story--active,
+.drag-story:active {
+    cursor: grabbing;
+    box-shadow: -1px 0 15px 0 rgba(34, 33, 81, 0.01),
+                0px 15px 15px 0 rgba(34, 33, 81, 0.25);
+    z-index: 1000;
+    opacity: 0.9;
+    transform: rotate(2deg) scale(1.05);
+}
+
+/* Estados de validación */
 .drag-story[data-validation="true"] {
     background-color: #0ab454;
+    box-shadow: 0 4px 12px rgba(10, 180, 84, 0.3);
 }
 
 .drag-story[data-validation="false"] {
     background-color: #b91818;
+    box-shadow: 0 4px 12px rgba(185, 24, 24, 0.3);
 }
 
-.drag-story--active {
-    --box-shadow: -1px 0 15px 0 rgba(34, 33, 81, 0.01),
-    0px 15px 15px 0 rgba(34, 33, 81, 0.25);
-    z-index: 1;
+.drag-story[data-validation="true"]:hover {
+    background-color: #089643;
 }
 
+.drag-story[data-validation="false"]:hover {
+    background-color: #9e1414;
+}
+
+/* Botón del menú contextual dentro del drag */
+.drag-story button[data-type="dnd-drag-move-button"] {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 150ms ease;
+    display: flex;
+    align-items: center;
+    color: currentColor;
+    justify-content: center;
+}
+
+.drag-story button[data-type="dnd-drag-move-button"]:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.drag-story button[data-type="dnd-drag-move-button"]:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.drag-story button[data-type="dnd-drag-move-button"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.drag-story button[data-type="dnd-drag-move-button"] svg {
+    fill: currentColor;
+}
+
+/* Contenedor Droppable */
 .drop-story {
     margin: 2rem 0;
     width: 100%;
-    height: 100px;
+    min-height: 120px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: .8rem;
     text-align: center;
+    padding: 1rem;
     border-radius: 10px;
     box-sizing: border-box;
+    background-color: #f8f9fa;
     box-shadow: inset rgba(201, 211, 219, 0.5) 0 0 0 2px,
-      rgba(0, 0, 0, 0) 0 0 0 1px, rgba(201, 211, 219, 0.25) 20px 14px 24px;
-    transition: box-shadow 250ms ease;
-    z-index: -2;
+                rgba(0, 0, 0, 0) 0 0 0 1px, 
+                rgba(201, 211, 219, 0.25) 0px 2px 8px;
+    transition: all 250ms ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.drop-story::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(0, 102, 255, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 250ms ease;
+    pointer-events: none;
+}
+
+.drop-story:hover::before {
+    opacity: 1;
+}
+
+/* Estado cuando se arrastra sobre el drop zone */
+.drop-story[data-drop-active="true"] {
+    background-color: #e3f2fd;
+    box-shadow: inset rgba(0, 102, 255, 0.5) 0 0 0 3px,
+                rgba(0, 102, 255, 0.3) 0px 8px 24px;
+    transform: scale(1.02);
 }
 
 .drop-story p {
     font-size: 1.2rem;
     font-weight: bold;
-    color: grey;
+    color: #6c757d;
+    margin: 0;
+    z-index: 1;
 }
 
+.drop-story:empty::after {
+    content: 'Suelta elementos aquí';
+    color: #adb5bd;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* Botón de acción (reset, validate, etc) */
 .button-story {
     margin-inline: auto;
+    margin-top: 1.5rem;
+    display: block;
+}
+
+/* Mejoras de accesibilidad */
+.c-draggable:focus-visible {
+    outline: 2px solid #0066ff;
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+.c-droppable:focus-visible {
+    outline: 2px solid #0066ff;
+    outline-offset: 4px;
+}
+
+/* Animación de entrada para elementos dinámicos */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.drag-story {
+    animation: fadeInScale 200ms ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .drag-story {
+        min-width: 100%;
+        padding: 0.75rem;
+    }
+    
+    .drop-story {
+        min-height: 100px;
+        margin: 1rem 0;
+    }
+    
+    .drop-story p {
+        font-size: 1rem;
+    }
+}
+
+/* Mejora del contraste en modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .drop-story {
+        background-color: #1a1a1a;
+        box-shadow: inset rgba(255, 255, 255, 0.1) 0 0 0 2px,
+                    rgba(255, 255, 255, 0.05) 0px 2px 8px;
+    }
+    
+    .drop-story p {
+        color: #adb5bd;
+    }
+    
+    .drag-story {
+        background-color: #2d3748;
+    }
 }

@@ -17,7 +17,10 @@ export const getChildrenByType = (children: React.ReactNode, type: string): Reac
         // Utilizamos esta validación para prevenir errores cuando son strings.
         if (!child.props) return;
 
-        if (child?.props?.__TYPE === type) {
+        // Verificamos tanto el _dndType del componente como el __TYPE en las props (retrocompatibilidad)
+        const componentType = (child.type as any)?._dndType || child.props.__TYPE;
+        
+        if (componentType === type) {
             result.push(child);
         }
 

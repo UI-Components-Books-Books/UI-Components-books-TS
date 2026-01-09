@@ -1,55 +1,64 @@
-import { useId } from 'react'
+import { forwardRef, useEffect, useRef } from "react";
 
-import { useDroppable } from '@dnd-kit/core'
-import { cn } from '@utils/cn'
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 
-import type { ContainerDragProps } from '../types/types'
+import { useDragAndDropContext } from "./drag-and-drop-context";
+import { DragAndDropTypes } from "../utils/const";
+import { cn } from "@/utils/cn";
 
-import './drag-and-drop.css'
-
-export const ContainerDrag: React.FC<ContainerDragProps> = ({
-  id,
-  children,
-  addClass,
-  over,
-  label = 'contendor inicial',
-  __TYPE,
-  ...props
-}) => {
-
-  const reactId = useId();
-  const uid = id || reactId;
-
-  /**
-   * Utilizamos el hook useDroppable
-   * para poder agregar la funcionalidad
-   * de "drop" al componente.
-   */
-  const { isOver, setNodeRef } = useDroppable({
-    id: uid,
-    data: {
-      label,
-      type: 'container'
-    }
-  })
-
-  return (
-    <div
-      id={uid}
-      ref={setNodeRef}
-      data-type-component={__TYPE}
-      className={cn(`c-droppable`, {
-        [over ?? '']: isOver,
-        [addClass ?? ""]: addClass
-      })}
-      {...props}
-    >
-      {children}
-    </div>
-  )
+interface ContainerDragProps {
+  id: string;
+  children: React.ReactNode;
+  addClass?: string;
+  label: string;
 }
 
-
-ContainerDrag.defaultProps = {
-  __TYPE: 'general-draggable',
+interface ContainerDragComponent
+  extends React.ForwardRefExoticComponent<
+    React.PropsWithoutRef<ContainerDragProps> & React.RefAttributes<HTMLDivElement>
+  > {
+  _dndType?: DragAndDropTypes;
 }
+
+export const ContainerDrag = forwardRef<HTMLDivElement, ContainerDragProps>(
+  ({ id, children, addClass, label, ...rest }, ref) => {
+    const { validate } = useDragAndDropContext();
+
+    const dropRef = useRef<HTMLDivElement>(null);
+    const localRef = ref || dropRef;
+
+    useEffect(() => {
+      const element = (localRef as React.RefObject<HTMLDivElement>).current;
+
+      if (!element) return;
+
+      // Configuramos el elemento como contenedor de drop
+      const cleanup = dropTargetForElements({
+        element,
+        canDrop: () => {
+          if (validate) return false;
+          return true;
+        },
+      });
+
+      return cleanup;
+    }, [id, validate, localRef]);
+
+    return (
+      <div
+        ref={localRef as React.RefObject<HTMLDivElement>}
+        data-drop-id={id}
+        data-type={DragAndDropTypes.CONTAINER}
+        role="region"
+        aria-label={label}
+        className={cn("c-droppable", addClass)}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  }
+) as ContainerDragComponent;
+
+ContainerDrag._dndType = DragAndDropTypes.CONTAINER;
+ContainerDrag.displayName = "ContainerDrag";
