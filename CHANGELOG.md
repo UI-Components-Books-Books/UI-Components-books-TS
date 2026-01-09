@@ -1,3 +1,44 @@
+# v0.1.40 (Fri Jan 09 2026)
+
+#### ⚠️ Pushed to `main`
+
+- fix: update dependency versions to remove caret (^) for consistency (coor_frontend@booksandbooksdigital.com.co)
+- fix: correct description of the component library to reflect accurate number of UI components (coor_frontend@booksandbooksdigital.com.co)
+- feat(drag-and-drop): implement drag move button and contextual menu for drag-and-drop functionality (coor_frontend@booksandbooksdigital.com.co)
+- feat: enhance documentation for various components with detailed descriptions and usage examples (coor_frontend@booksandbooksdigital.com.co)
+- feat: enhance VideoPlayer stories with detailed descriptions and examples (coor_frontend@booksandbooksdigital.com.co)
+- feat: add fade-in animation to TourElement on mount (coor_frontend@booksandbooksdigital.com.co)
+- feat: enhance Tour component stories with detailed descriptions and examples (coor_frontend@booksandbooksdigital.com.co)
+- feat: implement rendering logic and animations for video component (coor_frontend@booksandbooksdigital.com.co)
+- feat: enhance Interpreter stories with detailed descriptions and new examples (coor_frontend@booksandbooksdigital.com.co)
+- feat: enhance VideoAudioDescriptionToolbar with rendering logic and animations (coor_frontend@booksandbooksdigital.com.co)
+- fix: correct video source URL in Default story (coor_frontend@booksandbooksdigital.com.co)
+- chore: update package.json to improve project configuration (coor_frontend@booksandbooksdigital.com.co)
+- chore: update VSCode settings to improve file exclusion (coor_frontend@booksandbooksdigital.com.co)
+- feat: update package.json description and sideEffects field (coor_frontend@booksandbooksdigital.com.co)
+- feat: add Prettier configuration file for code formatting (coor_frontend@booksandbooksdigital.com.co)
+- chore: add .npmignore file to exclude unnecessary files from npm package (coor_frontend@booksandbooksdigital.com.co)
+- chore: update package.json to include gsap as a peer dependency (coor_frontend@booksandbooksdigital.com.co)
+- feat: update installation instructions and external dependencies to include gsap (coor_frontend@booksandbooksdigital.com.co)
+- feat: enhance README with additional badges, improved descriptions, and installation instructions (coor_frontend@booksandbooksdigital.com.co)
+- feat: update package dependencies and migrate stories to use @storybook/react-vite (coor_frontend@booksandbooksdigital.com.co)
+- feat: refactor components to use utility classnames function and update imports (coor_frontend@booksandbooksdigital.com.co)
+- feat: replace framer-motion with gsap for animations in Video components (coor_frontend@booksandbooksdigital.com.co)
+- feat: replace framer-motion with gsap for video animations in Interpreter component (coor_frontend@booksandbooksdigital.com.co)
+- feat: replace framer-motion with gsap for animations in Tour components (coor_frontend@booksandbooksdigital.com.co)
+- chore: remove unused Storybook preview configuration (coor_frontend@booksandbooksdigital.com.co)
+- chore: update eslint plugins and add new dependencies (coor_frontend@booksandbooksdigital.com.co)
+- fix: update ModalProps and ModalContextType for optional focus references (coor_frontend@booksandbooksdigital.com.co)
+- feat: add global decorator with root div for Storybook (coor_frontend@booksandbooksdigital.com.co)
+- feat: replace framer-motion with gsap for modal animations (coor_frontend@booksandbooksdigital.com.co)
+- chore: replace framer-motion with gsap in dependencies (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.39 (Thu Jan 08 2026)
 
 
