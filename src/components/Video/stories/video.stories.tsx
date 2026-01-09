@@ -24,7 +24,7 @@ export const Default: Story = {
   },
   args: {
     width: "900px",
-    src: "https://demos.booksandbooksdigital.com.co/120-ovas-2023/ova-41/assets/videos/120 OVAS-24 - OVA_41 - SLD 3.mp4",
+    src: "https://demos.booksandbooksdigital.com.co/120-ovas-2023/ovas/ova-41/assets/videos/120 OVAS-24 - OVA_41 - SLD 3.mp4",
   },
   render: (args) => <VideoPlayer {...args} />,
 };
