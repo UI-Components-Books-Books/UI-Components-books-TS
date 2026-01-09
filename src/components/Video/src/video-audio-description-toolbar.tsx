@@ -1,6 +1,6 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
-import { Icon , Switch } from "@components";
+import { Icon, Switch } from "@components";
 import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
@@ -17,6 +17,7 @@ export const VideoAudioDescriptionToolbar = () => {
   const refElement = useRef<HTMLDivElement>(null);
   const { showAD, isActiveAD, isPlaying } = usePlayerContext();
   const dispatch = usePlayerDispatchContext();
+  const [shouldRender, setShouldRender] = useState(false);
 
   // Cierra la barra de herramientas de audio descriptivo
   const closeAudioDescriptionControls = () => {
@@ -67,10 +68,7 @@ export const VideoAudioDescriptionToolbar = () => {
   };
 
   // Maneja los eventos de teclado para los botónes que están en el menu de audio descriptivo
-  const handleControlButtonKeyDown = (
-    event: React.KeyboardEvent,
-    callback: () => void
-  ) => {
+  const handleControlButtonKeyDown = (event: React.KeyboardEvent, callback: () => void) => {
     // Si se presiona Enter o la barra espaciadora, ejecuta el callback asociado
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -86,9 +84,7 @@ export const VideoAudioDescriptionToolbar = () => {
       a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])
     `;
     const focusableElements = Array.from(
-      refElement.current.querySelectorAll<HTMLElement>(
-        FOCUSABLE_ELEMENTS_SELECTOR
-      )
+      refElement.current.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR)
     );
 
     // Si no hay elementos enfocables, salir de la función
@@ -118,35 +114,54 @@ export const VideoAudioDescriptionToolbar = () => {
   };
 
   useLayoutEffect(() => {
-    if (!showAD || !refElement.current) return;
+    if (!shouldRender || !refElement.current) return;
 
     // Enfoca el primer elemento del toolbar
     refElement.current.focus();
-  }, [showAD, refElement]);
+  }, [shouldRender, refElement]);
+
+  useLayoutEffect(() => {
+    if (showAD) {
+      // Mostrar el componente y ejecutar la animación de entrada
+      setShouldRender(true);
+    } else if (shouldRender) {
+      // Ejecutar la animación de salida antes de desmontar
+      if (refElement.current) {
+        gsap.to(refElement.current, {
+          opacity: 0,
+          y: -20,
+          duration: 0.3,
+          ease: "power2.in",
+          onComplete: () => {
+            setShouldRender(false);
+          },
+        });
+      }
+    }
+  }, [showAD, shouldRender]);
+
+  useLayoutEffect(() => {
+    if (!refElement.current || !shouldRender) return;
+
+    // Animación de entrada del toolbar
+    gsap.fromTo(
+      refElement.current,
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
+    );
+  }, [shouldRender]);
 
   return (
     <>
-      {showAD && (
+      {shouldRender && (
         <div
-          ref={(el) => {
-            if (el && refElement.current !== el) {
-              refElement.current = el as HTMLDivElement;
-              gsap.fromTo(
-                el,
-                { opacity: 0, y: -20 },
-                { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
-              );
-            }
-          }}
+          ref={refElement}
           tabIndex={-1}
           aria-label="Controles del audio descriptivo"
           className="video-audio-description u-flow"
           onKeyDown={handleToolbarKeyDown}
         >
-          <div
-            className="video-audio-description__overlay"
-            aria-hidden="true"
-          />
+          <div className="video-audio-description__overlay" aria-hidden="true" />
           <div className="video-audio-description__header">
             <p>
               <Icon>
@@ -164,25 +179,21 @@ export const VideoAudioDescriptionToolbar = () => {
           </div>
 
           <p>
-            El audio descriptivo añade una narración extra para describir lo que
-            aparece en el video, haciéndolo más accesible.
+            El audio descriptivo añade una narración extra para describir lo que aparece en el
+            video, haciéndolo más accesible.
           </p>
 
           <p>
-            <strong>Importante:</strong> El control de volumen en este menú solo
-            ajusta el volumen del audio descriptivo. Si deseas modificar el
-            volumen del video principal, utiliza el control de volumen presente
-            en la barra inferior del reproductor.
+            <strong>Importante:</strong> El control de volumen en este menú solo ajusta el volumen
+            del audio descriptivo. Si deseas modificar el volumen del video principal, utiliza el
+            control de volumen presente en la barra inferior del reproductor.
           </p>
 
           <div
             aria-labelledby="audio-description-header"
             className="video-audio-description__content u-flow"
           >
-            <div
-              className="video-audio-description__content-header"
-              id="audio-description-header"
-            >
+            <div className="video-audio-description__content-header" id="audio-description-header">
               <p>
                 <Icon>
                   <AudioDescription />
@@ -210,12 +221,8 @@ export const VideoAudioDescriptionToolbar = () => {
               className="video-audio-description__button video-audio-description__button--control"
               onMouseDown={rewindVideoBy10Seconds}
               onMouseUp={stopSeeking}
-              onKeyDown={(event) =>
-                handleControlButtonKeyDown(event, rewindVideoBy10Seconds)
-              }
-              onKeyUp={(event) =>
-                handleControlButtonKeyDown(event, stopSeeking)
-              }
+              onKeyDown={(event) => handleControlButtonKeyDown(event, rewindVideoBy10Seconds)}
+              onKeyUp={(event) => handleControlButtonKeyDown(event, stopSeeking)}
             >
               <Icon>
                 <SkipPreviousIcon />
@@ -235,12 +242,8 @@ export const VideoAudioDescriptionToolbar = () => {
               className="video-audio-description__button video-audio-description__button--control"
               onMouseDown={fastForwardVideoBy10Seconds}
               onMouseUp={stopSeeking}
-              onKeyDown={(event) =>
-                handleControlButtonKeyDown(event, fastForwardVideoBy10Seconds)
-              }
-              onKeyUp={(event) =>
-                handleControlButtonKeyDown(event, stopSeeking)
-              }
+              onKeyDown={(event) => handleControlButtonKeyDown(event, fastForwardVideoBy10Seconds)}
+              onKeyUp={(event) => handleControlButtonKeyDown(event, stopSeeking)}
             >
               10s Adelante&nbsp;
               <Icon>
@@ -284,9 +287,7 @@ const VolumenSlider = () => {
         className="video-player__volume video-audio-description__volume"
         htmlFor="volume-audio-description-slider"
       >
-        <span className="u-sr-only">
-          Controlar volumen del audio descriptivo
-        </span>
+        <span className="u-sr-only">Controlar volumen del audio descriptivo</span>
         <input
           id="volume-audio-description"
           className="video-player__volume-slider video-audio-description__slider"
