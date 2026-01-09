@@ -1,4 +1,4 @@
-import { useState, useId, useRef, useMemo, useEffect } from "react";
+import { useState, useId, useRef, useEffect } from "react";
 
 import { Icon } from "@components";
 import { cn } from '@utils/cn'
@@ -23,16 +23,20 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
     const refAccesibilityVideo = useRef<HTMLVideoElement>(null);
 
     const previousVideo = useRef<HTMLVideoElement | null>(null); // Referencia al video previo
-
+    const [currentDisplayVideo, setCurrentDisplayVideo] = useState<HTMLVideoElement | null>(null);
 
     /**
-     * Hook personalizado para manejar el estado de reproducción de los videos.
-     * Este hook retorna el video actual basado en el estado displayVideo.
+     * Efecto para actualizar el video actual cuando cambia displayVideo o los refs se inicializan.
      */
-    const currentDisplayVideo = useMemo(
-        () => (displayVideo === SHOW_VIDEO.CONTENT ? refContentVideo.current : refAccesibilityVideo.current),
-        [displayVideo]
-    );
+    useEffect(() => {
+        if (!refContentVideo.current || !refAccesibilityVideo.current) return;
+
+        const videoElement = displayVideo === SHOW_VIDEO.CONTENT 
+            ? refContentVideo.current 
+            : refAccesibilityVideo.current;
+        
+        setCurrentDisplayVideo(videoElement);
+    }, [displayVideo]);
 
     useEffect(() => {
         // Si había un video previo, pausarlo

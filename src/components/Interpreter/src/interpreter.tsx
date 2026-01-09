@@ -117,9 +117,11 @@ const Video: React.FC<InterpreterVideoProps> = ({
       y: 0,
     },
   });
+  const [shouldRender, setShouldRender] = useState(false);
 
   const uid = useId();
   const dragRef = useRef(null);
+  const containerInterpreterRef = useRef<HTMLDivElement>(null);
 
   const { accesibilityURL, contentURL } = URLs;
 
@@ -193,8 +195,8 @@ const Video: React.FC<InterpreterVideoProps> = ({
   };
 
   useEffect(() => {
-    // Si 'show' está activo o no hay URLs disponibles, no hacer nada
-    if (show || (!accesibilityURL && !contentURL)) return;
+    // Si 'shouldRender' está activo o no hay URLs disponibles, no hacer nada
+    if (shouldRender || (!accesibilityURL && !contentURL)) return;
 
     // Determina el tipo de video a mostrar basado en la URL disponible
     const currentVideo = accesibilityURL
@@ -204,7 +206,39 @@ const Video: React.FC<InterpreterVideoProps> = ({
       : null;
 
     setDisplayVideo(currentVideo);
-  }, [show, accesibilityURL, contentURL]);
+  }, [shouldRender, accesibilityURL, contentURL]);
+
+  useEffect(() => {
+    if (!show) {
+      // Mostrar el componente y ejecutar la animación de entrada
+      setShouldRender(true);
+    } else if (shouldRender) {
+      // Ejecutar la animación de salida antes de desmontar
+      if (containerInterpreterRef.current) {
+        gsap.to(containerInterpreterRef.current, {
+          opacity: 0,
+          scale: 0,
+          duration: 0.3,
+          ease: 'back.in(1.2)',
+          onComplete: () => {
+            setShouldRender(false);
+            resetDragPosition();
+          },
+        });
+      }
+    }
+  }, [show, shouldRender]);
+
+  useEffect(() => {
+    if (!containerInterpreterRef.current || !shouldRender) return;
+
+    // Animación de entrada
+    gsap.fromTo(
+      containerInterpreterRef.current,
+      { opacity: 0, scale: 0 },
+      { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.2)' }
+    );
+  }, [shouldRender]);
 
   return (
     <Draggable
@@ -218,18 +252,10 @@ const Video: React.FC<InterpreterVideoProps> = ({
           className="c-interpreter__zoom"
           style={{ "--scale": zoomIn } as React.CSSProperties}
         >
-          {!show ? (
+          {shouldRender ? (
             <div
               key={uid}
-              ref={(el) => {
-                if (el) {
-                  gsap.fromTo(
-                    el,
-                    { opacity: 0, scale: 0 },
-                    { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.2)' }
-                  );
-                }
-              }}
+              ref={containerInterpreterRef}
               className="c-interpreter"
             >
                 <ul role="list" className="c-interpreter__list">
