@@ -1,4 +1,4 @@
-import { createElement, isValidElement, useRef } from 'react'
+import { createElement, isValidElement, useRef, useEffect } from 'react'
 
 import { Button,  Icon } from '@components';
 import { cn } from '@utils/cn'
@@ -84,6 +84,16 @@ export const TourElement: React.FC<TourElementProps> = ({
     ])
   }
 
+  useEffect(() => {
+    if (refContainer.current) {
+      gsap.fromTo(
+        refContainer.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 1, ease: 'power2.out' }
+      );
+    }
+  }, [id]);
+
   return (
     <>
       <div
@@ -91,16 +101,7 @@ export const TourElement: React.FC<TourElementProps> = ({
         data-class='c-layout'
       />
       <div
-        ref={(el) => {
-          if (el && refContainer.current !== el) {
-            refContainer.current = el as HTMLDivElement;
-            gsap.fromTo(
-              el,
-              { opacity: 0 },
-              { opacity: 1, duration: 1, ease: 'power2.out' }
-            );
-          }
-        }}
+        ref={refContainer}
         id={`unique-id-tour-element-${id}`}
         style={styles.popper}
         className={cn('c-tour-content', addClass)}
