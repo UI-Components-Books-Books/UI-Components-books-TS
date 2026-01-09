@@ -6,6 +6,52 @@ const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Tooltip** muestra información contextual al pasar el mouse (hover).
+
+## Características principales
+
+- **Activación por hover**: Aparece al pasar el mouse
+- **Posicionamiento inteligente**: Powered by Popper.js
+- **12 posiciones disponibles**: Control completo de ubicación
+- **Flecha opcional**: Indicador visual con \`hasArrow\`
+- **Delay configurable**: Control del tiempo de aparición
+- **Solo informativo**: No debe contener elementos interactivos
+- **Accesible**: Atributos ARIA para lectores de pantalla
+- **Responsive**: Se adapta al espacio disponible
+
+## Cuándo usar cada componente
+
+**Tooltip (este):**
+- Información breve al hacer hover
+- Solo texto, sin interacción
+- Ayuda contextual rápida
+
+**Toggletip:**
+- Requiere click intencional
+- Puede contener enlaces simples
+- Información que necesita permanecer visible
+
+**Popover:**
+- Contenido interactivo complejo
+- Formularios, menús, acciones
+- Requiere interacción del usuario
+
+## Posiciones disponibles
+
+\`top\`, \`top-start\`, \`top-end\`, \`bottom\`, \`bottom-start\`, \`bottom-end\`, \`left\`, \`left-start\`, \`left-end\`, \`right\`, \`right-start\`, \`right-end\`, \`auto\` (automático)
+
+## Buenas prácticas
+
+- Usa texto breve y conciso
+- No pongas elementos clickeables dentro
+- No uses tooltips en dispositivos táctiles exclusivamente
+- Proporciona la misma información de forma alternativa
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +63,15 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Tooltip` es una pequeña burbuja de información que aclara el propósito de controles o herramientas que de otro modo serían ambiguos. Utilizando el motor de posicionamiento `popper.js`, permite colocarlo en cualquiera de los 4 ejes cardinales. Además, está diseñado con todos los criterios de accesibilidad necesarios para el manejo de este tipo de elementos. Para su implementación, solo necesitas importar el componente `<Tooltip />`. Haz clic en Show code en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Tooltip básico que aparece al hacer hover.
+
+**Características:**
+- Se activa automáticamente al pasar el mouse
+- Posicionamiento automático inteligente
+- Desaparece al quitar el mouse
+- Ideal para ayuda contextual rápida
+        `,
       },
     },
   },
@@ -33,8 +86,11 @@ export const HasArrow: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Con la propiedad `hasArrow` podemos agregar una flecha a nuestro componente.",
+        story: `
+Tooltip con flecha apuntando al elemento.
+
+La prop \`hasArrow\` agrega un indicador visual que conecta claramente el tooltip con el elemento que describe.
+        `,
       },
     },
   },
@@ -48,8 +104,18 @@ export const Placement: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Por defecto, el componente se ubica automáticamente en la posición que permita visualizar correctamente su contenido. Sin embargo, si necesitas que esté en una posición específica, puedes usar la propiedad `placement`.",
+        story: `
+Control preciso de la posición del tooltip.
+
+**Opciones disponibles:**
+- \`top\`, \`top-start\`, \`top-end\`
+- \`bottom\`, \`bottom-start\`, \`bottom-end\`
+- \`left\`, \`left-start\`, \`left-end\`
+- \`right\`, \`right-start\`, \`right-end\`
+- \`auto\` (default): Se posiciona automáticamente
+
+En este ejemplo, \`placement="top-start"\` alinea el tooltip arriba e inicia desde el borde izquierdo.
+        `,
       },
     },
   },

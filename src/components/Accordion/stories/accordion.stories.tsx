@@ -8,6 +8,44 @@ const meta: Meta<typeof Accordion> = {
   component: Accordion,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Accordion** permite mostrar y ocultar secciones de contenido de forma interactiva.
+
+## Características principales
+
+- **Composable**: Construido con subcomponentes (\`Accordion.Item\`, \`Accordion.Button\`, \`Accordion.Panel\`)
+- **Modo exclusivo**: Por defecto, solo un panel abierto a la vez
+- **Modo múltiple**: Permite múltiples paneles abiertos simultáneamente
+- **Animaciones suaves**: Transiciones fluidas al expandir/contraer
+- **Navegación por teclado**: Totalmente navegable con flechas y Enter/Space
+- **Accesible**: Implementa WAI-ARIA con roles y estados apropiados
+- **Íconos automáticos**: Indicadores visuales del estado (abierto/cerrado)
+
+## Composición
+
+\`\`\`tsx
+<Accordion>
+  <Accordion.Item>
+    <Accordion.Button>Título de la sección</Accordion.Button>
+    <Accordion.Panel>
+      Contenido que se expande y contrae
+    </Accordion.Panel>
+  </Accordion.Item>
+</Accordion>
+\`\`\`
+
+## Navegación por teclado
+
+- **Enter / Space**: Alternar panel
+- **Flecha abajo**: Navegar al siguiente botón
+- **Flecha arriba**: Navegar al botón anterior
+- **Home**: Ir al primer botón
+- **End**: Ir al último botón
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +57,11 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Accordion` está equipado con diversas propiedades que permiten su completa personalización. Además, incorpora diferentes atributos `aria` para garantizar su correcto funcionamiento con lectores de pantalla. Para su implementación, solo necesitas importar el componente `<Accordion/>`. Este incluye los componentes `<Accordion.Button/>` y `<Accordion.Panel/>`, necesarios para su uso. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Accordion básico con comportamiento exclusivo: solo un panel puede estar abierto a la vez.
+
+Cuando abres un panel, el panel previamente abierto se cierra automáticamente. Este es el comportamiento predeterminado, ideal para FAQs o navegación.
+        `,
       },
     },
   },

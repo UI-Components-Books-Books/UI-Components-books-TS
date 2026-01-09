@@ -7,6 +7,42 @@ const meta: Meta<typeof Icon> = {
   component: Icon,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Icon** facilita el manejo y estilizado de iconos SVG.
+
+## Características principales
+
+- **Tamaños predefinidos**: Small, normal y big
+- **Tamaño personalizado**: Variable CSS \`--icon-size\` para control fino
+- **Estilos consistentes**: Normaliza el comportamiento de SVGs
+- **Herencia de color**: Los iconos heredan el color del texto por defecto
+- **Flexible**: Acepta cualquier SVG como hijo
+- **Responsive**: Se adapta al contexto
+
+## Personalización avanzada
+
+Usa la variable CSS \`--icon-size\` para tamaños específicos:
+
+\`\`\`tsx
+<Icon>
+  <svg style={{ "--icon-size": "3rem" }}>
+    {/* tu SVG */}
+  </svg>
+</Icon>
+\`\`\`
+
+## Integración con librerías
+
+Compatible con:
+- Material Icons
+- Font Awesome (versión SVG)
+- Heroicons
+- Cualquier SVG personalizado
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -18,8 +54,11 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Icon` agrega una serie de estilos CSS por defecto que te ayudarán a manejar todos esos iconos en formato SVG de una forma más sencilla. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Icono básico con tamaño y estilos normalizados.
+
+El componente proporciona estilos consistentes para cualquier SVG, simplificando su uso en toda la aplicación.
+        `,
       },
     },
   },
@@ -48,8 +87,19 @@ export const CustomSizeIcon: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Para cambiar el tamaño del ícono, puedes utilizar la propiedad `size`, que incluye 3 diferentes tamaños: `small`, `normal` y `big`. Pero si estos valores no se ajustan a tus requerimientos, puedes utilizar la CSS custom property `--icon-size`, que modificará tanto el alto como el ancho de tu SVG.",
+        story: `
+Personaliza el tamaño del icono con dos opciones:
+
+**1. Prop \`size\`:** small, normal, big
+
+**2. Variable CSS \`--icon-size\`:** Control preciso para cualquier dimensión
+
+\`\`\`tsx
+<svg style={{ "--icon-size": "4rem" }}>
+\`\`\`
+
+La variable CSS modifica tanto ancho como alto simultáneamente.
+        `,
       },
     },
   },

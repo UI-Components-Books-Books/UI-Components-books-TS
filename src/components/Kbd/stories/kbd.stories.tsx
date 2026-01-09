@@ -8,6 +8,42 @@ const meta: Meta<typeof Kbd> = {
   component: Kbd,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Kbd** representa teclas o combinaciones de teclado de forma visual.
+
+## Características principales
+
+- **Semántico**: Usa el elemento HTML \`<kbd>\` nativo
+- **Estilizado**: Apariencia de tecla física realista
+- **Personalizable**: Variables CSS para customización
+- **Composable**: Se puede combinar para mostrar atajos
+- **Accesible**: Claramente identificable para todos los usuarios
+
+## Variables CSS disponibles
+
+- \`--kbd-bg-color\`: Color de fondo
+- \`--kbd-border-radius\`: Radio del borde
+- \`--kbd-color\`: Color del texto
+
+## Uso típico
+
+Documentación de:
+- Atajos de teclado
+- Comandos del sistema
+- Combinaciones de teclas
+- Tutoriales e instrucciones
+
+## Ejemplos de combinaciones
+
+\`\`\`tsx
+<><Kbd>Ctrl</Kbd> + <Kbd>C</Kbd></> // Copiar
+<><Kbd>Cmd</Kbd> + <Kbd>V</Kbd></> // Pegar (Mac)
+\`\`\`
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +55,11 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El `kbd` existe para mostrar qué tecla o combinación de teclas realiza una acción determinada. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Representación visual de una tecla individual.
+
+Úsalo para documentar teclas únicas o combínalos para mostrar atajos de teclado complejos.
+        `,
       },
     },
   },
@@ -34,8 +73,18 @@ export const KbdStyling: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Si necesitas personalizar totalmente la apariencia del componente, puedes pasarle tus clases personalizadas de CSS a través de la propiedad `addClass`. Además, también contamos con CSS custom properties, puedes usar `--kbd-bg-color`, `--kbd-border-radious` y `--kbd-color`. Puedes especificar estas variables en una clase personalizada de CSS.",
+        story: `
+Personaliza la apariencia del componente con:
+
+**1. Prop \`addClass\`:** Clases CSS personalizadas
+
+**2. Variables CSS:**
+- \`--kbd-bg-color\`: Color de fondo
+- \`--kbd-border-radius\`: Radio del borde
+- \`--kbd-color\`: Color del texto
+
+Define estas variables en tu clase CSS personalizada para un control completo del diseño.
+        `,
       },
     },
   },

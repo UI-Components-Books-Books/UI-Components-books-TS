@@ -8,6 +8,46 @@ const meta: Meta<typeof Radio> = {
   component: Radio,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Radio** es un input de selección única personalizado con estados visuales.
+
+## Características principales
+
+- **Selección única**: Solo una opción del grupo puede estar seleccionada
+- **Estados visuales**: Normal, right (correcto), wrong (incorrecto)
+- **Label flexible**: Soporta HTML para formateo
+- **Checked programable**: Control del estado seleccionado
+- **Agrupación**: Usa el mismo \`name\` para agrupar opciones
+- **Accesible**: Input radio semántico con labels asociados
+- **Validación visual**: Iconos de feedback integrados
+
+## Agrupación
+
+Para crear un grupo de opciones mutuamente excluyentes:
+
+\`\`\`tsx
+<Radio name="pregunta1" label="Opción A" />
+<Radio name="pregunta1" label="Opción B" />
+<Radio name="pregunta1" label="Opción C" />
+\`\`\`
+
+## Estados de validación
+
+- **right**: Muestra ✓ para respuestas correctas
+- **wrong**: Muestra ✗ para respuestas incorrectas
+- **normal**: Estado estándar sin validación
+
+## Casos de uso
+
+- Preguntas de selección única
+- Opciones mutuamente excluyentes
+- Quizzes y exámenes
+- Formularios con opciones limitadas
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +59,11 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Radio` es un elemento personalizado que permite manejar diferentes estados en su interior. Es especialmente útil en formularios cuando el usuario necesita seleccionar un valor de distintas opciones disponibles. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Radio button básico con label que soporta HTML.
+
+El label puede incluir formato como \`<strong>\`, \`<em>\`, enlaces, etc. Solo una opción puede estar seleccionada en un grupo.
+        `,
       },
     },
   },
@@ -40,8 +83,15 @@ export const States: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando la propiedad `state`, se pueden manejar los múltiples estados del componente, tales como: `right`, y `wrong`. Estos dos muestran un ícono SVG dentro del componente.",
+        story: `
+Radio button con estados de validación visual.
+
+**Estados disponibles:**
+- **right**: Muestra icono de éxito (✓)
+- **wrong**: Muestra icono de error (✗)
+
+Útil para quizzes, exámenes o formularios con validación inmediata.
+        `,
       },
     },
   },

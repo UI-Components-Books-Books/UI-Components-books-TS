@@ -8,6 +8,36 @@ const meta: Meta<typeof Audio> = {
   component: Audio,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Audio** es un reproductor de audio personalizado y completamente accesible.
+
+## Características principales
+
+- **Controles completos**: Play, pause, línea de tiempo, volumen
+- **Dos modos de visualización**: Bar (completo) y Button (compacto)
+- **Tamaños**: Normal y small para diferentes contextos
+- **Línea de tiempo arrastrable**: Navegación precisa por el audio
+- **Control de volumen**: Ajuste fino del nivel de audio
+- **Indicador de tiempo**: Muestra tiempo actual y duración total
+- **Accesible**: Cumple estándares WCAG con controles por teclado
+- **Responsive**: Se adapta al contenedor
+
+## Modos de visualización
+
+- **bar** (default): Reproductor completo con todos los controles visibles
+- **button**: Versión compacta, ideal para espacios reducidos
+
+## Navegación por teclado
+
+- **Space**: Play/Pause
+- **Flecha derecha**: Avanzar en la línea de tiempo
+- **Flecha izquierda**: Retroceder en la línea de tiempo
+- **Flecha arriba/abajo**: Ajustar volumen
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +49,16 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Audio` es un reproductor totalmente personalizado que se puede ajustar a tus diferentes necesidades. Cuenta con las funcionalidades básicas de todo reproductor, como pausar/iniciar, medidor de tiempo, una línea de tiempo arrastrable y un controlador de volumen. Además, está construido acorde a los estándares de la WCAG para que sea un elemento accesible para usuarios con diferentes discapacidades. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Reproductor de audio en modo **bar** (completo) con todos los controles visibles.
+
+**Incluye:**
+- Botón play/pause
+- Línea de tiempo interactiva
+- Indicadores de tiempo (actual/total)
+- Control de volumen con slider
+- Diseño accesible para todos los usuarios
+        `,
       },
     },
   },
@@ -44,8 +82,15 @@ export const AudioSize: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "La propiedad `size` nos permite cambiar el tamaño de nuestro reproductor a uno más pequeño. Por el momento, solo está disponible el tamaño `small`.",
+        story: `
+Reproductor en tamaño **small** para interfaces compactas.
+
+Ideal para:
+- Sidebars
+- Cards pequeñas
+- Reproducciones secundarias
+- Interfaces móviles
+        `,
       },
     },
   },

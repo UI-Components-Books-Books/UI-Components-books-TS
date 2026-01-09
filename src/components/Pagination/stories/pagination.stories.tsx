@@ -6,6 +6,49 @@ const meta: Meta<typeof Pagination> = {
   component: Pagination,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Pagination** proporciona navegación por páginas accesible y personalizable.
+
+## Características principales
+
+- **Basado en usePagination hook**: Lógica reutilizable y testeada
+- **Botones configurables**: Next, Previous, First, Last (opcionales)
+- **Indicador de página actual**: Destacado visualmente
+- **Navegación por teclado**: Completa con Tab y Enter
+- **Accesible**: Implementa ARIA para lectores de pantalla
+- **Responsive**: Se adapta a diferentes tamaños
+- **Elipsis inteligentes**: Muestra ... cuando hay muchas páginas
+- **Callback onChange**: Notifica cambios de página
+
+## Props principales
+
+- **\`count\`**: Número total de páginas (requerido)
+- **\`page\`**: Página actual (controlado)
+- **\`defaultPage\`**: Página inicial (no controlado)
+- **\`onChange\`**: Callback al cambiar de página
+- **\`hideNextButton\`**: Ocultar botón siguiente
+- **\`hidePrevButton\`**: Ocultar botón anterior
+- **\`showFirstButton\`**: Mostrar botón primera página
+- **\`showLastButton\`**: Mostrar botón última página
+- **\`siblingCount\`**: Número de páginas visibles a cada lado
+- **\`boundaryCount\`**: Número de páginas en los extremos
+
+## Uso típico
+
+\`\`\`tsx
+<Pagination 
+  count={totalPages}
+  page={currentPage}
+  onChange={(page) => setCurrentPage(page)}
+  showFirstButton
+  showLastButton
+/>
+\`\`\`
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +60,16 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Pagination` nos ofrece una forma sencilla de manejar la paginación de nuestro aplicativo. Construido a partir del hook personalizado `usePagination`, este componente nos brinda la estructura, el diseño y las características de accesibilidad recomendadas para un paginador. Para su implementación, solo debes importar el componente Pagination y, utilizando la propiedad `count`, indicarle el número de páginas que va a manejar. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Paginación básica con 10 páginas.
+
+**Incluye:**
+- Botones de siguiente y anterior
+- Números de página clickeables
+- Página actual destacada
+- Elipsis (...) para rangos grandes
+- Accesibilidad completa
+        `,
       },
     },
   },
@@ -32,8 +83,11 @@ export const WithoutButtons: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Por defecto, el componente incluye los botones de siguiente y anterior página, pero usando las propiedades `hideNextButton` y `hidePrevButton`, puedes ocultarlos.",
+        story: `
+Paginación sin botones de navegación anterior/siguiente.
+
+Usa \`hideNextButton\` y \`hidePrevButton\` para un diseño minimalista que solo muestra los números de página.
+        `,
       },
     },
   },
@@ -48,8 +102,11 @@ export const WithMoreButtons: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando la propiedad `showFirstButton` y `showLastButton`, podemos mostrar los botones para ir a la primera y última página del componente.",
+        story: `
+Paginación completa con botones de primera y última página.
+
+Activa \`showFirstButton\` y \`showLastButton\` para facilitar la navegación rápida en conjuntos de datos grandes.
+        `,
       },
     },
   },

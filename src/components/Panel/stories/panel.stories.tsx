@@ -6,6 +6,46 @@ const meta: Meta<typeof Panel> = {
   component: Panel,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Panel** organiza contenido en secciones navegables, mostrando una a la vez.
+
+## Características principales
+
+- **Composable**: Construido con \`Panel.Section\` y \`Panel.Nav\`
+- **Navegación integrada**: Puntos indicadores clickeables
+- **Botones opcionales**: Next/Previous para navegación lineal
+- **Indicador visual**: Muestra la sección activa
+- **Navegación por teclado**: Flechas para cambiar de sección
+- **Accesible**: ARIA roles y labels apropiados
+- **Transiciones suaves**: Animaciones entre secciones
+- **Responsive**: Se adapta a diferentes tamaños
+
+## Composición
+
+\`\`\`tsx
+<Panel>
+  <Panel.Section>Contenido 1</Panel.Section>
+  <Panel.Section>Contenido 2</Panel.Section>
+  <Panel.Section>Contenido 3</Panel.Section>
+  <Panel.Nav 
+    showNextButton 
+    showPrevButton 
+  />
+</Panel>
+\`\`\`
+
+## Casos de uso
+
+- Onboarding con múltiples pasos
+- Galerías de imágenes
+- Presentaciones tipo slideshow
+- Tutoriales paso a paso
+- Carruseles de contenido
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +57,15 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Panel` nos brinda la oportunidad de distribuir el contenido de nuestra página en diferentes secciones. Además, incorpora diferentes atributos `aria` para garantizar su correcto funcionamiento con lectores de pantalla. Para su implementación, solo necesitas importar el componente `<Panel />`. Este incluye los componentes `<Panel.Section />` y `<Panel.Nav />`, necesarios para su uso. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Panel básico con cuatro secciones y navegación por puntos.
+
+**Características:**
+- Navegación con indicadores (dots)
+- Una sección visible a la vez
+- Click en los puntos para cambiar de sección
+- Totalmente accesible
+        `,
       },
     },
   },
@@ -40,8 +87,18 @@ export const WithNavigationButtons: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando las propiedades `showNextButton` y `showNextButton` presentes en el `<Panel.Nav />`, podemos mostrar los botones de siguiente y anterior sección.",
+        story: `
+Panel con botones de navegación anterior/siguiente además de los indicadores.
+
+\`\`\`tsx
+<Panel.Nav 
+  showNextButton 
+  showPrevButton 
+/>
+\`\`\`
+
+Ideal para experiencias guiadas donde quieres que el usuario navegue secuencialmente.
+        `,
       },
     },
   },

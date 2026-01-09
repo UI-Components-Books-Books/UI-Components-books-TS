@@ -8,6 +8,42 @@ const meta: Meta<typeof Modal> = {
   component: Modal,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Modal** es una ventana emergente accesible que muestra contenido sobre el resto de la página.
+
+## Características principales
+
+- **Composable**: Construido con subcomponentes (\`Modal.Overlay\`, \`Modal.Content\`, \`Modal.CloseButton\`)
+- **Gestión de foco**: Atrapa el foco dentro del modal usando el atributo \`inert\` en el resto del DOM
+- **Restauración de foco**: Devuelve el foco al elemento especificado al cerrar
+- **Teclado**: Cierra con tecla Escape
+- **Overlay configurable**: Control del comportamiento al hacer clic fuera
+- **Accesible**: Implementa WAI-ARIA con roles y atributos apropiados
+- **Animaciones**: Transiciones suaves al abrir y cerrar
+
+## Composición
+
+\`\`\`tsx
+<Modal isOpen={isOpen} onClose={handleClose} finalFocusRef=".trigger-button">
+  <Modal.Overlay />
+  <Modal.Content>
+    {/* Tu contenido aquí */}
+    <Modal.CloseButton />
+  </Modal.Content>
+</Modal>
+\`\`\`
+
+## Gestión de foco
+
+El modal automáticamente:
+- Enfoca el primer elemento interactivo al abrir
+- Mantiene el foco dentro del modal
+- Restaura el foco al elemento especificado en \`finalFocusRef\` al cerrar
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +55,18 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Modal` está equipado con diversas propiedades que permiten su completa personalización. Además, este implementa el atributo `inert` en el DOM, que previene que el foco salga del componente. Para su implementación, solo necesitas importar el componente `<Modal/>`. Este incluye los componentes `<Modal.CloseButton/>`, `<Modal.Overlay/>` y `<Modal.Content/>`, necesarios para su uso.  Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Modal básico con contenido de texto y botón de cierre.
+
+**Características demostradas:**
+- Overlay que oscurece el fondo
+- Contenido centrado
+- Botón de cierre incluido
+- Cierre con tecla Escape
+- Gestión automática de foco
+
+El modal usa el atributo \`inert\` en el resto del DOM para evitar que el foco escape del modal.
+        `,
       },
     },
   },

@@ -8,6 +8,46 @@ const meta: Meta<typeof Tabs> = {
   component: Tabs,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Tabs** organiza contenido en pestañas, mostrando un panel a la vez.
+
+## Características principales
+
+- **Composable**: Construido con subcomponentes (\`Tabs.TabList\`, \`Tabs.Tab\`, \`Tabs.TabPanels\`, \`Tabs.TabPanel\`)
+- **Orientación**: Soporta layout horizontal y vertical
+- **Pestaña inicial**: Configurable con \`defaultIndex\`
+- **Navegación por teclado**: Completa accesibilidad con flechas
+- **Accesible**: Implementa WAI-ARIA Tabs pattern
+- **Indicador visual**: Destaca la pestaña activa
+- **Sincronizado**: Los paneles se sincronizan automáticamente con las pestañas
+
+## Composición
+
+\`\`\`tsx
+<Tabs defaultIndex={0}>
+  <Tabs.TabList label="Navegación principal">
+    <Tabs.Tab>Primera</Tabs.Tab>
+    <Tabs.Tab>Segunda</Tabs.Tab>
+  </Tabs.TabList>
+  <Tabs.TabPanels>
+    <Tabs.TabPanel>Contenido 1</Tabs.TabPanel>
+    <Tabs.TabPanel>Contenido 2</Tabs.TabPanel>
+  </Tabs.TabPanels>
+</Tabs>
+\`\`\`
+
+## Navegación por teclado
+
+- **Flecha izquierda/derecha** (horizontal): Navegar entre pestañas
+- **Flecha arriba/abajo** (vertical): Navegar entre pestañas
+- **Home**: Ir a la primera pestaña
+- **End**: Ir a la última pestaña
+- **Tab**: Navegar del TabList al contenido del panel activo
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +59,15 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Tabs` es un conjunto de secciones de contenido, conocidas como paneles de pestañas, que muestran un panel de contenido a la vez. Este componente está equipado con diversas propiedades que permiten su completa personalización. Además, incorpora diferentes atributos `aria` para garantizar su correcto funcionamiento en lectores de pantalla. Para su implementación, solo necesitas importar el componente `<Tabs />`. Este incluye los componentes `<Tabs.TabList />`, `<Tabs.Tab />`, `<Tabs.TabPanels />` y `<Tabs.Panel />`, necesarios para su uso. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Ejemplo básico de tabs con orientación horizontal.
+
+**Características demostradas:**
+- Tres pestañas con sus respectivos paneles
+- Orientación horizontal (default)
+- Navegación con teclado habilitada
+- Solo un panel visible a la vez
+        `,
       },
     },
   },
@@ -47,8 +94,16 @@ export const WithADefaultIndex: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Con la propiedad `defaultIndex`, podemos decidir qué pestaña debe aparecer abierta al momento de mostrarse. Ten en cuenta que esta propiedad se maneja igual que las posiciones de un `Array`, por lo que el número 0 corresponderá a la primera pestaña del grupo, y así sucesivamente.",
+        story: `
+Usa \`defaultIndex\` para especificar qué pestaña debe estar activa inicialmente.
+
+**Nota:** El índice es base-0, como los arrays de JavaScript:
+- \`0\` = Primera pestaña
+- \`1\` = Segunda pestaña
+- \`2\` = Tercera pestaña
+
+En este ejemplo, \`defaultIndex={1}\` abre la segunda pestaña al cargar.
+        `,
       },
     },
   },

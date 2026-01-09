@@ -7,6 +7,35 @@ const meta: Meta<typeof Image> = {
   component: Image,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Image** gestiona imágenes con fallback automático y caption opcional.
+
+## Características principales
+
+- **Imagen de fallback**: Muestra imagen placeholder si falla la carga
+- **Caption integrado**: Descripción bajo la imagen con \`title\` y \`alt\`
+- **Caption opcional**: Se puede ocultar con \`noCaption\`
+- **Tamaño configurable**: Control del ancho con \`size\`
+- **Accesible**: Atributo \`alt\` para lectores de pantalla
+- **Lazy loading**: Carga diferida opcional
+- **Responsive**: Se adapta al contenedor
+
+## Buenas prácticas
+
+- Siempre proporciona un \`alt\` descriptivo
+- Usa \`title\` para contexto adicional
+- El \`alt\` debe describir el contenido, no repetir el \`title\`
+- Para imágenes decorativas, usa \`alt=""\`
+
+## Caption vs noCaption
+
+- Por defecto, muestra caption con \`title\` o \`alt\`
+- Usa \`noCaption={true}\` para ocultar, manteniendo \`alt\` accesible
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -18,8 +47,14 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Image` es una herramienta sencilla que nos permite gestionar nuestras imágenes de manera rápida y sin preocuparnos demasiado. Cuenta con la propiedad `src`, en la cual podemos colocar la URL de nuestra imagen; en caso de que esta no se encuentre, aparecerá una imagen de respaldo para evitar problemas en nuestro diseño. Además, tenemos dos propiedades, `title` y `alt`, que permiten colocar una descripción que aparecerá en la parte inferior de nuestra imagen. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Imagen básica con caption visible.
+
+**Características:**
+- Imagen de fallback si \`src\` no está disponible
+- Caption generado automáticamente desde \`alt\` o \`title\`
+- Tamaño configurable con la prop \`size\`
+        `,
       },
     },
   },
@@ -40,8 +75,11 @@ export const WithoutCaption: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando la propiedad `noCaption`, podemos ocultar la descripción de la imagen. Además, esta propiedad no genera conflictos si necesitas colocarle una propiedad `alt` a tu imagen.",
+        story: `
+Imagen sin caption visible usando \`noCaption={true}\`.
+
+**Importante:** El atributo \`alt\` se mantiene para accesibilidad aunque el caption esté oculto. Los lectores de pantalla seguirán accediendo a la descripción.
+        `,
       },
     },
   },

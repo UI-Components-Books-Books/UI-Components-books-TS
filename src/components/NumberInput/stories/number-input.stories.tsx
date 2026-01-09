@@ -6,6 +6,43 @@ const meta: Meta<typeof NumberInput> = {
   component: NumberInput,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **NumberInput** es un input numérico con controles de incremento/decremento integrados.
+
+## Características principales
+
+- **Composable**: Construido con subcomponentes (Field, Stepper, IncrementStepper, DecrementStepper)
+- **Validación de rango**: Props \`min\` y \`max\` para limitar valores
+- **Valor por defecto**: \`defaultValue\` para estado inicial
+- **Keep within range**: Mantiene el valor dentro de límites al perder foco
+- **Navegación por teclado**: Flechas arriba/abajo para incrementar/decrementar
+- **Precislón**: Soporte para decimales con \`step\`
+- **Accesible**: Labels y controles semánticos
+- **Disabled**: Soporte para estado deshabilitado
+
+## Composición
+
+\`\`\`tsx
+<NumberInput min={0} max={100} defaultValue={50}>
+  <NumberInput.Field label="Cantidad" />
+  <NumberInput.Stepper>
+    <NumberInput.IncrementStepper />
+    <NumberInput.DecrementStepper />
+  </NumberInput.Stepper>
+</NumberInput>
+\`\`\`
+
+## Casos de uso
+
+- Cantidades en carrito de compras
+- Controles de configuración numérica
+- Inputs de edad, calificaciones, puntuaciones
+- Cualquier valor numérico con límites
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +54,15 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `NumberInput` es similar a un input básico, pero está equipado con funcionalidades para incrementar o decrementar un número. Dado que está diseñado para su fácil modificación, cada parte fundamental de este está separada en un componente. Para su implementación, solo necesitas importar el componente `<NumberInput />`. Este incluye los componentes `<NumberInput.Field />`, `<NumberInput.Stepper />`, `<NumberInput.IncrementStepper />` y `<NumberInput.DecrementStepper />`, necesarios para su uso. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+NumberInput básico con todos los subcomponentes necesarios.
+
+**Componentes incluidos:**
+- \`NumberInput.Field\`: Input con label
+- \`NumberInput.Stepper\`: Contenedor de botones
+- \`NumberInput.IncrementStepper\`: Botón para aumentar
+- \`NumberInput.DecrementStepper\`: Botón para disminuir
+        `,
       },
     },
   },
@@ -40,8 +84,15 @@ export const Controlled: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando las propiedades `max`, `min` y `defaultValue`, puedes controlar el rango de valores y el valor por defecto que manejará tu componente.",
+        story: `
+Controla el rango de valores permitidos:
+
+- **\`min\`**: Valor mínimo permitido
+- **\`max\`**: Valor máximo permitido  
+- **\`defaultValue\`**: Valor inicial
+
+En este ejemplo, el valor está limitado entre 5 y 10, iniciando en 5.
+        `,
       },
     },
   },

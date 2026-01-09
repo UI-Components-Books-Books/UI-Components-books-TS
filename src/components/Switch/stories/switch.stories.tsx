@@ -6,6 +6,33 @@ const meta: Meta<typeof Switch> = {
   component: Switch,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Switch** es un toggle estilizado para activar/desactivar opciones.
+
+## Características principales
+
+- **Tamaños**: Small, normal y big
+- **Label configurable**: Visible u oculto visualmente
+- **Estados**: On/Off con animación suave
+- **Accesible**: Basado en checkbox semántico con ARIA
+- **Controlado/No controlado**: Flexible para cualquier caso de uso
+- **Clase adicional**: Personalización de estilos
+
+## Uso ideal
+
+- Activar/desactivar funcionalidades
+- Configuración de preferencias
+- Modos (claro/oscuro, público/privado)
+- Toggles en formularios
+
+## Accesibilidad
+
+Aunque visualmente es un switch, semánticamente es un checkbox, lo que garantiza compatibilidad con lectores de pantalla y navegación por teclado.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +44,11 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Switch` es un input de tipo checkbox personalizado. Su funcionamiento base es el mismo, pero el cambio radica en su diseño. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Switch básico con label oculto visualmente (pero accesible para lectores de pantalla).
+
+El label por defecto está oculto para mantener un diseño limpio, pero sigue siendo accesible para tecnologías de asistencia.
+        `,
       },
     },
   },
@@ -39,8 +69,11 @@ export const HasLabelVisible: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Por defecto, el label del componente se encuentra oculto, pero puedes cambiar este comportamiento usando la propiedad `isLabelVisible`.",
+        story: `
+Usa \`isLabelVisible={true}\` para mostrar el label visualmente junto al switch.
+
+Esto es útil cuando necesitas proporcionar contexto visual claro sobre qué controla el switch.
+        `,
       },
     },
   },

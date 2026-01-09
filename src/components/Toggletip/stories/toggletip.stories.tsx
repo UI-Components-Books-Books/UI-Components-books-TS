@@ -6,6 +6,44 @@ const meta: Meta<typeof Toggletip> = {
   component: Toggletip,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Toggletip** muestra información contextual al hacer click, ideal para aclaraciones breves.
+
+## Características principales
+
+- **Activación por click**: A diferencia del tooltip (hover)
+- **Posicionamiento inteligente**: Powered by Popper.js
+- **12 posiciones disponibles**: top, bottom, left, right y variantes
+- **Flecha opcional**: Indicador visual con \`hasArrow\`
+- **Click outside**: Cierra al interactuar fuera (configurable)
+- **ESC para cerrar**: Navegación por teclado
+- **Accesible**: Role y atributos ARIA apropiados
+- **Contenido dinámico**: Soporta texto y JSX
+
+## Diferencias clave
+
+| Característica | Tooltip | Toggletip | Popover |
+|----------------|---------|-----------|----------|
+| Activación | Hover | Click | Click |
+| Contenido | Solo texto | Texto/HTML simple | Contenido interactivo |
+| Interacción | No | Sí (links) | Sí (completa) |
+| Uso | Ayuda rápida | Aclaraciones | Menús/Formularios |
+
+## Posicionamiento
+
+Disponibles: \`top\`, \`top-start\`, \`top-end\`, \`bottom\`, \`bottom-start\`, \`bottom-end\`, \`left\`, \`left-start\`, \`left-end\`, \`right\`, \`right-start\`, \`right-end\`, \`auto\`
+
+## Casos de uso
+
+- Aclarar terminología técnica
+- Ayuda contextual clickeable
+- Definiciones que requieren click intencional
+- Información que puede contener enlaces
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +55,15 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Toggletip` es una pequeña burbuja de información que aclara el propósito de controles o herramientas que de otro modo serían ambiguos. Utilizando el motor de posicionamiento `popper.js`, permite colocarlo en cualquiera de los 4 ejes cardinales. Además, está diseñado con todos los criterios de accesibilidad necesarios para el manejo de este tipo de elementos. Para su implementación, solo necesitas importar el componente `<Toggletip />`. Haz clic en Show code en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Toggletip básico que se activa con click.
+
+**Características:**
+- Click para abrir/cerrar
+- Posicionamiento automático
+- Cierra con ESC o click fuera
+- Ideal para información que requiere acción intencional
+        `,
       },
     },
   },
@@ -33,8 +78,11 @@ export const HasArrow: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Con la propiedad `hasArrow` podemos agregar una flecha a nuestro componente.",
+        story: `
+Toggletip con flecha apuntando al elemento disparador.
+
+La prop \`hasArrow\` agrega un indicador visual que mejora la conexión entre el toggletip y su elemento asociado.
+        `,
       },
     },
   },
@@ -48,8 +96,11 @@ export const DisabledInteractionOutside: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando la propiedad `disabledInteractOutside`, podemos deshabilitar la funcionalidad que cierra este si se interactúa afuera del contenido del componente.",
+        story: `
+Toggletip que NO se cierra al hacer click fuera.
+
+Usa \`disabledInteractOutside\` cuando necesites que el usuario cierre el toggletip explícitamente. Útil para información crítica.
+        `,
       },
     },
   },

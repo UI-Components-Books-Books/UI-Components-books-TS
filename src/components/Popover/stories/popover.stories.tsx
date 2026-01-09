@@ -6,6 +6,49 @@ const meta: Meta<typeof Popover> = {
   component: Popover,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Popover** muestra contenido flotante contextual al hacer click.
+
+## Características principales
+
+- **Composable**: Usa \`Popover.Button\` y \`Popover.Content\`
+- **Posicionamiento inteligente**: Powered by Popper.js
+- **12 posiciones**: top, bottom, left, right y sus variantes
+- **Click outside**: Cierra al interactuar fuera (configurable)
+- **Navegación por teclado**: ESC para cerrar
+- **Trap focus**: Mantiene el foco dentro del popover
+- **Accesible**: Implementa WAI-ARIA disclosure pattern
+- **Portal**: Se renderiza fuera del flujo del DOM
+
+## Composición
+
+\`\`\`tsx
+<Popover placement="bottom">
+  <Popover.Button>
+    <Button>Abrir</Button>
+  </Popover.Button>
+  <Popover.Content>
+    {/* Tu contenido aquí */}
+  </Popover.Content>
+</Popover>
+\`\`\`
+
+## Diferencia con Tooltip
+
+- **Popover**: Click para activar, contenido interactivo
+- **Tooltip**: Hover para activar, solo informativo
+
+## Casos de uso
+
+- Menús desplegables
+- Formularios en contexto
+- Confirmaciones
+- Información adicional interactiva
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +60,15 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Popover` nos permite utilizar un elemento emergente de forma muy sencilla. Utilizando el motor de posicionamiento `popper.js`, permite colocarlo en cualquiera de los 4 ejes cardinales. Además, está diseñado con todos los criterios de accesibilidad necesarios para el manejo de este tipo de elementos. Para su implementación, solo necesitas importar el componente `<Popover />`. Este incluye los componentes `<Popover.Button />` y `<Popover.Content />`, necesarios para su uso. Haz clic en Show code en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Popover básico con contenido interactivo.
+
+**Características:**
+- Abre con click en el botón
+- Cierra con click fuera o ESC
+- Puede contener botones y elementos interactivos
+- Posicionamiento automático
+        `,
       },
     },
   },
@@ -45,8 +95,16 @@ export const DisabledInteractionOutside: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando la propiedad `disabledInteractOutside` presente en el componente `<Popover.Content/>`, podemos deshabilitar la funcionalidad que cierra este si se interactúa afuera del contenido del componente.",
+        story: `
+Popover que NO se cierra al hacer click fuera.
+
+Usa \`disabledInteractOutside\` en \`Popover.Content\` cuando necesites que el usuario interactúe explícitamente con el contenido.
+
+Útil para:
+- Formularios que requieren completarse
+- Confirmaciones importantes
+- Contenido que no debe ignorarse
+        `,
       },
     },
   },

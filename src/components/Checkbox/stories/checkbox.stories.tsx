@@ -8,6 +8,30 @@ const meta: Meta<typeof CheckBox> = {
   component: CheckBox,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **CheckBox** es un input personalizado para selección múltiple.
+
+## Características principales
+
+- **Estados visuales**: Normal, correcto (right), incorrecto (wrong)
+- **Iconos integrados**: Feedback visual con iconos SVG
+- **Label flexible**: Soporta HTML para formateo rico
+- **Accesible**: Atributos ARIA y asociación label-input correcta
+- **Controlado/No controlado**: Funciona en ambos modos
+- **Customizable**: Estilos modificables mediante clases
+
+## Uso en formularios
+
+Ideal para:
+- Selección múltiple de opciones
+- Aceptación de términos y condiciones
+- Filtros y preferencias
+- Validación con feedback visual
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -19,8 +43,11 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "El componente `Checkbox` es un elemento personalizado que permite manejar diferentes estados en su interior. Es especialmente útil en formularios cuando el usuario necesita seleccionar múltiples valores de distintas opciones disponibles. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: `
+Checkbox básico con label que soporta HTML.
+
+El label puede incluir formato como \`<strong>\`, \`<em>\`, enlaces, etc., para mejorar la presentación del texto.
+        `,
       },
     },
   },
@@ -40,8 +67,15 @@ export const States: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Utilizando la propiedad `state`, se pueden manejar los múltiples estados del componente, tales como: `normal`, `right`, y `wrong`. Estos dos últimos muestran un ícono SVG dentro del componente.",
+        story: `
+El checkbox soporta tres estados visuales:
+
+- **normal**: Estado estándar sin validación
+- **right**: Muestra un icono de éxito/correcto (✓)
+- **wrong**: Muestra un icono de error/incorrecto (✗)
+
+Los estados \`right\` y \`wrong\` son útiles para validación en tiempo real o feedback de formularios.
+        `,
       },
     },
   },

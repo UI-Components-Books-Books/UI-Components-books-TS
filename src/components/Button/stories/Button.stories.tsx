@@ -6,6 +6,26 @@ const meta: Meta<typeof Button> = {
   component: Button,
   parameters: {
     layout: "centered",
+    docs: {
+      description: {
+        component: `
+El componente **Button** es un botón versátil, accesible y completamente personalizable.
+
+## Características principales
+
+- **Variantes**: Estilos primary, secondary y no-line
+- **Tamaños**: Small, normal y big para diferentes contextos
+- **Accesible**: Soporte completo para aria-label y lectores de pantalla
+- **Estados**: Maneja disabled, focus, hover y active
+- **Composable**: Acepta iconos y contenido personalizado
+- **Semántico**: Genera elementos \`<button>\` nativos para mejor accesibilidad
+
+## Accesibilidad
+
+Cuando uses iconos sin texto visible, activa \`hasAriaLabel\` y proporciona un \`label\` descriptivo para lectores de pantalla.
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
@@ -17,8 +37,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Un componente `Button` sencillo, fácil de personalizar y accesible. Haz clic en `Show code` en la parte inferior para ver y utilizar este ejemplo.",
+        story: "Botón básico con configuración por defecto. Usa los controles interactivos para explorar las diferentes opciones disponibles.",
       },
     },
   },
@@ -50,8 +69,13 @@ export const DifferentSize: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "La propiedad `size` nos permite modificar el tamaño del componente. Podemos usar los valores `small`, `normal` y `big` para ajustar el tamaño según nuestras necesidades específicas.",
+        story: `
+El botón está disponible en tres tamaños:
+
+- **small**: Para interfaces compactas o acciones secundarias
+- **normal** (default): Tamaño estándar para la mayoría de casos
+- **big**: Para llamadas a la acción principales o interfaces con más espacio
+        `,
       },
     },
   },
@@ -68,8 +92,13 @@ export const Variant: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Por defecto, el componente tiene el diseño de la propiedad `variant='primary'`, pero puedes usar diferentes tipos como `secondary` y `no-line` para cambiar el diseño del botón.",
+        story: `
+Tres variantes visuales disponibles:
+
+- **primary**: Estilo principal, alto contraste, para acciones primarias
+- **secondary**: Estilo alternativo para acciones secundarias
+- **no-line**: Estilo minimalista sin borde, ideal para acciones terciarias
+        `,
       },
     },
   },
@@ -86,8 +115,17 @@ export const WithAriaLabel: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Para el tema de accesibilidad (a11y), incluimos la propiedad `hasAriaLabel`. El uso de esta propiedad se ilustra en el ejemplo que aparece en la parte inferior. En el caso de un botón que no tiene una etiqueta ni un contenido claro, el lector de pantalla no podrá informar adecuadamente al usuario. Por esta razón, la propiedad `hasAriaLabel` agrega la propiedad `aria-label`. Es importante que la propiedad `label` esté presente, ya que su contenido se utilizará en la propiedad `aria-label`.",
+        story: `
+**Importante para accesibilidad:** Cuando un botón contiene solo un icono sin texto visible, es esencial proporcionar un label descriptivo.
+
+\`\`\`tsx
+<Button hasAriaLabel label="Cerrar ventana">
+  <Icon><CloseIcon /></Icon>
+</Button>
+\`\`\`
+
+Activando \`hasAriaLabel\`, el contenido de \`label\` se usará como \`aria-label\`, permitiendo que los lectores de pantalla describan correctamente la función del botón.
+        `,
       },
     },
   },
