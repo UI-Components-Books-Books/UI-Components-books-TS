@@ -1,7 +1,6 @@
 export { DragAndDrop } from "./src/drag-and-drop";
 
 export type {
-    ModifiersType,
     DroppableProps,
     DraggableProps,
     DragAndDropProps,
