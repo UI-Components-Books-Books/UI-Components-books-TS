@@ -1,3 +1,15 @@
+# v1.0.2 (Tue Jan 20 2026)
+
+#### ⚠️ Pushed to `main`
+
+- fix(dependencies): update peer dependencies to use caret versioning (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v0.1.40 (Fri Jan 09 2026)
 
 #### ⚠️ Pushed to `main`
