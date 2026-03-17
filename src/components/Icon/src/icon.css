@@ -2,9 +2,16 @@
     display: block;
     width: var(--icon-size);
     height: var(--icon-size);
-    fill: currentColor;
     forced-color-adjust: auto;
     pointer-events: none;
+}
+
+.c-icon[fill] {
+    fill: var(--icon-fill, currentColor);
+}
+
+.c-icon[stroke] {
+    stroke: var(--icon-stroke, currentColor);
 }
 
 :where(.c-icon.c-small) {
