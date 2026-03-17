@@ -1,3 +1,16 @@
+# v1.0.3 (Tue Mar 17 2026)
+
+#### ⚠️ Pushed to `main`
+
+- feat(accordion): add inert attribute for accessibility and update stories with button (coor_frontend@booksandbooksdigital.com.co)
+- fix(icon): add fill and stroke properties for icon customization (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v1.0.2 (Tue Jan 20 2026)
 
 #### ⚠️ Pushed to `main`
