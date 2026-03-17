@@ -1,4 +1,4 @@
-import { Accordion } from "@components";
+import { Accordion, Button } from "@components";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import "../assets/docs.css";
@@ -77,6 +77,9 @@ Cuando abres un panel, el panel previamente abierto se cierra automáticamente. 
               quos libero veritatis ab commodi. Aspernatur, dignissimos.
               Doloribus minima tenetur quos iste porro?
             </p>
+            <Button variant="primary" size="small">
+              Read more
+            </Button>
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item>
