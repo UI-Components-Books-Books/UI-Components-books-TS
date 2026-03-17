@@ -6,11 +6,11 @@
     pointer-events: none;
 }
 
-.c-icon[fill] {
+.c-icon[fill]:not([fill="none"]) {
     fill: var(--icon-fill, currentColor);
 }
 
-.c-icon[stroke] {
+.c-icon[stroke]:not([stroke="none"]) {
     stroke: var(--icon-stroke, currentColor);
 }
 
