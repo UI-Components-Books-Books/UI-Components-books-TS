@@ -1,3 +1,15 @@
+# v1.0.4 (Tue Mar 17 2026)
+
+#### ⚠️ Pushed to `main`
+
+- fix(icon): refine fill and stroke selectors for better specificity (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v1.0.3 (Tue Mar 17 2026)
 
 #### ⚠️ Pushed to `main`
