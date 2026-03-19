@@ -37,7 +37,7 @@ const ToogleMutedButton = () => {
             onClick={toogleMuted}
         >
             <Icon>
-                <svg xmlns='http://www.w3.org/2000/svg' height='48' width='48' viewBox='0 -3 24 30'>
+                <svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' height='48' width='48' viewBox='0 -3 24 30'>
                     <path
                         d="M16 21c3.527-1.547 5.999-4.909 5.999-9S19.527 4.547 16 3v2c2.387 1.386 3.999 4.047 3.999 7S18.387 17.614 16 19v2z"
                         style={{ opacity: volume <= 0.5 ? 0 : 1, transition: 'opacity 0.2s' }}
