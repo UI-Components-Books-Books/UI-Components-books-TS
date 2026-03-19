@@ -1,3 +1,15 @@
+# v1.0.5 (Thu Mar 19 2026)
+
+#### ⚠️ Pushed to `main`
+
+- feat: update SVG icons to include fill attribute and improve structure (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v1.0.4 (Tue Mar 17 2026)
 
 #### ⚠️ Pushed to `main`
