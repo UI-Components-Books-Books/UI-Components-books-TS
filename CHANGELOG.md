@@ -1,3 +1,15 @@
+# v1.0.6 (Thu Mar 26 2026)
+
+#### ⚠️ Pushed to `main`
+
+- feat: enhance useResize hook with improved slider width calculation and resize observation (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v1.0.5 (Thu Mar 19 2026)
 
 #### ⚠️ Pushed to `main`
