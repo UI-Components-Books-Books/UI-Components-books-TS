@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useCallback, useEffect,useRef, useState } from "react";
 
 interface props {
     onResize: (currentWidth: number) => void;
@@ -63,20 +63,6 @@ export const useResize = <T extends HTMLElement>({
     }, []);
 
 
-    // Función para actualizar el ancho del slider según un porcentaje dado
-    const updateSliderWidth = (currentPercentage: number) => {
-        // Calcular el nuevo ancho del slider en píxeles
-        const newWidth = ((currentPercentage / 100) * size.current.base).toFixed(4);
-
-        // Actualizar el ancho del slider en el estado ref
-        size.current.width = parseFloat(newWidth);
-        size.current.percentage = currentPercentage
-
-        // Establecer los estilos actualizados para reflejar el nuevo ancho del slider
-        setStyles(`${size.current.width}px`);
-    };
-
-
     // Función para calcular y establecer las medidas iniciales del contenedor
     const calculateInitialContainerSize = () => {
         if (!container) return;
@@ -89,6 +75,26 @@ export const useResize = <T extends HTMLElement>({
 
         // Establecer el desplazamiento izquierdo del contenedor respecto al viewport
         size.current.leftOffset = left;
+    };
+
+
+    // Función para actualizar el ancho del slider según un porcentaje dado
+    const updateSliderWidth = (currentPercentage: number) => {
+        // Si el ancho base es 0 (ej. cuando el elemento está dentro de un Panel.Section
+        // oculto con display:none), intentamos recalcularlo antes de continuar.
+        if (size.current.base === 0) {
+            calculateInitialContainerSize();
+        }
+
+        // Calcular el nuevo ancho del slider en píxeles
+        const newWidth = ((currentPercentage / 100) * size.current.base).toFixed(4);
+
+        // Actualizar el ancho del slider en el estado ref
+        size.current.width = parseFloat(newWidth);
+        size.current.percentage = currentPercentage
+
+        // Establecer los estilos actualizados para reflejar el nuevo ancho del slider
+        setStyles(`${size.current.width}px`);
     };
 
 
@@ -192,8 +198,19 @@ export const useResize = <T extends HTMLElement>({
         // Medir el contenedor antes de iniciar la redimension
         calculateInitialContainerSize();
 
+        // Observar cambios de tamaño para recalcular cuando el contenedor pasa de
+        // oculto (clientWidth === 0, ej. dentro de un Panel.Section) a visible.
+        const resizeObserver = new ResizeObserver(() => {
+            const currentWidth = container.clientWidth;
+            if (currentWidth > 0 && currentWidth !== size.current.base) {
+                initializeResize();
+            }
+        });
+        resizeObserver.observe(container);
+
         return () => {
             container.removeEventListener("pointerdown", onPointerDown);
+            resizeObserver.disconnect();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [container, hasElementLoad]);
