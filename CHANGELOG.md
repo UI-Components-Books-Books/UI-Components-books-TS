@@ -1,3 +1,15 @@
+# v1.0.7 (Fri Apr 10 2026)
+
+#### ⚠️ Pushed to `main`
+
+- feat: add transcriptionRef for improved animation handling in VideoTranscription component ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v1.0.6 (Thu Mar 26 2026)
 
 #### ⚠️ Pushed to `main`
