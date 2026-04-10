@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { Icon } from "@components";
 import { formatTime } from "@utils/converterTime";
@@ -16,6 +16,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
   const { uid, currentTime, activeVideoTranscription } = usePlayerContext();
   const { transcript, currentCueId } = useTranscript(uid, caption);
   const dispatch = usePlayerDispatchContext();
+  const transcriptionRef = useRef<HTMLDivElement>(null);
 
   /**
    * Salta al tiempo específico del video cuando se hace clic en un segmento de transcripción.
@@ -41,6 +42,16 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
   };
 
   useEffect(() => {
+    if (activeVideoTranscription && transcriptionRef.current) {
+      gsap.fromTo(
+        transcriptionRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+  }, [activeVideoTranscription]);
+
+  useEffect(() => {
     // Encuentra el índice del cue actual basado en el tiempo del video
     const currentCueId = transcript.findIndex(
       (cue) => currentTime >= cue.start && currentTime < cue.end
@@ -63,15 +74,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
     <>
       {activeVideoTranscription && (
         <div
-          ref={(el) => {
-            if (el) {
-              gsap.fromTo(
-                el,
-                { opacity: 0, y: 20 },
-                { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-              );
-            }
-          }}
+          ref={transcriptionRef}
           className="video-player__transcription"
         >
           <div className="video-player__transcription-header">
