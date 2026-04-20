@@ -68,7 +68,7 @@ Toggletip básico que se activa con click.
     },
   },
   args: {
-    label: "Default",
+    label: "<i>Default</i> toggletip",
     children: <Button label="default" />,
   },
   render: (args) => <Toggletip {...args}></Toggletip>,

@@ -76,7 +76,7 @@ Tooltip básico que aparece al hacer hover.
     },
   },
   args: {
-    label: "Default",
+    label: "<i>Default</i> tooltip",
     children: <Button label="default" />,
   },
   render: (args) => <Tooltip {...args}></Tooltip>,

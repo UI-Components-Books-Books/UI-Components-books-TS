@@ -154,7 +154,7 @@ export const Toggletip: React.FC<ToggletipProps> = ({
                     })}
                     {...attributes.popper}
                 >
-                    {label}
+                    <span dangerouslySetInnerHTML={{__html: label }}></span>
                     {hasArrow && (
                         <div
                             className="c-toggletip__arrow"

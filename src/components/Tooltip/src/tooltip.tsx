@@ -186,7 +186,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           })}
           {...attributes.popper}
         >
-          {label}
+          <span dangerouslySetInnerHTML={{__html: label }}></span>
           {hasArrow && (
             <div
               className="c-tooltip__arrow"
