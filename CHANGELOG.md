@@ -1,3 +1,15 @@
+# v1.0.10 (Mon Apr 20 2026)
+
+#### ⚠️ Pushed to `main`
+
+- feat: update Toggletip and Tooltip components to support HTML labels (coor_frontend@booksandbooksdigital.com.co)
+
+#### Authors: 1
+
+- Frontend-leader (coor_frontend@booksandbooksdigital.com.co)
+
+---
+
 # v1.0.9 (Fri Apr 10 2026)
 
 
