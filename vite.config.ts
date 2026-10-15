@@ -34,7 +34,11 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'books-ui',
       // Se agregará la extension apropiada.
-      fileName: 'books-ui'
+      fileName: 'books-ui',
+      // Desde Vite 6 el CSS de una librería se llama como el `name` del package.json
+      // (`books-ui.css`). `exports["./styles"]` apunta a `dist/style.css`, así que se conserva
+      // el nombre anterior para no romper `import "books-ui/styles"` a quienes consumen la librería.
+      cssFileName: 'style'
     },
     rollupOptions: {
       // Asegúrate de externalizar las dependencias que no deberían estar empaquetadas
