@@ -13,7 +13,8 @@ const shouldIncludeDts = process.env.SKIP_DTS !== 'true';
 
 const plugins = [
   react(),
-  shouldIncludeDts && dts({ rollupTypes: true }),
+  // Los tests viven dentro de `src`, pero no deben formar parte de los tipos publicados.
+  shouldIncludeDts && dts({ rollupTypes: true, exclude: ['node_modules/**', 'src/**/*.test.{ts,tsx}', 'src/test/**'] }),
 ].filter(Boolean)
 
 // https://vitejs.dev/config/
