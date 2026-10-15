@@ -7,8 +7,11 @@ import { useMedia } from './useMedia'
  * Hook para manejar el Dark Mode.
  *
  * Agrega y remueve la propiedad "data-dark-mode" del Body element,
- * que sirve para controlar el tema en la aplicación. Además observa
- * las preferencias del usuario frente al modo oscuro.
+ * que sirve para controlar el tema en la aplicación.
+ *
+ * La elección explícita del usuario (guardada en el localStorage) siempre tiene prioridad.
+ * Mientras el usuario no haya elegido, se sigue la preferencia del Navegador o del
+ * Sistema Operativo, sin guardarla.
  *
  * @example
  * const [darkMode, setDarkMode] = useDarkMode();
@@ -17,10 +20,14 @@ import { useMedia } from './useMedia'
  */
 const useDarkMode = (): [boolean, (value: boolean) => void] => {
     /**
-     * Usamos nuestro useLocalStorage Hook para guardar nuestro
-     * estado sin importar que la página se recargue.
+     * Usamos nuestro useLocalStorage Hook para guardar la elección del usuario
+     * sin importar que la página se recargue. Su valor inicial es undefined,
+     * que significa "el usuario aún no ha elegido".
      */
-    const [enableState, setEnableState] = useLocalStorage<boolean>('dark-mode-enabled', false);
+    const [enableState, setEnableState] = useLocalStorage<boolean | undefined>(
+        'dark-mode-enabled',
+        undefined
+    );
 
     /**
      * Comprueba si el usuario tiene en Navegador o el Sistema Operativo
@@ -32,15 +39,7 @@ const useDarkMode = (): [boolean, (value: boolean) => void] => {
      * Si enableState está definido entonces usar este, de otra manera usar el valor de
      * prefersDarkMode.
      */
-    const enabled = typeof enableState !== 'undefined' ? enableState : prefersDarkMode
-
-    /**
-     * Observa cambios en nuestra Media Query y lanza una
-     * actualización a nuestro localStorage.
-     */
-    useEffect(() => {
-        setEnableState(prefersDarkMode);
-    }, [prefersDarkMode]);
+    const enabled = enableState ?? prefersDarkMode
 
     /**
      * Efecto que agrega/remueve la propiedad "data-dark-mode"
