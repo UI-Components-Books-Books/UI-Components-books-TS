@@ -141,6 +141,7 @@ export const VideoPlayer: React.FC<InterpreterVideoPlayerProps> = ({ displayVide
 
         // Limpieza: remover oyentes de eventos y restablecer valores al desmontar el componente
         return () => {
+            videoElement.removeEventListener('loadedmetadata', handleLoadMetaData);
             videoElement.removeEventListener('timeupdate', handleTimeUpdate);
             videoElement.removeEventListener('ended', handleVideoEnded);
             setCurrentTime(0);

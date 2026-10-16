@@ -312,6 +312,21 @@ describe('Interpreter', () => {
       expect(slider).toHaveAttribute('aria-valuetext', '00:12')
     })
 
+    it('un video que ya no está en pantalla no cambia la duración del que sí lo está', async () => {
+      await open()
+      await userEvent.click(screen.getByRole('button', { name: 'Video de contenido' }))
+      setMediaProps(contentVideo(), { duration: 50 })
+      fireEvent.loadedMetadata(contentVideo())
+      const slider = screen.getByLabelText('Tiempo transcurrido')
+      expect(slider).toHaveAttribute('max', '50')
+
+      // El video descriptivo, que se dejó de mostrar, termina de cargar sus metadatos más tarde.
+      setMediaProps(accesibilityVideo(), { duration: 90 })
+      fireEvent.loadedMetadata(accesibilityVideo())
+
+      expect(slider).toHaveAttribute('max', '50')
+    })
+
     it('al mover el control deslizante cambia el tiempo del video', async () => {
       await open()
       setMediaProps(accesibilityVideo(), { duration: 100 })
