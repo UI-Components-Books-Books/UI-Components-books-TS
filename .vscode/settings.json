@@ -3,7 +3,7 @@
     "**.gitignore": false,
     "**/.github": true,
     "**/.storybook": false,
-    "**/tests": true,
+    "**/tests": false,
     ".npmrc": true,
     "babel.config.json": true,
     "**jest.config.cjs": true,
