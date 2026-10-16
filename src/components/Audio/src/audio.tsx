@@ -253,7 +253,7 @@ export const Audio: React.FC<AudioProps> = ({
         />
         <Button
           type='button'
-          label={play ? 'Pausar' : 'Reproduccir'}
+          label={play ? 'Pausar' : 'Reproducir'}
           data-a11y={a11y}
           onClick={togglePlay}
           hasAriaLabel

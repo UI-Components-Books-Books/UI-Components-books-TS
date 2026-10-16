@@ -1,8 +1,9 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useMemo, useRef } from "react";
 
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Popover } from "@components";
 import { cn } from "@utils/cn";
+import { mergeRefs } from "@utils/mergeRefs";
 
 import { useDragAndDropContext } from "./drag-and-drop-context";
 import { DragMoveButton } from "./drag-move-button";
@@ -20,8 +21,10 @@ interface DraggableComponent
 
 export const Draggable = forwardRef<HTMLDivElement, DraggableProps>(
   ({ id, children, dragDisabled = false, addClass = "", label, handleDrag, ...rest }, ref) => {
-    const dragRef = useRef<HTMLDivElement>(null);
-    const localRef = ref || dragRef;
+    const dragRef = useRef<HTMLDivElement | null>(null);
+    // Une la ref interna (la que usa el efecto de arrastre) con la que pueda pasar quien usa el
+    // componente: si solo se usara una de las dos, el elemento dejaría de ser arrastrable.
+    const setRefs = useMemo(() => mergeRefs(dragRef, ref), [ref]);
 
     const { validate, listId } = useDragAndDropContext();
 
@@ -48,7 +51,7 @@ export const Draggable = forwardRef<HTMLDivElement, DraggableProps>(
 
     return (
       <div
-        ref={localRef as React.RefObject<HTMLDivElement>}
+        ref={setRefs}
         data-drag-id={id}
         data-type={DragAndDropTypes.DRAGGABLE}
         className={cn("c-draggable", addClass)}

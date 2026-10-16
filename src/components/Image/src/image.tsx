@@ -19,20 +19,21 @@ export const Image = forwardRef<HTMLImageElement, ImageProps>(function Image(
   },
   ref
 ) {
-  // Estado para determinar si se muestra la imagen por defecto.
-  const [error, setError] = useState<boolean>(false);
+  // Guarda el `src` que falló al cargar. Se guarda el valor (y no un booleano) para que el error
+  // deje de aplicar por sí solo cuando llega un `src` distinto.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   /**
    * Manejador de error para la imagen.
-   * Si la imagen no se carga correctamente, cambia el estado `error`
+   * Si la imagen no se carga correctamente, registra el `src` que falló
    * para mostrar la imagen por defecto.
    */
   const onError = (): void => {
-    setError(true);
+    setFailedSrc(src);
   };
 
-  // Determina la fuente de la imagen a mostrar dependiendo del estado `error`.
-  const imgToSee = !error ? src : imageBase;
+  // Determina la fuente de la imagen a mostrar: la por defecto solo si falló el `src` actual.
+  const imgToSee = failedSrc !== src ? src : imageBase;
 
   // Elemento HTML a renderizar, puede ser `div` o `figure` basado en `noCaption`.
   const Element = noCaption ? "div" : "figure";

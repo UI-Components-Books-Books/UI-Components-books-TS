@@ -34,13 +34,15 @@ const KEYCODE = Object.freeze({
  * de los elementos que son usados en la navegación de la secciones.
  *
  * @param {String} type - Tipo de elemento
- * @param {Number} section - Número de la sección
+ * @param {Number} section - Índice de la sección (base 0, igual que `defaultIndex` y `Panel.Button`)
  * @param {Boolean} selected - Boolean que informa si está la sección seleccionada.
  * @returns {string} Message - Mensaje utiliado en el aria-label
  */
 const defaultAriaLabel: PanelAriaLabelGenerator = (type, selected, section) => {
   if (type === 'section') {
-    return `${selected ? '' : 'Ir a la '}sección ${section}`
+    // Se le dice al usuario el número "humano" de la sección (desde 1), igual que el texto
+    // "Sección N" que lleva cada sección para los lectores de pantalla.
+    return `${selected ? '' : 'Ir a la '}sección ${(section ?? 0) + 1}`
   }
   return `Ir a la ${getSpanishType[type]} sección`
 }
@@ -151,30 +153,22 @@ export const NavSection: React.FC<NavSectionProps> = ({
    * @param {Event} event - Evento disparado por KeyDown
    */
   const onNavigation = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    // Obtenemos la primera sección.
-    const FIRST_SECTION = refSections.current[0]
-    // Obtenemos la última sección.
-    const LAST_SECTION = refSections.current[refSections.current.length - 1]
+    const keyCode = event.keyCode || event.which
+    const isLeft = event.key === 'ArrowLeft' || keyCode === KEYCODE.LEFT
+    const isRight = event.key === 'ArrowRight' || keyCode === KEYCODE.RIGHT
 
-    // Si la tecla pulsada ArrowLeft
-    if ((event.keyCode || event.which) === KEYCODE.LEFT) {
-      if (event.target === FIRST_SECTION) {
-        LAST_SECTION.focus()
-      } else {
-        const prevFocusButton = refSections.current.indexOf(event.target as HTMLButtonElement) - 1
-        // Agregamos el focus al botón anterior
-        refSections.current[prevFocusButton].focus()
-      }
-    } else if ((event.keyCode || event.which) === KEYCODE.RIGHT) {
-      // Si la tecla pulsada es ArrowRight
-      if (event.target === LAST_SECTION) {
-        FIRST_SECTION.focus()
-      } else {
-        const nextFocusButton = refSections.current.indexOf(event.target as HTMLButtonElement) + 1
-        // Agregamos el focus al siguiente botón
-        refSections.current[nextFocusButton].focus()
-      }
-    }
+    if (!isLeft && !isRight) return
+
+    // Solo se navega entre los botones que pueden recibir el foco: `.focus()` sobre un botón
+    // deshabilitado (p. ej. "anterior" en la primera sección) no hace nada y el foco quedaría atascado.
+    const focusable = refSections.current.filter((button) => button.isConnected && !button.disabled)
+    const currentIndex = focusable.indexOf(event.target as HTMLButtonElement)
+
+    if (currentIndex === -1) return
+
+    // La navegación es circular: desde el último se pasa al primero y viceversa.
+    const nextIndex = (currentIndex + (isLeft ? -1 : 1) + focusable.length) % focusable.length
+    focusable[nextIndex].focus()
   }
 
 
@@ -187,7 +181,8 @@ export const NavSection: React.FC<NavSectionProps> = ({
     handleToggle(section)
 
     if (onValue !== undefined) {
-      onValue(currentSection, sectionsId.length)
+      // Se informa la sección a la que se va (no la que se abandona).
+      onValue(sectionsId.indexOf(section), sectionsId.length)
     }
   }
 

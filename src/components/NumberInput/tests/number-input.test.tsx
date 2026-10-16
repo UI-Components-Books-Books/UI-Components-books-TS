@@ -93,9 +93,7 @@ describe('NumberInput', () => {
       expect(screen.getByText('Visible')).not.toHaveClass('u-sr-only')
     })
 
-    // BUG CONOCIDO: igual que en Switch, con el label visible queda class="false".
-    // Cuando se corrija este test fallará y habrá que quitar `.fails`.
-    it.fails('no deja la clase literal "false" cuando el label es visible', () => {
+    it('no deja la clase literal "false" cuando el label es visible', () => {
       render(
         <NumberInput>
           <NumberInput.Field label="Visible" isLabelVisible />
@@ -103,6 +101,7 @@ describe('NumberInput', () => {
       )
 
       expect(screen.getByText('Visible')).not.toHaveClass('false')
+      expect(screen.getByText('Visible')).not.toHaveAttribute('class')
     })
 
     it('usa el name por defecto y permite personalizarlo', () => {
@@ -202,15 +201,29 @@ describe('NumberInput', () => {
       expect(input).toHaveValue('5')
     })
 
-    // BUG CONOCIDO: si `step` no divide el rango, un click puede dejar el valor por encima
-    // del máximo (4 -> 6 con max=5 y step=2) y recién el siguiente click lo corrige a 5.
-    // Cuando se corrija este test fallará y habrá que quitar `.fails`.
-    it.fails('con keepWithinRange nunca supera el máximo, aunque step no divida el rango', async () => {
+    it('con keepWithinRange nunca supera el máximo, aunque step no divida el rango', async () => {
       const { input, increment } = setup({ keepWithinRange: true, min: 0, max: 5, step: 2, defaultValue: 4 })
 
       await userEvent.click(increment)
 
-      expect(Number(input.value)).toBeLessThanOrEqual(5)
+      expect(input).toHaveValue('5')
+    })
+
+    it('con keepWithinRange nunca baja del mínimo, aunque step no divida el rango', async () => {
+      const { input, decrement } = setup({ keepWithinRange: true, min: 0, max: 5, step: 2, defaultValue: 1 })
+
+      await userEvent.click(decrement)
+
+      expect(input).toHaveValue('0')
+    })
+
+    it('con keepWithinRange tampoco supera el máximo usando la flecha arriba del teclado', () => {
+      const { input } = setup({ keepWithinRange: true, min: 0, max: 5, defaultValue: 5 })
+
+      // El botón de incremento está deshabilitado en el máximo, pero el teclado no lo estaba.
+      fireEvent.keyDown(input, { key: 'ArrowUp', keyCode: 38 })
+
+      expect(input).toHaveValue('5')
     })
   })
 

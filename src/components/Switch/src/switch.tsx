@@ -28,7 +28,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
       className={cn(`c-switch c-switch--${size}`, addClass)}
     >
       <label htmlFor={uid}>
-        <span className={`${!isLabelVisible && "u-sr-only"}`}> {label} </span>
+        <span className={isLabelVisible ? undefined : "u-sr-only"}> {label} </span>
       </label>
       <input
         id={uid}

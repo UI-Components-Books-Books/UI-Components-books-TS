@@ -111,7 +111,7 @@ export const NumberInputField = forwardRef<HTMLInputElement, NumberInputFieldPro
         htmlFor={uid}
         className={cn('c-number-input__label', addClass)}
       >
-        <span className={`${!isLabelVisible && 'u-sr-only'}`}> {label} </span>
+        <span className={isLabelVisible ? undefined : 'u-sr-only'}> {label} </span>
         <input
           id={uid}
           ref={ref}

@@ -102,16 +102,33 @@ describe('Image', () => {
       expect(img(container)).toHaveAttribute('src', 'none')
     })
 
-    // BUG CONOCIDO: el estado `error` nunca se reinicia. Si la imagen falla y luego llega un
-    // `src` válido (p. ej. al reutilizar el componente en una lista), se sigue mostrando la
-    // imagen por defecto. Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('vuelve a mostrar la imagen cuando llega un nuevo src después de un error', () => {
+    it('vuelve a mostrar la imagen cuando llega un nuevo src después de un error', () => {
       const { container, rerender } = render(<Image src="/rota.png" alt="x" />)
       fireEvent.error(img(container))
 
       rerender(<Image src="/buena.png" alt="x" />)
 
       expect(img(container)).toHaveAttribute('src', '/buena.png')
+    })
+
+    it('si el nuevo src también falla, vuelve a mostrar la imagen por defecto', () => {
+      const { container, rerender } = render(<Image src="/rota.png" alt="x" />)
+      fireEvent.error(img(container))
+      rerender(<Image src="/otra-rota.png" alt="x" />)
+      expect(img(container)).toHaveAttribute('src', '/otra-rota.png')
+
+      fireEvent.error(img(container))
+
+      expect(img(container).getAttribute('src')?.startsWith(FALLBACK)).toBe(true)
+    })
+
+    it('mientras no cambie el src sigue mostrando la imagen por defecto tras otros renders', () => {
+      const { container, rerender } = render(<Image src="/rota.png" alt="x" />)
+      fireEvent.error(img(container))
+
+      rerender(<Image src="/rota.png" alt="x" addClass="otra-clase" />)
+
+      expect(img(container).getAttribute('src')?.startsWith(FALLBACK)).toBe(true)
     })
   })
 })

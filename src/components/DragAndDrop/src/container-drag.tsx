@@ -1,10 +1,11 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useMemo, useRef } from "react";
 
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 
 import { useDragAndDropContext } from "./drag-and-drop-context";
 import { DragAndDropTypes } from "../utils/const";
 import { cn } from "@/utils/cn";
+import { mergeRefs } from "@/utils/mergeRefs";
 
 interface ContainerDragProps {
   id: string;
@@ -24,11 +25,12 @@ export const ContainerDrag = forwardRef<HTMLDivElement, ContainerDragProps>(
   ({ id, children, addClass, label, ...rest }, ref) => {
     const { validate } = useDragAndDropContext();
 
-    const dropRef = useRef<HTMLDivElement>(null);
-    const localRef = ref || dropRef;
+    const dropRef = useRef<HTMLDivElement | null>(null);
+    // Une la ref interna con la que pueda pasar quien usa el componente (objeto o callback).
+    const setRefs = useMemo(() => mergeRefs(dropRef, ref), [ref]);
 
     useEffect(() => {
-      const element = (localRef as React.RefObject<HTMLDivElement>).current;
+      const element = dropRef.current;
 
       if (!element) return;
 
@@ -42,11 +44,11 @@ export const ContainerDrag = forwardRef<HTMLDivElement, ContainerDragProps>(
       });
 
       return cleanup;
-    }, [id, validate, localRef]);
+    }, [id, validate]);
 
     return (
       <div
-        ref={localRef as React.RefObject<HTMLDivElement>}
+        ref={setRefs}
         data-drop-id={id}
         data-type={DragAndDropTypes.CONTAINER}
         role="region"

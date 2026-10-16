@@ -180,11 +180,7 @@ describe('DragAndDrop', () => {
       expect(cleanups.monitor).toHaveBeenCalled()
     })
 
-    // BUG CONOCIDO: el efecto de Draggable lee `dragRef.current`, pero si el usuario pasa su propia
-    // `ref`, `localRef` apunta a ella y `dragRef` nunca se asocia al DOM. El elemento deja de ser
-    // arrastrable con el mouse sin ningún aviso (Droppable y ContainerDrag sí usan `localRef`).
-    // Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('un Draggable sigue registrándose como arrastrable cuando recibe una ref', () => {
+    it('un Draggable sigue registrándose como arrastrable cuando recibe una ref', () => {
       const ref = createRef<HTMLDivElement>()
       render(
         <DragAndDrop id="dnd">
@@ -197,6 +193,63 @@ describe('DragAndDrop', () => {
       )
 
       expect(draggable).toHaveBeenCalled()
+      expect(ref.current).toBe(dragEl('A'))
+    })
+
+    describe('refs recibidas por los subcomponentes', () => {
+      it('un Draggable con ref de tipo callback también se registra y recibe su elemento', () => {
+        const ref = vi.fn()
+        render(
+          <DragAndDrop id="dnd">
+            <DragAndDrop.Container id="c" label="C">
+              <DragAndDrop.Drag id="A" label="A" ref={ref}>
+                Alfa
+              </DragAndDrop.Drag>
+            </DragAndDrop.Container>
+          </DragAndDrop>
+        )
+
+        expect(draggable).toHaveBeenCalled()
+        expect(ref).toHaveBeenCalledWith(dragEl('A'))
+      })
+
+      it('una Drop con ref (objeto o callback) se registra como destino y recibe su elemento', () => {
+        const objectRef = createRef<HTMLDivElement>()
+        const callbackRef = vi.fn()
+        render(
+          <DragAndDrop id="dnd">
+            <div>
+              <DragAndDrop.Drop id="z1" label="Z1" validate={[]} ref={objectRef} />
+              <DragAndDrop.Drop id="z2" label="Z2" validate={[]} ref={callbackRef} />
+            </div>
+          </DragAndDrop>
+        )
+
+        expect(dropTargetForElements).toHaveBeenCalledTimes(2)
+        expect(objectRef.current).toBe(zoneEl('z1'))
+        expect(callbackRef).toHaveBeenCalledWith(zoneEl('z2'))
+      })
+
+      it('un Container con ref (objeto o callback) se registra como destino y recibe su elemento', () => {
+        const objectRef = createRef<HTMLDivElement>()
+        const callbackRef = vi.fn()
+        render(
+          <DragAndDrop id="dnd">
+            <div>
+              <DragAndDrop.Container id="c1" label="C1" ref={objectRef}>
+                vacío
+              </DragAndDrop.Container>
+              <DragAndDrop.Container id="c2" label="C2" ref={callbackRef}>
+                vacío
+              </DragAndDrop.Container>
+            </div>
+          </DragAndDrop>
+        )
+
+        expect(dropTargetForElements).toHaveBeenCalledTimes(2)
+        expect(objectRef.current).toBe(zoneEl('c1'))
+        expect(callbackRef).toHaveBeenCalledWith(zoneEl('c2'))
+      })
     })
   })
 
@@ -373,12 +426,7 @@ describe('DragAndDrop', () => {
       await waitFor(() => expect(onValidate).toHaveBeenLastCalledWith({ validate: [], active: true }))
     })
 
-    // BUG CONOCIDO (importante para la corrección de ejercicios): sin multipleDrags, si B se suelta
-    // en una zona ocupada por A, A vuelve al contenedor de origen pero SIGUE contando como válido.
-    // La causa es que `validateDrags` busca "el elemento previo de la zona" en el estado ya
-    // actualizado, donde A ya no está en esa zona. Cuando se corrija este test fallará:
-    // quitar `.fails`.
-    it.fails('sin multipleDrags, un elemento desplazado fuera de su zona deja de contar como válido', async () => {
+    it('sin multipleDrags, un elemento desplazado fuera de su zona deja de contar como válido', async () => {
       const onValidate = vi.fn()
       render(<Example onValidate={onValidate} />)
       await moveWithMenu('Opción A', 'Zona 1')
@@ -387,6 +435,43 @@ describe('DragAndDrop', () => {
 
       // B no es válido en la zona 1 y A fue desplazado al origen: ninguno debería ser válido.
       await waitFor(() => expect(onValidate).toHaveBeenLastCalledWith({ validate: [], active: true }))
+    })
+
+    it('un elemento vuelve a ser válido al regresar a su zona después de haber sido desplazado', async () => {
+      const onValidate = vi.fn()
+      render(<Example onValidate={onValidate} />)
+      await moveWithMenu('Opción A', 'Zona 1')
+      await moveWithMenu('Opción B', 'Zona 1') // desplaza a A
+
+      await moveWithMenu('Opción A', 'Zona 1') // A regresa y desplaza a B
+
+      expect(whereIs('A')).toBe('zona-1')
+      expect(whereIs('B')).toBe('origen')
+      await waitFor(() => expect(onValidate).toHaveBeenLastCalledWith({ validate: ['A'], active: true }))
+    })
+
+    it('soltar un elemento sobre la zona donde ya está no lo desplaza ni lo invalida', async () => {
+      const onValidate = vi.fn()
+      render(<Example onValidate={onValidate} />)
+      await moveWithMenu('Opción A', 'Zona 1')
+
+      await moveWithMenu('Opción A', 'Zona 1')
+
+      expect(whereIs('A')).toBe('zona-1')
+      expect(idsIn('origen')).toEqual(['B'])
+      await waitFor(() => expect(onValidate).toHaveBeenLastCalledWith({ validate: ['A'], active: true }))
+    })
+
+    it('con multipleDrags, mover otro elemento a la zona no afecta la validez de los que ya estaban', async () => {
+      const onValidate = vi.fn()
+      render(<Example multipleDrags onValidate={onValidate} />)
+      await moveWithMenu('Opción A', 'Zona 1')
+
+      await moveWithMenu('Opción B', 'Zona 1')
+
+      // A sigue en su zona (válido); B también está ahí pero no es aceptado por esa zona.
+      expect(idsIn('zona-1').sort()).toEqual(['A', 'B'])
+      await waitFor(() => expect(onValidate).toHaveBeenLastCalledWith({ validate: ['A'], active: true }))
     })
 
     it('con validate=true un elemento en una zona que no lo acepta se marca como incorrecto', async () => {
@@ -399,10 +484,7 @@ describe('DragAndDrop', () => {
       expect(dragEl('B')).toHaveAttribute('data-validation', 'false')
     })
 
-    // BUG CONOCIDO: consecuencia del anterior. Con validate=true, A (desplazado al contenedor de
-    // origen) se marca data-validation="true" aunque no está en su zona. Cuando se corrija:
-    // quitar `.fails`.
-    it.fails('con validate=true un elemento desplazado al origen no se marca como correcto', async () => {
+    it('con validate=true un elemento desplazado al origen no se marca como correcto', async () => {
       const { rerender } = render(<Example />)
       await moveWithMenu('Opción A', 'Zona 1')
       await moveWithMenu('Opción B', 'Zona 1')

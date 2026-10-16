@@ -87,14 +87,58 @@ describe('Popover', () => {
       await waitFor(() => expect(content()).toHaveAttribute('data-popper-placement'))
     })
 
-    // BUG CONOCIDO: `isDisabled` está declarado en PopoverContentProps pero el componente nunca
-    // lo lee, así que no tiene efecto. Cuando se implemente: quitar `.fails`.
-    it.fails('con isDisabled no se abre al hacer click en el disparador', async () => {
+    it('con isDisabled no se abre al hacer click en el disparador', async () => {
       setup({}, { isDisabled: true })
 
       await userEvent.click(trigger())
 
       expect(isOpen()).toBe(false)
+      expect(content()).toHaveAttribute('hidden')
+      expect(content()).not.toHaveClass('c-popover-modal--active')
+      expect(content()).not.toHaveFocus()
+    })
+
+    it('al volver a habilitarse no aparece abierto por sorpresa', async () => {
+      const tree = (isDisabled: boolean) => (
+        <Popover>
+          <>
+            <Popover.Button>
+              <button>Abrir</button>
+            </Popover.Button>
+            <Popover.Content id="pop" isDisabled={isDisabled}>
+              <button>Primero</button>
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+      const { rerender } = render(tree(true))
+      await userEvent.click(trigger())
+
+      rerender(tree(false))
+
+      expect(isOpen()).toBe(false)
+    })
+
+    it('una vez habilitado de nuevo, el disparador vuelve a abrirlo con normalidad', async () => {
+      const tree = (isDisabled: boolean) => (
+        <Popover>
+          <>
+            <Popover.Button>
+              <button>Abrir</button>
+            </Popover.Button>
+            <Popover.Content id="pop" isDisabled={isDisabled}>
+              <button>Primero</button>
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+      const { rerender } = render(tree(true))
+      await userEvent.click(trigger())
+      rerender(tree(false))
+
+      await userEvent.click(trigger())
+
+      expect(isOpen()).toBe(true)
     })
   })
 
@@ -295,10 +339,7 @@ describe('Popover', () => {
       expect(screen.getByRole('button', { name: 'B' })).toHaveFocus()
     })
 
-    // BUG CONOCIDO: la condición del primer `if` no mira `shiftKey`, así que Shift+Tab sobre el
-    // ÚLTIMO elemento (que debería retroceder al anterior) también salta al disparador.
-    // Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('Shift+Tab sobre el último elemento no salta al disparador', async () => {
+    it('Shift+Tab sobre el último elemento no salta al disparador (retrocede con normalidad)', async () => {
       render(
         <Popover>
           <>
@@ -324,10 +365,7 @@ describe('Popover', () => {
       expect(trigger()).not.toHaveFocus()
     })
 
-    // BUG CONOCIDO: en SELECTOR_ELEMENTS falta una coma (`embed [tabindex="0"]`), por lo que
-    // los elementos con tabindex="0" no cuentan como enfocables y el "último" elemento es otro.
-    // Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('considera enfocables los elementos con tabindex="0"', async () => {
+    it('considera enfocables los elementos con tabindex="0"', async () => {
       render(
         <Popover>
           <>

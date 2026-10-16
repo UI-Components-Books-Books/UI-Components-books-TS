@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 
 import 'wicg-inert'
 
@@ -15,22 +15,24 @@ const Tour: React.FC<TourProps> & TourSubComponents = ({ steps, isOpen = false, 
     // Estado utilizado para almacenar el id del elemento activado.
     const [activeId, setActiveId] = useState<number>(TourStateEnum.default);
 
+    // Pasos válidos (con un objetivo que existe en la página), numerados desde 1.
+    const [items, setItems] = useState<StepType[]>([]);
+
     /**
      * Creamos un array con todos los objetos contenidos en la propiedad steps
      * y además agregamos la prop id.
+     *
+     * Se calcula en un efecto, es decir DESPUÉS de montar, y no durante el render: los objetivos
+     * suelen renderizarse en ese mismo render y todavía no están en el DOM. Se recalcula cuando
+     * cambian los pasos o cuando el tour se abre (los objetivos pueden haber aparecido mientras tanto).
      */
-    const items = useMemo(() => {
-        return (steps || []).reduce((list: StepType[], item: StepType) => {
-            if (!item.target) return list;
-
-            const isValidElement = document.querySelector(item.target);
-
-            if (isValidElement) {
-                list.push({...item });
-            }
-            return list;
-        }, []).map((item: StepType, index: number) => ({ id: index + 1, ...item}) );
-    }, [steps]);
+    useEffect(() => {
+        setItems(
+            (steps || [])
+                .filter((item: StepType) => !!item.target && !!document.querySelector(item.target))
+                .map((item: StepType, index: number) => ({ id: index + 1, ...item }))
+        );
+    }, [steps, isOpen]);
 
     /**
      * Función utilizada para encontrar un objeto a partir de la propiedad id.
@@ -109,12 +111,18 @@ const Tour: React.FC<TourProps> & TourSubComponents = ({ steps, isOpen = false, 
 
     /**
      * Efecto encargado de mostrar el componente cuando la propiedad isOpen es true.
+     * Al dejar de estar abierto (porque el padre pone isOpen en false por su cuenta o porque
+     * el componente se desmonta) se quita `inert` de #root, para no dejar la página bloqueada.
      */
     useEffect(() => {
-        if (isOpen) {
-            setActiveId(TourStateEnum.start);
-            inertToggle(isOpen);
-        }
+        if (!isOpen) return;
+
+        setActiveId(TourStateEnum.start);
+        inertToggle(true);
+
+        return () => {
+            inertToggle(false);
+        };
     }, [isOpen]);
 
     return (

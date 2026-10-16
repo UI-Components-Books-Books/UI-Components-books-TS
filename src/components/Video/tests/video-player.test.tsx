@@ -264,16 +264,108 @@ describe('VideoPlayer', () => {
       expect(tool('Reproducir video')).toBeInTheDocument()
     })
 
-    // BRECHA DE ACCESIBILIDAD CONOCIDA: el elemento declara role="slider" y es enfocable, pero
-    // solo responde a la barra espaciadora. Un slider ARIA debe poder moverse con las flechas
-    // (y Inicio/Fin). Cuando se implemente este test fallará: quitar `.fails`.
-    it.fails('la flecha derecha adelanta el video', () => {
-      setup()
-      loadVideo(100)
+    describe('teclado (patrón de slider de WAI-ARIA)', () => {
+      const press = (key: string) => {
+        fireEvent.keyDown(slider(), { key })
+        fireEvent.keyUp(slider(), { key })
+      }
+      const now = () => Number(slider().getAttribute('aria-valuenow'))
 
-      fireEvent.keyDown(slider(), { key: 'ArrowRight', keyCode: 39 })
+      it('la flecha derecha adelanta el video 5 segundos', () => {
+        setup()
+        loadVideo(100)
 
-      expect(Number(slider().getAttribute('aria-valuenow'))).toBeGreaterThan(0)
+        fireEvent.keyDown(slider(), { key: 'ArrowRight', keyCode: 39 })
+
+        expect(now()).toBe(5)
+        expect(videoEl().currentTime).toBe(5)
+      })
+
+      it('la flecha arriba también adelanta y las flechas izquierda y abajo retroceden', () => {
+        setup()
+        loadVideo(100)
+
+        press('ArrowUp')
+        press('ArrowUp')
+        expect(now()).toBe(10)
+
+        press('ArrowLeft')
+        expect(now()).toBe(5)
+
+        press('ArrowDown')
+        expect(now()).toBe(0)
+      })
+
+      it('no baja de 0 ni supera la duración total', () => {
+        setup()
+        loadVideo(8)
+
+        press('ArrowLeft')
+        expect(now()).toBe(0)
+
+        press('ArrowRight')
+        press('ArrowRight')
+        expect(now()).toBe(8)
+      })
+
+      it('Inicio lleva al principio y Fin al final', () => {
+        setup()
+        loadVideo(100)
+        press('ArrowRight')
+
+        press('End')
+        expect(now()).toBe(100)
+
+        press('Home')
+        expect(now()).toBe(0)
+      })
+
+      it('evita que la página se desplace con las flechas', () => {
+        setup()
+        loadVideo(100)
+
+        const notPrevented = fireEvent.keyDown(slider(), { key: 'ArrowRight' })
+
+        expect(notPrevented).toBe(false)
+      })
+
+      it('mientras el video se reproduce, aplica el nuevo tiempo al video y luego vuelve a seguir su avance', async () => {
+        setup()
+        loadVideo(100)
+        await userEvent.click(tool('Reproducir video'))
+
+        fireEvent.keyDown(slider(), { key: 'ArrowRight' })
+        expect(videoEl().currentTime).toBe(5)
+
+        // Mientras la tecla está presionada la búsqueda manda: el avance natural no la pisa.
+        setMediaProps(videoEl(), { currentTime: 1 })
+        fireEvent.timeUpdate(videoEl())
+        expect(now()).toBe(5)
+
+        // Al soltar la tecla el reproductor vuelve a seguir el avance del video.
+        fireEvent.keyUp(slider(), { key: 'ArrowRight' })
+        setMediaProps(videoEl(), { currentTime: 9 })
+        fireEvent.timeUpdate(videoEl())
+        expect(now()).toBe(9)
+      })
+
+      it('la barra espaciadora sigue alternando la reproducción', () => {
+        setup()
+
+        fireEvent.keyDown(slider(), { key: ' ', keyCode: 32 })
+
+        expect(tool('Pausar video')).toBeInTheDocument()
+      })
+
+      it('otras teclas no mueven el video', () => {
+        setup()
+        loadVideo(100)
+
+        press('a')
+        press('Tab')
+
+        expect(now()).toBe(0)
+      })
     })
 
     describe('con el puntero', () => {
@@ -586,13 +678,32 @@ describe('VideoPlayer', () => {
       expect(videoEl().volume).toBe(1)
     })
 
-    // BUG CONOCIDO (accesibilidad): el <label> apunta con htmlFor a "volume-audio-description-slider",
-    // pero el input tiene id="volume-audio-description"; al no coincidir, el control queda sin
-    // nombre accesible. Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('el control de volumen del audio descriptivo tiene nombre accesible', async () => {
+    it('el control de volumen del audio descriptivo tiene nombre accesible', async () => {
       await openAD()
 
-      expect(within(adToolbar()).getByLabelText('Controlar volumen del audio descriptivo')).toBeInTheDocument()
+      const input = within(adToolbar()).getByLabelText('Controlar volumen del audio descriptivo')
+
+      expect(input).toBeInTheDocument()
+      expect(input).toHaveAttribute('type', 'range')
+    })
+
+    it('el control de volumen del video principal sigue teniendo su nombre accesible', () => {
+      setup()
+
+      expect(screen.getByLabelText('Controlar volumen')).toHaveAttribute('type', 'range')
+    })
+
+    it('con dos reproductores en la página cada control de volumen se asocia a su propio reproductor', () => {
+      render(
+        <>
+          <VideoPlayer src="/uno.mp4" id="uno" />
+          <VideoPlayer src="/dos.mp4" id="dos" />
+        </>
+      )
+
+      const sliders = screen.getAllByLabelText('Controlar volumen')
+      expect(sliders).toHaveLength(2)
+      expect(new Set(sliders).size).toBe(2)
     })
 
     it('el botón de reproducción de la barra controla el mismo video', async () => {

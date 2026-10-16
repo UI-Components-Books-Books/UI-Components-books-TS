@@ -84,11 +84,7 @@ describe('useInteractOutside', () => {
     expect(onInteractionOutsideStart).not.toHaveBeenCalled()
   })
 
-  // BUG CONOCIDO: los callbacks se guardan en un useRef con los valores del PRIMER render y nunca
-  // se actualizan (mismo patrón de cierre obsoleto que tenía useMedia). Consecuencia: un cambio
-  // posterior de `disabledInteractOutside` en Popover no se respeta. Cuando se corrija este test
-  // fallará: quitar `.fails`.
-  it.fails('usa el callback más reciente cuando onInteractionOutside cambia entre renders', () => {
+  it('usa el callback más reciente cuando onInteractionOutside cambia entre renders', () => {
     const first = vi.fn()
     const second = vi.fn()
     const { getByTestId, rerender } = render(<Probe onInteractionOutside={first} />)
@@ -98,6 +94,31 @@ describe('useInteractOutside', () => {
 
     expect(second).toHaveBeenCalledTimes(1)
     expect(first).not.toHaveBeenCalled()
+  })
+
+  it('usa el callback más reciente de onInteractionOutsideStart', () => {
+    const onInteractionOutside = vi.fn()
+    const firstStart = vi.fn()
+    const secondStart = vi.fn()
+    const { getByTestId, rerender } = render(
+      <Probe onInteractionOutside={onInteractionOutside} onInteractionOutsideStart={firstStart} />
+    )
+
+    rerender(<Probe onInteractionOutside={onInteractionOutside} onInteractionOutsideStart={secondStart} />)
+    click(getByTestId('outside'))
+
+    expect(secondStart).toHaveBeenCalledTimes(1)
+    expect(firstStart).not.toHaveBeenCalled()
+  })
+
+  it('deja de reaccionar si el callback se quita en un render posterior', () => {
+    const onInteractionOutside = vi.fn()
+    const { getByTestId, rerender } = render(<Probe onInteractionOutside={onInteractionOutside} />)
+
+    rerender(<Probe />)
+    click(getByTestId('outside'))
+
+    expect(onInteractionOutside).not.toHaveBeenCalled()
   })
 
   it('deja de escuchar al desmontar', () => {

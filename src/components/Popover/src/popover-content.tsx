@@ -21,7 +21,7 @@ const KEYCODE = Object.freeze({
 
 // Lista de elementos a los cuales se les puede hacer focus.
 const SELECTOR_ELEMENTS =
-  'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed [tabindex="0"], [contenteditable], audio:not([tabindex="-1"])' as const
+  'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable], audio:not([tabindex="-1"])' as const
 
 export const PopoverContent: React.FC<PopoverContentProps> = ({
   id,
@@ -30,10 +30,20 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
   hasArrow = false,
   distance,
   placement = 'auto',
+  isDisabled = false,
   disabledInteractOutside = false,
 }) => {
   // Obtenemos la función isOpen y la referencia del botón del contexto
-  const { togglePopover, isPopoverOpen, popoverButtonRef } = usePopoverContext();
+  const { togglePopover, isPopoverOpen: isContextOpen, popoverButtonRef } = usePopoverContext();
+
+  // Con `isDisabled` el popover nunca se muestra, aunque el botón intente abrirlo.
+  const isPopoverOpen = isContextOpen && !isDisabled;
+
+  // Si el botón lo abrió estando deshabilitado, se devuelve el contexto a "cerrado" para que no
+  // quede un estado abierto oculto que aparezca de golpe al volver a habilitarlo.
+  useEffect(() => {
+    if (isDisabled && isContextOpen) togglePopover();
+  }, [isDisabled, isContextOpen, togglePopover]);
 
 
   // Referencia del Popover
@@ -97,8 +107,10 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
     // Sacamos el último elemento de la lista.
     const LAST_ELEMENT = focusableElements[focusableElements.length - 1]
 
-    // Si va hacia adelante usando tab y el último elemento está activo, entonces agregar el focus al elemento padre.
+    // Si va hacia adelante usando tab (sin shift) y el último elemento está activo, entonces agregar el focus al elemento padre.
+    // Con shift + tab desde el último elemento se retrocede al anterior, así que no se intercepta.
     if (
+      !e.shiftKey &&
       (e.keyCode || e.which) === KEYCODE.TAB &&
       document.activeElement === LAST_ELEMENT
     ) {

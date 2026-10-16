@@ -8,6 +8,7 @@ import {
 } from 'react'
 
 import { Portal } from '@components'
+import { callAll } from '@utils/callAll'
 import { cn } from '@utils/cn'
 import { usePopper } from 'react-popper'
 
@@ -144,19 +145,22 @@ export const Tooltip: React.FC<TooltipProps> = ({
     if (!isValidElement(child)) return null;
 
     // Obtenemos los props del hijo
-    const { props } = child;
+    const { props } = child as React.ReactElement<Record<string, any>>;
 
-    // Creamos un nuevo objeto combinando los props del hijo con los eventos y atributos adicionales
-    const componentProperties = Object.assign({}, {
-      'aria-describedby': id,
+    // Creamos un nuevo objeto combinando los props del hijo con los eventos y atributos adicionales.
+    // Los manejadores del hijo no se reemplazan: se llaman primero y luego los del tooltip.
+    const componentProperties = {
+      ...props,
+      // Siempre se relaciona con el tooltip (usa el `uid`, que existe aunque no se pase `id`),
+      // conservando lo que el hijo ya describiera.
+      'aria-describedby': [props['aria-describedby'], uid].filter(Boolean).join(' '),
       ref: refElement,
-      onFocus,
-      onBlur,
-      onMouseEnter,
-      onMouseLeave,
-      onKeyDown,
-      ...props
-    });
+      onFocus: callAll(props.onFocus, onFocus),
+      onBlur: callAll(props.onBlur, onBlur),
+      onMouseEnter: callAll(props.onMouseEnter, onMouseEnter),
+      onMouseLeave: callAll(props.onMouseLeave, onMouseLeave),
+      onKeyDown: callAll(props.onKeyDown, onKeyDown),
+    };
 
     // Creamos un nuevo elemento clonado con los componentProperties actualizados
     return cloneElement(child, componentProperties);

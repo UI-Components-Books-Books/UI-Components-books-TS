@@ -148,18 +148,22 @@ describe('useTranscript', () => {
     expect(result.current.transcript[0].start).toBe(1)
   })
 
-  // BUG CONOCIDO (probable en producción): si la línea de tiempos lleva ajustes de cue
-  // (`align:start position:0%`, habituales en VTT exportados por herramientas de subtitulado),
-  // `parseTime` parte el texto por ":", obtiene 5 partes, cae en la rama "solo segundos" y
-  // devuelve end = 0. Con end = 0 ningún cue llega a estar activo, así que la transcripción no
-  // resalta ni desplaza al cue actual. Cuando se corrija este test fallará: quitar `.fails`.
-  it.fails('con ajustes de cue (align, position...) el fin también se interpreta bien', async () => {
+  it('con ajustes de cue (align, position...) el fin también se interpreta bien', async () => {
     stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:02.000 align:start position:0%\nTexto\n')
 
     const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0].end).toBe(2)
+  })
+
+  it('con varios ajustes de cue y fin de más de un minuto, el fin sigue siendo correcto', async () => {
+    stubFetch('WEBVTT\n\n00:01:00.000 --> 00:02:30.500 line:90% align:center size:60%\nTexto\n')
+
+    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+
+    await waitFor(() => expect(result.current.transcript).toHaveLength(1))
+    expect(result.current.transcript[0]).toMatchObject({ start: 60, end: 150.5 })
   })
 
   it('con archivo de líneas CRLF sigue interpretando bien los tiempos', async () => {
@@ -182,16 +186,77 @@ describe('useTranscript', () => {
     expect(result.current.transcript).toEqual([])
   })
 
-  // BUG CONOCIDO: los identificadores de cue de WebVTT (líneas "1", "2"... antes de la línea de
-  // tiempos) no se reconocen y se pegan al texto del cue ANTERIOR ("Hola 2"). Es habitual en
-  // archivos convertidos desde SRT. Cuando se corrija este test fallará: quitar `.fails`.
-  it.fails('no pega los identificadores numéricos de cue al texto del cue anterior', async () => {
+  it('no pega los identificadores numéricos de cue al texto del cue anterior', async () => {
     stubFetch('WEBVTT\n\n1\n00:00:01.000 --> 00:00:03.000\nHola\n\n2\n00:00:04.000 --> 00:00:06.000\nMundo\n')
 
     const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(2))
-    expect(result.current.transcript[0].text.trim()).toBe('Hola')
+    expect(result.current.transcript.map((cue) => cue.text)).toEqual(['Hola', 'Mundo'])
+  })
+
+  it('ignora los identificadores de cue con texto (no solo numéricos)', async () => {
+    stubFetch('WEBVTT\n\nintro\n00:00:01.000 --> 00:00:03.000\nHola\n\nfinal\n00:00:04.000 --> 00:00:06.000\nAdiós\n')
+
+    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+
+    await waitFor(() => expect(result.current.transcript).toHaveLength(2))
+    expect(result.current.transcript.map((cue) => cue.text)).toEqual(['Hola', 'Adiós'])
+  })
+
+  it('no mezcla los bloques NOTE ni STYLE con el texto de los cues', async () => {
+    stubFetch(
+      [
+        'WEBVTT',
+        '',
+        'STYLE',
+        '::cue { color: red }',
+        '',
+        'NOTE',
+        'Esto es un comentario',
+        '',
+        '00:00:01.000 --> 00:00:03.000',
+        'Hola',
+        '',
+        'NOTE otro comentario',
+        '',
+        '00:00:04.000 --> 00:00:06.000',
+        'Mundo',
+        '',
+      ].join('\n')
+    )
+
+    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+
+    await waitFor(() => expect(result.current.transcript).toHaveLength(2))
+    expect(result.current.transcript.map((cue) => cue.text)).toEqual(['Hola', 'Mundo'])
+  })
+
+  it('el texto de un cue de varias líneas se une con espacios, sin espacios sobrantes', async () => {
+    stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:03.000\n  Primera línea  \nSegunda línea\n')
+
+    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+
+    await waitFor(() => expect(result.current.transcript).toHaveLength(1))
+    expect(result.current.transcript[0].text).toBe('Primera línea Segunda línea')
+  })
+
+  it('descarta las líneas de tiempos que no se pueden interpretar', async () => {
+    stubFetch('WEBVTT\n\nabc --> def\nInválido\n\n00:00:04.000 --> 00:00:06.000\nVálido\n')
+
+    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+
+    await waitFor(() => expect(result.current.transcript).toHaveLength(1))
+    expect(result.current.transcript[0].text).toBe('Válido')
+  })
+
+  it('un cue sin texto se conserva con texto vacío', async () => {
+    stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:03.000\n')
+
+    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+
+    await waitFor(() => expect(result.current.transcript).toHaveLength(1))
+    expect(result.current.transcript[0]).toEqual({ start: 1, end: 3, text: '' })
   })
 
   describe('cue activo', () => {

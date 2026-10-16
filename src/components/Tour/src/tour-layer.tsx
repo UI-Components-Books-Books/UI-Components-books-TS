@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 
 import { cn } from '@utils/cn'
 import gsap from 'gsap';
@@ -49,38 +49,46 @@ const useResize = (delay: number = 500) => {
 }
 
 
+/**
+ * Obtiene la posición y el tamaño del elemento objetivo en el DOM
+ * y los devuelve como propiedades de estilo para la capa de ayuda.
+ *
+ * @param {string | undefined} target - Selector CSS del elemento objetivo.
+ * @returns {React.CSSProperties | undefined} Estilos de la capa, o `undefined` si no hay objetivo o no existe.
+ */
+const getTargetPosition = (target?: string): React.CSSProperties | undefined => {
+  // Verifica si hay un objetivo para calcular la posición
+  if (!target) return;
+
+  // Busca el elemento en el DOM que coincide con el selector proporcionado
+  const element = document.querySelector(target);
+  if (!element) return;
+
+  // Obtiene las dimensiones y la posición del elemento
+  const { x, y, width, height } = element.getBoundingClientRect();
+
+  // Devuelve un objeto con propiedades de estilo para el componente
+  return {
+    width: `${width}px`,
+    height: `${height}px`,
+    top: 0,
+    left: 0,
+    transform: `translate(${x}px, ${y}px)`
+  };
+}
+
+
 export const TourHelpLayer = ({ addClass }: { addClass?: string }) => {
   // Propiedad obtenidas a través del contexto.
   const { id, target } = useTourContext()
 
-  // Obtiene el estado de redimensionamiento
-  const isResizing = useResize();
+  // No se usa su valor: el hook guarda el estado de redimensionamiento, así que cuando empieza y
+  // cuando termina un cambio de tamaño de la ventana este componente se vuelve a renderizar y la
+  // posición de abajo se vuelve a medir.
+  useResize();
 
-  /**
-   * Función que obtiene la posición del elemento en el DOM,
-   * crea un objecto con eso valores y actualiza el estado position.
-   * 
-   */
-  const getPosition = useMemo(() => {
-    // Verifica si hay un objetivo para calcular la posición
-    if (!target) return;
-
-    // Busca el elemento en el DOM que coincide con el selector proporcionado
-    const element = document.querySelector(target);
-    if (!element) return;
-
-    // Obtiene las dimensiones y la posición del elemento
-    const { x, y, width, height } = element.getBoundingClientRect();
-
-    // Devuelve un objeto con propiedades de estilo para el componente
-    return {
-      width: `${width}px`,
-      height: `${height}px`,
-      top: 0,
-      left: 0,
-      transform: `translate(${x}px, ${y}px)`
-    };
-  }, [target, isResizing])
+  // Se mide en cada render (es barato): así sigue al objetivo al cambiar de paso y al redimensionar.
+  const position = getTargetPosition(target);
 
   return (
     <div
@@ -94,7 +102,7 @@ export const TourHelpLayer = ({ addClass }: { addClass?: string }) => {
         }
       }}
       className={cn('c-tour-help', addClass)}
-      style={getPosition}
+      style={position}
     >
       <p className='c-tour-number' data-class='c-tour-number'>
         {id}

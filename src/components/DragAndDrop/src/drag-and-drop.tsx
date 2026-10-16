@@ -18,6 +18,21 @@ interface DropTarget {
   label?: string;
 }
 
+/**
+ * Indica si un elemento arrastrable es válido en el contenedor dado.
+ * Solo las zonas de destino (Droppable) validan: llevan el atributo `data-validate` con los ids
+ * que aceptan. Un Container (sin ese atributo) no valida nada.
+ */
+const isValidIn = (containerId: string, dragId: string): boolean => {
+  const dropElement = document.querySelector(`[data-drop-id="${containerId}"]`);
+
+  if (!dropElement?.hasAttribute('data-validate')) return false;
+
+  const validIds = dropElement.getAttribute('data-validate')?.split(',').map((id) => id.trim()) || [];
+
+  return validIds.includes(dragId);
+};
+
 const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
   id: idDragAndDrop,
   children: childrenProps,
@@ -112,40 +127,24 @@ const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
   }, [items]);
 
   /**
-   * Valida si un drag está en la posición correcta
+   * Actualiza la lista de elementos válidos después de mover uno o más elementos.
+   *
+   * Cada elemento que cambió de contenedor se vuelve a evaluar desde cero en su nuevo contenedor
+   * (primero se quita de la lista y solo se agrega si es válido ahí). Así, un elemento que fue
+   * desplazado fuera de su zona deja de contar como válido.
+   *
+   * @param moved - Elementos que cambiaron de contenedor: el arrastrado y, si lo hay, el desplazado.
    */
-  const validateDrags = useCallback((containerId: string, dragId: string, currentItems: ItemType) => {
+  const validateDrags = useCallback((moved: Array<{ containerId: string; dragId: string }>) => {
     setValidateId((prevValidateId) => {
-      let newArrayValidate = [...prevValidateId];
+      const movedIds = moved.map(({ dragId }) => dragId);
 
-      // Verificamos si el contenedor es un Drop (tiene atributo data-validate)
-      const dropElement = document.querySelector(`[data-drop-id="${containerId}"]`);
-      const hasValidateAttribute = dropElement?.hasAttribute('data-validate');
-
-      // Si es un Drop (Droppable), verificamos si el drag es válido para ese drop
-      if (hasValidateAttribute) {
-        const validIds = dropElement?.getAttribute('data-validate')?.split(',').map(id => id.trim()) || [];
-        const isValid = validIds.includes(dragId);
-
-        // Removemos el dragId de la lista y lo agregamos solo si es válido
-        newArrayValidate = prevValidateId.filter((item) => item !== dragId);
-        if (isValid) {
-          newArrayValidate.push(dragId);
-        }
-      } 
-      // Si es un Container (no tiene data-validate), removemos de la validación
-      else {
-        newArrayValidate = prevValidateId.filter((item) => item !== dragId);
-      }
-
-      // Para drag único, quitamos el elemento anterior del contenedor de la validación
-      if (!multipleDrags && currentItems[containerId]?.length > 0) {
-        const itemsInContainer = currentItems[containerId].filter(id => id !== dragId);
-        if (itemsInContainer.length > 0) {
-          const previousItem = itemsInContainer[0];
-          newArrayValidate = newArrayValidate.filter((item) => item !== previousItem);
-        }
-      }
+      const newArrayValidate = [
+        ...prevValidateId.filter((item) => !movedIds.includes(item)),
+        ...moved
+          .filter(({ containerId, dragId }) => isValidIn(containerId, dragId))
+          .map(({ dragId }) => dragId),
+      ];
 
       // Notificamos cambios de validación
       if (onValidate) {
@@ -154,7 +153,7 @@ const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
 
       return newArrayValidate;
     });
-  }, [multipleDrags, onValidate]);
+  }, [onValidate]);
 
   /**
    * Maneja el movimiento de elementos, sea por arrastre o menú contextual
@@ -186,10 +185,12 @@ const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
 
     // Actualizamos el estado garantizando que el elemento esté en un solo lugar
     setItems((prevItems) => {
-      // Si no permitimos múltiples elementos y ya hay algo en el destino
-      if (!multipleDrags && prevItems[targetContainerId].length > 0) {
+      // Si no permitimos múltiples elementos y ya hay OTRO elemento en el destino
+      // (soltar un elemento sobre la zona donde ya está no desplaza a nadie).
+      const displacedItem = prevItems[targetContainerId].find((id) => id !== dragId);
+
+      if (!multipleDrags && displacedItem) {
         const baseContainer = Object.keys(prevItems).pop() as string;
-        const displacedItem = prevItems[targetContainerId][0];
 
         // Primero movemos el elemento desplazado al contenedor base
         let newState = ensureElementExistsOnlyOnce(prevItems, displacedItem, baseContainer);
@@ -197,18 +198,20 @@ const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
         // Luego movemos el elemento arrastrado al destino
         newState = ensureElementExistsOnlyOnce(newState, dragId, targetContainerId);
 
-        // Validamos después de calcular el nuevo estado
-        validateDrags(targetContainerId, dragId, newState);
+        // Revalidamos a los dos: el arrastrado en su destino y el desplazado en el contenedor base
+        validateDrags([
+          { containerId: targetContainerId, dragId },
+          { containerId: baseContainer, dragId: displacedItem },
+        ]);
 
         return newState;
       }
 
       // Caso simple: solo movemos el elemento arrastrado
       const newState = ensureElementExistsOnlyOnce(prevItems, dragId, targetContainerId);
-      
-      // Validamos después de calcular el nuevo estado
-      validateDrags(targetContainerId, dragId, newState);
-      
+
+      validateDrags([{ containerId: targetContainerId, dragId }]);
+
       return newState;
     });
 

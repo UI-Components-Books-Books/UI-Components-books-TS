@@ -43,13 +43,21 @@ describe('Tooltip', () => {
       expect(screen.getByRole('button')).toHaveAttribute('aria-describedby', 'mi-tooltip')
     })
 
-    // BUG CONOCIDO: `aria-describedby` usa la prop `id` y no el `uid` generado, así que si no se
-    // pasa `id` el tooltip existe pero no queda asociado a su disparador para los lectores de
-    // pantalla. Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('vincula aria-describedby al tooltip incluso cuando no se pasa id', () => {
+    it('vincula aria-describedby al tooltip incluso cuando no se pasa id', () => {
       setup({ id: undefined })
 
+      expect(tooltip().id).toBeTruthy()
       expect(screen.getByRole('button')).toHaveAttribute('aria-describedby', tooltip().id)
+    })
+
+    it('conserva el aria-describedby que el hijo ya tuviera y agrega el del tooltip', () => {
+      render(
+        <Tooltip label="Ayuda" id="tip">
+          <button aria-describedby="otra-descripcion">Disparador</button>
+        </Tooltip>
+      )
+
+      expect(screen.getByRole('button')).toHaveAttribute('aria-describedby', 'otra-descripcion tip')
     })
 
     it('agrega addClass y la flecha cuando se pide', () => {
@@ -188,10 +196,7 @@ describe('Tooltip', () => {
   })
 
   describe('manejadores propios del hijo', () => {
-    // BUG CONOCIDO: las props del hijo se aplican al final de `Object.assign`, así que un
-    // `onFocus`/`onBlur`/`onMouseEnter`... propio del hijo REEMPLAZA al del tooltip y este deja de
-    // abrirse. Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('sigue abriéndose aunque el hijo tenga su propio onFocus', async () => {
+    it('sigue abriéndose aunque el hijo tenga su propio onFocus', async () => {
       const onFocus = vi.fn()
       render(
         <Tooltip label="Ayuda" id="tip">
@@ -203,6 +208,32 @@ describe('Tooltip', () => {
 
       expect(onFocus).toHaveBeenCalled()
       expect(isOpen()).toBe(true)
+    })
+
+    it('llama a los manejadores propios del hijo y también cierra el tooltip', async () => {
+      const onBlur = vi.fn()
+      const onMouseEnter = vi.fn()
+      const onKeyDown = vi.fn()
+      render(
+        <Tooltip label="Ayuda" id="tip">
+          <button onBlur={onBlur} onMouseEnter={onMouseEnter} onKeyDown={onKeyDown}>
+            Con manejadores
+          </button>
+        </Tooltip>
+      )
+
+      await userEvent.hover(screen.getByRole('button'))
+      expect(onMouseEnter).toHaveBeenCalledTimes(1)
+      expect(isOpen()).toBe(true)
+
+      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape', keyCode: 27 })
+      expect(onKeyDown).toHaveBeenCalledTimes(1)
+      expect(isOpen()).toBe(false)
+
+      await act(async () => screen.getByRole('button').focus())
+      await act(async () => screen.getByRole('button').blur())
+      expect(onBlur).toHaveBeenCalledTimes(1)
+      expect(isOpen()).toBe(false)
     })
 
     it('conserva el onClick del hijo', async () => {

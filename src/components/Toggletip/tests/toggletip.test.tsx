@@ -44,12 +44,21 @@ describe('Toggletip', () => {
       expect(trigger()).toHaveAttribute('aria-describedby', 'mi-toggletip')
     })
 
-    // BUG CONOCIDO: igual que en Tooltip, `aria-describedby` usa la prop `id` y no el `uid`
-    // generado, así que sin `id` no queda asociado. Cuando se corrija: quitar `.fails`.
-    it.fails('vincula aria-describedby al toggletip incluso cuando no se pasa id', () => {
+    it('vincula aria-describedby al toggletip incluso cuando no se pasa id', () => {
       setup({ id: undefined })
 
+      expect(status().id).toBeTruthy()
       expect(trigger()).toHaveAttribute('aria-describedby', status().id)
+    })
+
+    it('conserva el aria-describedby que el hijo ya tuviera y agrega el del toggletip', () => {
+      render(
+        <Toggletip label="Info" id="tg">
+          <button aria-describedby="otra-descripcion">Disparador</button>
+        </Toggletip>
+      )
+
+      expect(trigger()).toHaveAttribute('aria-describedby', 'otra-descripcion tg')
     })
 
     it('agrega addClass y la flecha cuando se pide', () => {
@@ -99,10 +108,18 @@ describe('Toggletip', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument()
     })
 
-    // BUG CONOCIDO: `isDisabled` está declarado en ToggletipProps (y en Tooltip sí funciona),
-    // pero el componente nunca lo lee, así que no tiene efecto. Cuando se implemente: quitar `.fails`.
-    it.fails('con isDisabled devuelve solo el hijo', () => {
+    it('con isDisabled devuelve solo el hijo', () => {
       setup({ isDisabled: true })
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument()
+      expect(trigger()).toBeInTheDocument()
+      expect(trigger()).not.toHaveAttribute('aria-describedby')
+    })
+
+    it('con isDisabled hacer click en el hijo no abre nada', async () => {
+      setup({ isDisabled: true })
+
+      await userEvent.click(trigger())
 
       expect(screen.queryByRole('status')).not.toBeInTheDocument()
     })
@@ -146,10 +163,7 @@ describe('Toggletip', () => {
       expect(isActive()).toBe(false)
     })
 
-    // BUG CONOCIDO: al hacer click de nuevo sobre el disparador (que sigue con el foco) se cierra
-    // y 100 ms después un segundo `setIsOpen(prev => !prev)` lo vuelve a abrir, por lo que no se
-    // puede cerrar con el mismo click. Cuando se corrija: quitar `.fails`.
-    it.fails('se cierra al volver a hacer click en el disparador y se queda cerrado', async () => {
+    it('se cierra al volver a hacer click en el disparador y se queda cerrado', async () => {
       setup()
       await userEvent.click(trigger())
       expect(isActive()).toBe(true)
@@ -157,6 +171,49 @@ describe('Toggletip', () => {
       await userEvent.click(trigger())
       await wait(300)
 
+      expect(isActive()).toBe(false)
+    })
+
+    it('se puede abrir y cerrar varias veces seguidas con el mismo disparador', async () => {
+      setup()
+
+      for (let i = 0; i < 3; i++) {
+        await userEvent.click(trigger())
+        expect(isActive()).toBe(true)
+        await userEvent.click(trigger())
+        expect(isActive()).toBe(false)
+      }
+    })
+
+    it('también se cierra con un segundo click cuando disabledInteractOutside está activo', async () => {
+      setup({ disabledInteractOutside: true })
+      await userEvent.click(trigger())
+
+      await userEvent.click(trigger())
+      await wait(300)
+
+      expect(isActive()).toBe(false)
+    })
+
+    it('llama a los manejadores onBlur y onKeyDown propios del hijo y también cierra', async () => {
+      const onBlur = vi.fn()
+      const onKeyDown = vi.fn()
+      render(
+        <Toggletip label="Info" id="tg">
+          <button onBlur={onBlur} onKeyDown={onKeyDown}>
+            Disparador
+          </button>
+        </Toggletip>
+      )
+      await userEvent.click(trigger())
+
+      fireEvent.keyDown(trigger(), { key: 'Escape', keyCode: 27 })
+      expect(onKeyDown).toHaveBeenCalledTimes(1)
+      expect(isActive()).toBe(false)
+
+      await userEvent.click(trigger())
+      await act(async () => trigger().blur())
+      expect(onBlur).toHaveBeenCalledTimes(1)
       expect(isActive()).toBe(false)
     })
 

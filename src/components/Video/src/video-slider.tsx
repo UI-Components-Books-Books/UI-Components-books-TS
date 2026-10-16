@@ -11,6 +11,12 @@ import "./video.css";
 
 const KEYCODE_SPACE_BAR = 32;
 
+// Segundos que avanza o retrocede cada pulsación de las flechas.
+const KEYBOARD_SEEK_SECONDS = 5;
+
+// Teclas que mueven el slider (patrón de teclado de WAI-ARIA para role="slider").
+const SEEK_KEYS = ["ArrowRight", "ArrowUp", "ArrowLeft", "ArrowDown", "Home", "End"];
+
 export const Slider = () => {
   const {
     currentTime,
@@ -50,6 +56,40 @@ export const Slider = () => {
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if ((event.keyCode || event.which) === KEYCODE_SPACE_BAR) {
       dispatch({ type: PlayerActionKind.PLAY_PAUSE, payload: !isPlaying });
+      return;
+    }
+
+    if (!SEEK_KEYS.includes(event.key)) return;
+
+    // Evita que la página se desplace con las flechas mientras el slider tiene el foco.
+    event.preventDefault();
+
+    // Mientras la tecla está presionada se marca como "buscando", igual que al arrastrar con el
+    // puntero; así el video aplica el nuevo tiempo aunque se esté reproduciendo.
+    dispatch({ type: PlayerActionKind.UPDATE_SEEKING, payload: true });
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowUp":
+        dispatch({ type: PlayerActionKind.VIDEO_SKIP_FORWARD, payload: KEYBOARD_SEEK_SECONDS });
+        break;
+      case "ArrowLeft":
+      case "ArrowDown":
+        dispatch({ type: PlayerActionKind.VIDEO_SKIP_BACKWARD, payload: KEYBOARD_SEEK_SECONDS });
+        break;
+      case "Home":
+        dispatch({ type: PlayerActionKind.UPDATE_VIDEO_CURRENT_TIME, payload: 0 });
+        break;
+      case "End":
+        dispatch({ type: PlayerActionKind.UPDATE_VIDEO_CURRENT_TIME, payload: totalDuration });
+        break;
+    }
+  };
+
+  // Al soltar la tecla termina la búsqueda.
+  const handleKeyUp = (event: React.KeyboardEvent) => {
+    if (SEEK_KEYS.includes(event.key)) {
+      dispatch({ type: PlayerActionKind.UPDATE_SEEKING, payload: false });
     }
   };
 
@@ -119,6 +159,7 @@ export const Slider = () => {
       aria-valuetext={ariaTextTime}
       tabIndex={0}
       onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
       className="video-player__slider"
       style={{ "--slider-fill": fillWidth } as React.CSSProperties}
     >

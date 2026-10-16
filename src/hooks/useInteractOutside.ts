@@ -35,6 +35,13 @@ export const useInteractOutside = ({
 
     const state = stateRef.current;
 
+    // Mantiene siempre los últimos callbacks recibidos. Los escuchadores de abajo se registran una
+    // sola vez, así que sin esto seguirían llamando a los callbacks del primer render.
+    useEffect(() => {
+        state.onInteractionOutside = onInteractionOutside;
+        state.onInteractionOutsideStart = onInteractionOutsideStart;
+    });
+
     // Efecto para agregar y eliminar los escuchadores de eventos de 'mousedown' y 'mouseup'
     useEffect(() => {
         const onPointerDown = (e: MouseEvent) => {

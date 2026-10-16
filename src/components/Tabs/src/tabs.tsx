@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 
 import { Tab } from './tab'
 import { TabList } from './tab-list'
@@ -12,6 +12,10 @@ import './tabs.css'
 const Tabs: React.FC<TabsProps> & TabsSubComponents = ({ children, defaultIndex = 0, addClass, ...props }) => {
     // Controla el estado de abierto/cerrado del TabPanel.
     const [isOpen, setIsOpen] = useState<number | null>(null);
+
+    // Identificador único de esta instancia. Se usa como prefijo de los ids de cada Tab y TabPanel
+    // para que dos <Tabs> en la misma página no repitan ids (ni crucen aria-controls).
+    const uid = useId();
 
     /**
      * Función para abrir o cerrar el TabPanel.
@@ -34,7 +38,7 @@ const Tabs: React.FC<TabsProps> & TabsSubComponents = ({ children, defaultIndex 
     }, [defaultIndex]);
 
     return (
-        <TabsProvider value={{ isOpen, handleValidation, handleToggle }}>
+        <TabsProvider value={{ uid, isOpen, handleValidation, handleToggle }}>
             <div {...(addClass && { className: addClass })} {...props}>
                 {children}
             </div>

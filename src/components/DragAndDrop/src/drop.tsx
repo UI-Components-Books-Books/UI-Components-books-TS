@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useMemo, useRef } from 'react';
 
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { cn } from "@utils/cn";
+import { mergeRefs } from "@utils/mergeRefs";
 
 import { useDragAndDropContext } from './drag-and-drop-context';
 import { DragAndDropTypes } from '../utils/const';
@@ -24,11 +25,12 @@ interface DroppableComponente
 export const Droppable = forwardRef<HTMLDivElement, DroppableProps>(
   ({ id, children, validate = [], addClass = '', label, ...rest }, ref) => {
     const { validate: isValidate } = useDragAndDropContext();
-    const dropRef = useRef<HTMLDivElement>(null);
-    const localRef = ref || dropRef;
+    const dropRef = useRef<HTMLDivElement | null>(null);
+    // Une la ref interna con la que pueda pasar quien usa el componente (objeto o callback).
+    const setRefs = useMemo(() => mergeRefs(dropRef, ref), [ref]);
 
     useEffect(() => {
-      const element = (localRef as React.RefObject<HTMLDivElement>).current;
+      const element = dropRef.current;
 
       if (!element) return;
 
@@ -42,11 +44,11 @@ export const Droppable = forwardRef<HTMLDivElement, DroppableProps>(
       });
 
       return cleanup;
-    }, [id, isValidate, localRef]);
+    }, [id, isValidate]);
 
     return (
       <div
-        ref={localRef as React.RefObject<HTMLDivElement>}
+        ref={setRefs}
         role="region"
         aria-label={label}
         data-drop-id={id}

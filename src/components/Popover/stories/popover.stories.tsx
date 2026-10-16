@@ -168,7 +168,7 @@ export const Placement: Story = {
         <Popover.Button>
           <Button>Open popover</Button>
         </Popover.Button>
-        <Popover.Content placement="left-start" hasArrow isDisabled>
+        <Popover.Content placement="left-start" hasArrow>
           <p style={{ marginBlock: "2rem" }}>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit.
             Blanditiis, ipsam!

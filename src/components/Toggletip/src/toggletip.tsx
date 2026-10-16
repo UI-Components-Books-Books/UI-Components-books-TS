@@ -8,6 +8,7 @@ import {
 } from 'react'
 
 import { Portal } from '@components'
+import { callAll } from '@utils/callAll';
 import { cn } from '@utils/cn';
 import { usePopper } from 'react-popper'
 
@@ -31,6 +32,7 @@ export const Toggletip: React.FC<ToggletipProps> = ({
     distance,
     placement = "auto",
     children,
+    isDisabled,
     disabledInteractOutside,
 }) => {
     // Estado que controla la apertura o cierre del Toggletip
@@ -65,14 +67,8 @@ export const Toggletip: React.FC<ToggletipProps> = ({
      * Función para manejar el evento click del refElement.
      */
     const onClick = () => {
-        setIsOpen(!isOpen);
-
-        // Si ya está abierto y se hace clic en el mismo elemento, ciérralo
-        if (isOpen && document.activeElement === refElement.current && !disabledInteractOutside) {
-            setTimeout(() => {
-                setIsOpen((prev) => !prev);
-            }, 100);
-        }
+        // Alterna el estado: si ya está abierto y se hace clic en el mismo elemento, se cierra.
+        setIsOpen((prev) => !prev);
     };
 
 
@@ -82,8 +78,8 @@ export const Toggletip: React.FC<ToggletipProps> = ({
      * @param {React.KeyboardEvent} event - Evento de teclado
      */
     const onKeyDown = (event: React.KeyboardEvent) => {
-        if ((event.keyCode | event.which) === KEYCODE.ESC && isOpen) {
-            setIsOpen(!isOpen)
+        if ((event.keyCode || event.which) === KEYCODE.ESC && isOpen) {
+            setIsOpen(false)
         }
     }
 
@@ -92,19 +88,22 @@ export const Toggletip: React.FC<ToggletipProps> = ({
     const updatedChildren = Children.map(children, (child) => {
         if (!isValidElement(child)) return null;
 
-        // Agregamos todos los eventos al refElement.
+        // Agregamos todos los eventos al refElement. Los manejadores del hijo no se reemplazan:
+        // se llaman primero y luego los del toggletip.
         return cloneElement(child, {
             ...child.props,
-            'aria-describedby': id,
+            // Siempre se relaciona con el toggletip (usa el `uid`, que existe aunque no se pase `id`),
+            // conservando lo que el hijo ya describiera.
+            'aria-describedby': [child.props['aria-describedby'], uid].filter(Boolean).join(' '),
             ref: refElement,
-            onClick: (event: React.MouseEvent<HTMLElement>) => {
-                if (child.props.onClick) {
-                    child.props.onClick(event);
-                }
-                onClick();
-            },
+            onClick: callAll(child.props.onClick, onClick),
             'data-open': isOpen,
-            ...(disabledInteractOutside ? {} : { onBlur, onKeyDown }),
+            ...(disabledInteractOutside
+                ? {}
+                : {
+                    onBlur: callAll(child.props.onBlur, onBlur),
+                    onKeyDown: callAll(child.props.onKeyDown, onKeyDown),
+                }),
         });
     });
 
@@ -135,7 +134,7 @@ export const Toggletip: React.FC<ToggletipProps> = ({
 
 
     // Si no hay label, está deshabilitado o tiene más de 1 hijo no mostrar el Toggletip
-    if (!label || Children.count(children) > 1) {
+    if (!label || Children.count(children) > 1 || isDisabled) {
         return <>{children}</>
     }
 

@@ -327,10 +327,7 @@ describe('Audio', () => {
       expect(screen.getByRole('button')).toHaveAttribute('data-a11y', 'true')
     })
 
-    // BUG CONOCIDO: la etiqueta del botón en pausa está mal escrita: 'Reproduccir' (con la "c"
-    // de más). Es lo que anuncia el lector de pantalla. Cuando se corrija este test fallará:
-    // quitar `.fails`.
-    it.fails('la etiqueta del botón en pausa se llama "Reproducir"', () => {
+    it('la etiqueta del botón en pausa se llama "Reproducir"', () => {
       button()
 
       expect(screen.getByRole('button', { name: 'Reproducir' })).toBeInTheDocument()

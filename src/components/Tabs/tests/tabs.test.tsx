@@ -59,17 +59,18 @@ describe('Tabs', () => {
     it('relaciona cada tab con su panel (aria-controls / aria-labelledby)', () => {
       setup()
 
-      expect(tab('Uno')).toHaveAttribute('id', 'tab-0')
-      expect(tab('Uno')).toHaveAttribute('aria-controls', 'panel-0')
-      const panel = document.getElementById('panel-0')
-      expect(panel).toHaveAttribute('aria-labelledby', 'tab-0')
-      expect(tab('Dos')).toHaveAttribute('aria-controls', 'panel-1')
+      ;['Uno', 'Dos', 'Tres'].forEach((name, index) => {
+        const controls = tab(name).getAttribute('aria-controls') as string
+        const panel = document.getElementById(controls)
+
+        expect(controls).toMatch(new RegExp(`-panel-${index}$`))
+        expect(tab(name).id).toMatch(new RegExp(`-tab-${index}$`))
+        expect(panel).toHaveAttribute('role', 'tabpanel')
+        expect(panel).toHaveAttribute('aria-labelledby', tab(name).id)
+      })
     })
 
-    // BUG CONOCIDO: los ids son `tab-${índice}` / `panel-${índice}` sin nada único por instancia,
-    // así que dos <Tabs> en la misma página generan ids duplicados (y aria-controls apunta al
-    // primer panel que encuentre el navegador). Cuando se corrija, este test fallará: quitar `.fails`.
-    it.fails('dos instancias de Tabs en la misma página no repiten ids', () => {
+    it('dos instancias de Tabs en la misma página no repiten ids', () => {
       render(
         <>
           {[1, 2].map((n) => (
@@ -87,6 +88,28 @@ describe('Tabs', () => {
 
       const ids = Array.from(document.querySelectorAll('[id]')).map((el) => el.id)
       expect(new Set(ids).size).toBe(ids.length)
+    })
+
+    it('con dos instancias, cada pestaña controla el panel de SU propio grupo', () => {
+      render(
+        <>
+          {['A', 'B'].map((group) => (
+            <Tabs key={group}>
+              <Tabs.TabList label={`Grupo ${group}`} orientation="horizontal">
+                <Tabs.Tab>{`Tab ${group}`}</Tabs.Tab>
+              </Tabs.TabList>
+              <Tabs.TabPanels>
+                <Tabs.TabPanel>{`Panel ${group}`}</Tabs.TabPanel>
+              </Tabs.TabPanels>
+            </Tabs>
+          ))}
+        </>
+      )
+
+      ;['A', 'B'].forEach((group) => {
+        const panel = document.getElementById(tab(`Tab ${group}`).getAttribute('aria-controls') as string)
+        expect(panel).toHaveTextContent(`Panel ${group}`)
+      })
     })
 
     it('usa el label por defecto y la orientación horizontal cuando no se indican', () => {

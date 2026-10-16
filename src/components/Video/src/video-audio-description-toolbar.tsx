@@ -283,10 +283,9 @@ const VolumenSlider = () => {
   return (
     <div>
       <p>Volumen del audio descriptivo ({(volumeAD * 100).toFixed(0)}%)</p>
-      <label
-        className="video-player__volume video-audio-description__volume"
-        htmlFor="volume-audio-description-slider"
-      >
+      {/* El input está dentro del label, así que se asocian sin necesidad de `htmlFor`
+          (que además apuntaba a un id que no existía y dejaba el control sin nombre accesible). */}
+      <label className="video-player__volume video-audio-description__volume">
         <span className="u-sr-only">Controlar volumen del audio descriptivo</span>
         <input
           id="volume-audio-description"

@@ -24,6 +24,8 @@ type AppProps = {
   layerClass?: string
   /** Si es true (por defecto) `steps` se recrea en cada render del padre, como un array inline. */
   freshSteps?: boolean
+  /** Si es false, los elementos objetivo (#paso-1...) no están en la página. */
+  withTargets?: boolean
 }
 
 const App = ({
@@ -33,11 +35,16 @@ const App = ({
   modalProps,
   layerClass,
   freshSteps = true,
+  withTargets = true,
 }: AppProps) => (
   <>
-    <button id="paso-1">Uno</button>
-    <button id="paso-2">Dos</button>
-    <button id="paso-3">Tres</button>
+    {withTargets && (
+      <>
+        <button id="paso-1">Uno</button>
+        <button id="paso-2">Dos</button>
+        <button id="paso-3">Tres</button>
+      </>
+    )}
     <button id="final">Final</button>
     <Tour steps={freshSteps ? [...steps] : steps} isOpen={isOpen} onClose={onClose} finalFocusRef="#final">
       <Tour.Layer addClass={layerClass} />
@@ -59,8 +66,8 @@ afterEach(() => {
 })
 
 /**
- * Modela el uso típico: la página se monta con el tour cerrado (así los objetivos ya existen en el
- * DOM) y después se abre. Ver el test "BUG CONOCIDO" sobre pasos que se calculan durante el render.
+ * Modela el uso típico: la página se monta con el tour cerrado y después se abre. (Los pasos se
+ * calculan tras montar, así que también funcionan montando el tour ya abierto; ver "estable".)
  */
 const renderTour = ({ isOpen = true, ...props }: AppProps = {}) => {
   const utils = render(<App {...props} isOpen={false} />, { container: appRoot })
@@ -120,13 +127,32 @@ describe('Tour', () => {
       expect(dialog()).toHaveTextContent('Primer paso')
     })
 
-    // BUG CONOCIDO: los pasos válidos se calculan con `document.querySelector(target)` DENTRO de un
-    // `useMemo([steps])`, es decir durante el render, cuando los objetivos de ese mismo render aún
-    // no están en el DOM. Si `steps` es estable (una constante o un useMemo) y el tour se monta ya
-    // abierto, el resultado vacío queda cacheado y el tour se muestra con 0 pasos ("Parte  de 0.").
-    // Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('funciona con un steps estable cuando el tour se monta ya abierto', () => {
+    it('funciona con un steps estable cuando el tour se monta ya abierto', () => {
       render(<App isOpen freshSteps={false} />, { container: appRoot })
+
+      expect(stepLabel()).toBe('Parte 1 de 3.')
+      expect(dialog()).toHaveTextContent('Primer paso')
+    })
+
+    it('encuentra los objetivos que aparecen en la página después de montar el tour', () => {
+      const { rerender } = render(<App isOpen={false} freshSteps={false} withTargets={false} />, { container: appRoot })
+
+      rerender(<App isOpen freshSteps={false} withTargets />)
+
+      expect(stepLabel()).toBe('Parte 1 de 3.')
+    })
+
+    it('sin objetivos en la página muestra 0 pasos en lugar de fallar', () => {
+      render(<App isOpen freshSteps={false} withTargets={false} />, { container: appRoot })
+
+      expect(stepLabel()).toBe('Parte  de 0.')
+    })
+
+    it('recalcula los pasos cuando cambia el arreglo steps', () => {
+      const { rerender } = render(<App isOpen steps={STEPS.slice(0, 1)} freshSteps={false} />, { container: appRoot })
+      expect(stepLabel()).toBe('Parte 1 de 1.')
+
+      rerender(<App isOpen steps={STEPS} freshSteps={false} />)
 
       expect(stepLabel()).toBe('Parte 1 de 3.')
     })
@@ -292,10 +318,7 @@ describe('Tour', () => {
       expect(appRoot).not.toHaveAttribute('inert')
     })
 
-    // BUG CONOCIDO: el efecto solo ACTIVA `inert` y no tiene limpieza, así que si el padre pone
-    // `isOpen={false}` por su cuenta (sin pasar por el botón Salir), #root queda bloqueado.
-    // Modal sí lo hace bien (limpia en el `return` del efecto). Cuando se corrija: quitar `.fails`.
-    it.fails('quita inert de #root cuando el padre cierra el tour con isOpen=false', () => {
+    it('quita inert de #root cuando el padre cierra el tour con isOpen=false', () => {
       const { rerender } = renderTour()
       expect(appRoot).toHaveAttribute('inert')
 
@@ -304,15 +327,23 @@ describe('Tour', () => {
       expect(appRoot).not.toHaveAttribute('inert')
     })
 
-    // BUG CONOCIDO: lo mismo al desmontarse con el tour abierto (p. ej. al cambiar de ruta):
-    // #root queda inert para siempre. Cuando se corrija: quitar `.fails`.
-    it.fails('quita inert de #root si el componente se desmonta con el tour abierto', () => {
+    it('quita inert de #root si el componente se desmonta con el tour abierto', () => {
       const { unmount } = renderTour()
       expect(appRoot).toHaveAttribute('inert')
 
       unmount()
 
       expect(appRoot).not.toHaveAttribute('inert')
+    })
+
+    it('vuelve a poner inert al reabrir el tour después de cerrarlo desde el padre', () => {
+      const { rerender } = renderTour()
+      rerender(<App isOpen={false} />)
+      expect(appRoot).not.toHaveAttribute('inert')
+
+      rerender(<App isOpen />)
+
+      expect(appRoot).toHaveAttribute('inert')
     })
   })
 
@@ -333,6 +364,42 @@ describe('Tour', () => {
       expect(layer.style.transform).toBe('translate(40px, 60px)')
 
       Element.prototype.getBoundingClientRect = original
+    })
+
+    it('sigue al objetivo del paso actual cuando se avanza de paso', async () => {
+      const rects: Record<string, { x: number; y: number; width: number; height: number }> = {
+        'paso-1': { x: 10, y: 20, width: 100, height: 30 },
+        'paso-2': { x: 300, y: 400, width: 60, height: 25 },
+      }
+      const original = Element.prototype.getBoundingClientRect
+      Element.prototype.getBoundingClientRect = function () {
+        const rect = rects[this.id]
+        return rect
+          ? ({ ...rect, top: rect.y, left: rect.x, right: 0, bottom: 0, toJSON: () => ({}) } as DOMRect)
+          : original.call(this)
+      }
+
+      try {
+        renderTour()
+        const layer = () => document.querySelector('.c-tour-help') as HTMLElement
+        expect(layer().style.transform).toBe('translate(10px, 20px)')
+
+        await userEvent.click(next())
+
+        expect(layer().style.transform).toBe('translate(300px, 400px)')
+        expect(layer().style.width).toBe('60px')
+        expect(layer().style.height).toBe('25px')
+      } finally {
+        Element.prototype.getBoundingClientRect = original
+      }
+    })
+
+    it('sin elemento objetivo en la página no define posición ni tamaño', () => {
+      render(<App isOpen freshSteps={false} withTargets={false} />, { container: appRoot })
+
+      const layer = document.querySelector('.c-tour-help') as HTMLElement
+      expect(layer).toBeInTheDocument()
+      expect(layer).not.toHaveAttribute('style')
     })
 
     describe('al redimensionar la ventana', () => {

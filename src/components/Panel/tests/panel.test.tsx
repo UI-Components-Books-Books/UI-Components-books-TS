@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { Panel } from '../index'
-import type { NavSectionProps, PanelProps } from '../types/types'
+import type { NavSectionProps, PanelAriaLabelGenerator, PanelProps } from '../types/types'
 
 const setup = (panelProps: Partial<PanelProps> = {}, navProps: NavSectionProps | null = {}) =>
   render(
@@ -224,15 +224,30 @@ describe('Panel', () => {
       expect(tabs()[1].getAttribute('aria-label')).toMatch(/^Ir a la /)
     })
 
-    // BUG CONOCIDO: las etiquetas de la navegación numeran las secciones desde 0 ("sección 0",
-    // "Ir a la sección 1" para la 2.ª pestaña), pero el texto de cada sección las numera desde 1
-    // ("Sección 1", "Sección 2"...). Un lector de pantalla anuncia "Ir a la sección 1" para la
-    // pestaña que abre la "Sección 2". Cuando se corrija este test fallará: quitar `.fails`.
-    it.fails('las etiquetas de las pestañas numeran las secciones desde 1, igual que cada sección', () => {
+    it('las etiquetas de las pestañas numeran las secciones desde 1, igual que cada sección', () => {
       setup()
 
       expect(tabs()[0]).toHaveAttribute('aria-label', 'sección 1')
       expect(tabs()[1]).toHaveAttribute('aria-label', 'Ir a la sección 2')
+      expect(tabs()[2]).toHaveAttribute('aria-label', 'Ir a la sección 3')
+    })
+
+    it('la etiqueta de cada pestaña coincide con el texto "Sección N" de la sección que abre', () => {
+      setup()
+
+      tabs().forEach((tab, index) => {
+        const sectionText = sectionEl(['s1', 's2', 's3'][index]).querySelector('.u-sr-only')?.textContent
+        const number = sectionText?.replace('Sección ', '')
+        expect(tab.getAttribute('aria-label')).toMatch(new RegExp(`sección ${number}$`))
+      })
+    })
+
+    it('getItemAriaLabel sigue recibiendo el índice de la sección desde 0', () => {
+      const getItemAriaLabel = vi.fn<PanelAriaLabelGenerator>(() => 'x')
+      setup({}, { getItemAriaLabel })
+
+      const sectionCalls = getItemAriaLabel.mock.calls.filter(([type]) => type === 'section')
+      expect(sectionCalls.map(([, , section]) => section)).toEqual(expect.arrayContaining([0, 1, 2]))
     })
 
     describe('navegación con teclado', () => {
@@ -268,16 +283,43 @@ describe('Panel', () => {
         expect(next).toHaveFocus()
       })
 
-      // BUG CONOCIDO: las flechas no saltan los botones deshabilitados. En la primera sección
-      // "anterior" está deshabilitado, y `.focus()` sobre un botón disabled no hace nada, así que
-      // el foco se queda atascado en la primera pestaña. Cuando se corrija: quitar `.fails`.
-      it.fails('flecha izquierda no deja el foco atascado cuando "anterior" está deshabilitado', () => {
+      it('flecha izquierda no deja el foco atascado cuando "anterior" está deshabilitado', () => {
         setup({}, { showPrevButton: true, showNextButton: true })
         tabs()[0].focus()
 
         arrow(tabs()[0], 'left')
 
-        expect(tabs()[0]).not.toHaveFocus()
+        // "anterior" está deshabilitado en la primera sección: se salta y el foco da la vuelta.
+        expect(screen.getByRole('button', { name: 'Ir a la siguiente sección' })).toHaveFocus()
+      })
+
+      it('flecha derecha salta "siguiente" si está deshabilitado (última sección) y vuelve al inicio', () => {
+        setup({ defaultIndex: 2 }, { showPrevButton: true, showNextButton: true })
+        tabs()[2].focus()
+
+        arrow(tabs()[2], 'right')
+
+        expect(screen.getByRole('button', { name: 'Ir a la anterior sección' })).toHaveFocus()
+      })
+
+      it('funciona también con eventos que solo informan `key` (sin keyCode)', async () => {
+        setup()
+        tabs()[0].focus()
+
+        await userEvent.keyboard('{ArrowRight}')
+        expect(tabs()[1]).toHaveFocus()
+
+        await userEvent.keyboard('{ArrowLeft}{ArrowLeft}')
+        expect(tabs()[2]).toHaveFocus()
+      })
+
+      it('ignora otras teclas', () => {
+        setup()
+        tabs()[0].focus()
+
+        fireEvent.keyDown(tabs()[0], { key: 'a', keyCode: 65 })
+
+        expect(tabs()[0]).toHaveFocus()
       })
 
       it('mover el foco no cambia la sección visible', () => {
@@ -301,16 +343,34 @@ describe('Panel', () => {
         expect(onValue.mock.calls[0][1]).toBe(3)
       })
 
-      // BUG CONOCIDO: `onValue` recibe `currentSection`, calculado en el render previo, es decir el
-      // índice de la sección que se ABANDONA (al ir a la 2.ª pestaña llega 0, no 1). Cuando se
-      // corrija este test fallará: quitar `.fails`.
-      it.fails('recibe el índice de la nueva sección, no el de la que se abandona', async () => {
+      it('recibe el índice de la nueva sección, no el de la que se abandona', async () => {
         const onValue = vi.fn()
         setup({}, { onValue })
 
         await userEvent.click(tabs()[1])
 
         expect(onValue).toHaveBeenCalledWith(1, 3)
+      })
+
+      it('con los botones anterior/siguiente también informa la sección de destino', async () => {
+        const onValue = vi.fn()
+        setup({ defaultIndex: 1 }, { onValue, showPrevButton: true, showNextButton: true })
+
+        await userEvent.click(screen.getByRole('button', { name: 'Ir a la siguiente sección' }))
+        expect(onValue).toHaveBeenLastCalledWith(2, 3)
+
+        await userEvent.click(screen.getByRole('button', { name: 'Ir a la anterior sección' }))
+        expect(onValue).toHaveBeenLastCalledWith(1, 3)
+      })
+
+      it('informa la sección elegida aunque se haga click en varias seguidas', async () => {
+        const onValue = vi.fn()
+        setup({}, { onValue })
+
+        await userEvent.click(tabs()[2])
+        await userEvent.click(tabs()[0])
+
+        expect(onValue.mock.calls.map(([section]) => section)).toEqual([2, 0])
       })
     })
   })

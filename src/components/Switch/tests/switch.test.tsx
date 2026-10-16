@@ -76,13 +76,11 @@ describe('Switch', () => {
     expect(screen.getByText('Visible')).not.toHaveClass('u-sr-only')
   })
 
-  // BUG CONOCIDO: la clase se arma con `${!isLabelVisible && "u-sr-only"}`, así que con el
-  // label visible queda class="false". Este test pasa mientras el bug exista; cuando se
-  // corrija fallará y habrá que quitar `.fails`.
-  it.fails('no deja la clase literal "false" cuando el label es visible', () => {
+  it('no deja la clase literal "false" cuando el label es visible', () => {
     render(<Switch label="Visible" isLabelVisible />)
 
     expect(screen.getByText('Visible')).not.toHaveClass('false')
+    expect(screen.getByText('Visible')).not.toHaveAttribute('class')
   })
 
   it('asocia label e input con el id recibido', () => {

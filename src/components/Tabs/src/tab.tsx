@@ -19,7 +19,7 @@ export const Tab: React.FC<TabProps> = ({
   const refButton = useRef<HTMLButtonElement | null>(null);
 
   // Obtenemos las funciones necesarias del contexto de Tabs
-  const { handleValidation, handleToggle } = useTabsContext();
+  const { uid, handleValidation, handleToggle } = useTabsContext();
 
   // Obtenemos la función para agregar una nueva referencia del contexto de la lista de Tabs
   const { addNewTabRef, handleNavigationFocus } = useTabListContext();
@@ -56,11 +56,11 @@ export const Tab: React.FC<TabProps> = ({
 
   return (
     <button
-      id={`tab-${id}`}
+      id={`${uid}-tab-${id}`}
       role='tab'
       ref={refButton}
       tabIndex={isSelected ? 0 : -1}
-      aria-controls={`panel-${id}`}
+      aria-controls={`${uid}-panel-${id}`}
       aria-selected={isSelected}
       onKeyDown={handleNavigationFocus}
       onClick={handleClick}

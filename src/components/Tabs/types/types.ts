@@ -39,6 +39,11 @@ export type TabsSubComponents = {
  * Tipo para el contexto de las pestañas.
  */
 export type TabsContextType = {
+    /**
+     * Identificador único de la instancia de Tabs, usado como prefijo de los ids de
+     * cada pestaña y panel.
+     */
+    uid: string;
     isOpen: number | null;
     handleToggle: (value: number) => void;
     handleValidation: (value: number) => boolean;

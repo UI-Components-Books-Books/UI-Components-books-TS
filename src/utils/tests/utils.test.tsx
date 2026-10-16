@@ -1,9 +1,36 @@
 import { render, renderHook } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
+import { callAll } from '../callAll'
 import { cn } from '../cn'
 import { convertTime, formatTime } from '../converterTime'
 import { createContext } from '../createcontext'
+
+describe('callAll', () => {
+  it('llama a cada manejador, en orden, con el mismo evento', () => {
+    const calls: string[] = []
+    const first = vi.fn(() => calls.push('primero'))
+    const second = vi.fn(() => calls.push('segundo'))
+    const event = { type: 'click' }
+
+    callAll(first, second)(event)
+
+    expect(first).toHaveBeenCalledWith(event)
+    expect(second).toHaveBeenCalledWith(event)
+    expect(calls).toEqual(['primero', 'segundo'])
+  })
+
+  it('omite los manejadores no definidos', () => {
+    const handler = vi.fn()
+
+    expect(() => callAll(undefined, handler, undefined)('evento')).not.toThrow()
+    expect(handler).toHaveBeenCalledTimes(1)
+  })
+
+  it('sin manejadores no hace nada', () => {
+    expect(() => callAll()('evento')).not.toThrow()
+  })
+})
 
 describe('convertTime', () => {
   it('convierte segundos en horas, minutos y segundos con dos dígitos', () => {

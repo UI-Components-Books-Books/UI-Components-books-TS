@@ -30,12 +30,10 @@ const NumberInput: React.FC<NumberInputProps> & NumberInputSubComponents = ({
    * El valor a incrementar depende del valor del `step`.
    */
   const onIncrementValue = () => {
-    if (keepWithinRange && counter > max) {
-      // Si se debe mantener dentro del rango y el contador supera el máximo, establece el contador en el máximo.
-      return setCounter(max);
-    }
-    // Incrementa el contador por el valor de `step`
-    setCounter((value) => value + step);
+    // Incrementa el contador por el valor de `step`. Si se debe mantener dentro del rango, el valor
+    // nunca supera el máximo: ni cuando el siguiente paso se pasaría (p. ej. 4 + 2 con max = 5),
+    // ni cuando el contador ya lo superaba (por ejemplo porque se escribió a mano).
+    setCounter((value) => (keepWithinRange ? Math.min(value + step, max) : value + step));
   };
 
 
@@ -44,12 +42,9 @@ const NumberInput: React.FC<NumberInputProps> & NumberInputSubComponents = ({
     * El valor a decrementar depende del valor del `step`.
     */
   const onDecrementValue = () => {
-    if (keepWithinRange && counter < min) {
-      // Si se debe mantener dentro del rango y el contador es menor que el mínimo, establece el contador en el mínimo.
-      return setCounter(min);
-    }
-    // Decrementa el contador por el valor de `step`
-    setCounter((value) => value - step);
+    // Decrementa el contador por el valor de `step`. Si se debe mantener dentro del rango, el valor
+    // nunca baja del mínimo (mismo criterio que el incremento con el máximo).
+    setCounter((value) => (keepWithinRange ? Math.max(value - step, min) : value - step));
   };
 
 
