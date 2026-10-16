@@ -21,8 +21,11 @@ cp .env.example .env
 Edita `.env` y agrega tu token:
 ```
 GITHUB_TOKEN=ghp_tu_token_aqui
-NPM_TOKEN=tu_npm_token_aqui  # Solo si vas a publicar
+GH_TOKEN=ghp_tu_token_aqui
 ```
+
+Para publicar en npm no se usa `.env`: `npm publish` toma la sesión de `npm login` o el token de tu
+`~/.npmrc`. Comprueba que estás dentro con `npm whoami`.
 
 ### 3. Verificar Configuración
 ```bash
@@ -32,6 +35,7 @@ npm run version  # Debería funcionar sin errores
 ## Plugins Instalados
 
 - **npm**: Publica automáticamente a npm
+- **conventional-commits**: Calcula la versión a partir de los mensajes de commit (`feat:` → minor, `fix:` → patch, `!` o `BREAKING CHANGE` → major). `refactor:`, `chore:`, `docs:`, etc. no suben versión
 - **released**: Marca PRs y issues como released
 - **first-time-contributor**: Agradece a nuevos contribuidores
 
@@ -164,15 +168,15 @@ cp .env.example .env
 ```
 
 ### Error: "Cannot publish"
-Verifica que `NPM_TOKEN` esté configurado en `.env` y que tengas permisos de publicación.
+Ejecuta `npm whoami`: si responde `E401`, vuelve a entrar con `npm login`. Comprueba además que tu usuario tenga permisos de publicación sobre el paquete.
 
 ### Error: Repositorio no encontrado
 Verifica que el `owner` y `repo` en `.autorc` coincidan con tu repositorio de GitHub.
 
 ### No se genera versión
-El versionado se basa en las **labels de GitHub** en los commits/PRs. Asegúrate de:
-- Usar labels como `patch`, `minor`, `major` en tus PRs
-- O hacer push directo a main (se detectará como patch por defecto)
+`npm run release` avisa "No hay nada que publicar" cuando ningún cambio desde el último release sube la versión. El versionado sale de los mensajes de commit (conventional commits) o de las **labels de GitHub** del PR. Asegúrate de:
+- Usar `feat:` (minor), `fix:` (patch) o `!` / `BREAKING CHANGE` (major) en los commits; `refactor:`, `chore:` y `docs:` no suben versión
+- O poner labels `patch`, `minor`, `major` en tus PRs (la label tiene prioridad sobre el mensaje)
 
 ## Más Información
 

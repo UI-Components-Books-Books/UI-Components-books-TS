@@ -20,17 +20,22 @@ export PATH="$ROOT/node_modules/.bin:$PATH"
 # Si falla, el script se detiene en lugar de saltarse la publicación sin avisar.
 VERSION="$(auto version)"
 
-## Support for label 'skip-release'
-if [ -n "$VERSION" ]; then
-  ## Update Changelog
-  auto changelog
-
-  ## Publish Package
-  # --no-commit-hooks: el commit "Bump version" no sigue las convenciones y lo rechazaría commitlint.
-  npm --allow-same-version version "$VERSION" --no-commit-hooks -m "Bump version to: %s [skip ci]"
-  npm publish --access=public
-
-  ## Create GitHub Release
-  git push --follow-tags origin main
-  auto release
+# Con el plugin conventional-commits, `feat:` sube minor, `fix:` sube patch y `!` o
+# `BREAKING CHANGE` suben major; `refactor:`, `chore:`, etc. no suben versión. También sale vacío
+# con la etiqueta 'skip-release'. Se avisa en lugar de terminar en silencio.
+if [ -z "$VERSION" ]; then
+  echo "No hay nada que publicar: ningún cambio desde el último release sube la versión."
+  exit 0
 fi
+
+## Update Changelog
+auto changelog
+
+## Publish Package
+# --no-commit-hooks: el commit "Bump version" no sigue las convenciones y lo rechazaría commitlint.
+npm --allow-same-version version "$VERSION" --no-commit-hooks -m "Bump version to: %s [skip ci]"
+npm publish --access=public
+
+## Create GitHub Release
+git push --follow-tags origin main
+auto release
