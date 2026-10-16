@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./public/logo.jpg" alt="Books UI" width="100" />
+  <img src="https://raw.githubusercontent.com/UI-Components-Books-Books/UI-Components-books-TS/main/public/logo.jpg" alt="Books UI" width="100" />
   <br />
   Books UI
 </h1>

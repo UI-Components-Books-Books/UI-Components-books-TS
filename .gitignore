@@ -20,7 +20,10 @@ node_modules
 *.njsproj
 *.sln
 *.sw?
-/public
+# public/ tiene medios de ejemplo para Storybook y documentos de trabajo: no se versionan. Solo el
+# logo, que usan el README, el tema de Storybook y index.html y debe existir en cualquier clon.
+/public/*
+!/public/logo.jpg
 /dist
 .env
 /storybook-static
