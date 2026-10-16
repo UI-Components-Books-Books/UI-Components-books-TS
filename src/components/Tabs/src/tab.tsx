@@ -56,6 +56,7 @@ export const Tab: React.FC<TabProps> = ({
 
   return (
     <button
+      type="button"
       id={`${uid}-tab-${id}`}
       role='tab'
       ref={refButton}

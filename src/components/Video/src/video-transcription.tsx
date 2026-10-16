@@ -117,6 +117,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
                   </span>
                 </div>
                 <button
+                  type="button"
                   className="video-player__transcription-segment-button"
                   aria-label={cue.text}
                   onClick={() => handleSegmentClick(cue.start)}

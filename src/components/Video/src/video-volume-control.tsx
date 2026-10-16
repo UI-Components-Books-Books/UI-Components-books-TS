@@ -34,6 +34,7 @@ const ToogleMutedButton = () => {
                 'video-player__button--disabled': muted
             })}
             aria-label={muted ? 'Mutear video' : 'Volumen'}
+            type="button"
             onClick={toogleMuted}
         >
             <Icon>

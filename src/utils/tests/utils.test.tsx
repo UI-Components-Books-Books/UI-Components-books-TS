@@ -1,3 +1,5 @@
+import { createRef } from 'react'
+
 import { render, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -5,6 +7,85 @@ import { callAll } from '../callAll'
 import { cn } from '../cn'
 import { convertTime, formatTime } from '../converterTime'
 import { createContext } from '../createcontext'
+import { getChildRef } from '../getChildRef'
+import { mergeRefs } from '../mergeRefs'
+
+describe('mergeRefs', () => {
+  it('asigna el nodo a refs de objeto y a refs de tipo callback', () => {
+    const objectRef = createRef<HTMLDivElement>()
+    const callbackRef = vi.fn()
+    const node = document.createElement('div')
+
+    mergeRefs(objectRef, callbackRef)(node)
+
+    expect(objectRef.current).toBe(node)
+    expect(callbackRef).toHaveBeenCalledWith(node)
+  })
+
+  it('al soltar el nodo (null) lo propaga a todas', () => {
+    const objectRef = createRef<HTMLDivElement>()
+    const callbackRef = vi.fn()
+    const merged = mergeRefs(objectRef, callbackRef)
+    merged(document.createElement('div'))
+
+    merged(null)
+
+    expect(objectRef.current).toBeNull()
+    expect(callbackRef).toHaveBeenLastCalledWith(null)
+  })
+
+  it('omite las refs undefined y null', () => {
+    const objectRef = createRef<HTMLDivElement>()
+    const node = document.createElement('div')
+
+    expect(() => mergeRefs(undefined, null, objectRef)(node)).not.toThrow()
+    expect(objectRef.current).toBe(node)
+  })
+
+  it('sin refs no hace nada', () => {
+    expect(() => mergeRefs()(document.createElement('div'))).not.toThrow()
+  })
+
+  it('combinadas se pueden usar como prop ref de un elemento', () => {
+    const objectRef = createRef<HTMLButtonElement>()
+    const callbackRef = vi.fn()
+
+    const { getByRole } = render(<button ref={mergeRefs(objectRef, callbackRef)}>x</button>)
+
+    expect(objectRef.current).toBe(getByRole('button'))
+    expect(callbackRef).toHaveBeenCalledWith(getByRole('button'))
+  })
+})
+
+describe('getChildRef', () => {
+  it('devuelve la ref de objeto del elemento hijo', () => {
+    const ref = createRef<HTMLButtonElement>()
+
+    expect(getChildRef(<button ref={ref} />)).toBe(ref)
+  })
+
+  it('devuelve la ref de tipo callback del elemento hijo', () => {
+    const ref = vi.fn()
+
+    expect(getChildRef(<button ref={ref} />)).toBe(ref)
+  })
+
+  it('usa el primer elemento cuando hay varios hijos', () => {
+    const ref = createRef<HTMLButtonElement>()
+
+    expect(getChildRef([<button key="a" ref={ref} />, <button key="b" />])).toBe(ref)
+  })
+
+  it('devuelve undefined si el hijo no tiene ref', () => {
+    expect(getChildRef(<button />)).toBeUndefined()
+  })
+
+  it('devuelve undefined si no es un elemento (texto, nulo o sin hijos)', () => {
+    expect(getChildRef('texto')).toBeUndefined()
+    expect(getChildRef(null)).toBeUndefined()
+    expect(getChildRef(undefined)).toBeUndefined()
+  })
+})
 
 describe('callAll', () => {
   it('llama a cada manejador, en orden, con el mismo evento', () => {

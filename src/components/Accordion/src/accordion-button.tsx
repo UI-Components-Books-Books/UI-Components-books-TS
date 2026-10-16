@@ -30,6 +30,7 @@ export const AccordionButton: React.FC<AccordionButtonProps> = ({
 
   return (
     <button
+      type="button"
       id={`accordion-button-${uid}`}
       aria-controls={`accordion-panel-${uid}`}
       aria-expanded={isExpanded}

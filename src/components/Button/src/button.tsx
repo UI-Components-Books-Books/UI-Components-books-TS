@@ -20,6 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
+        type="button"
         ref={ref}
         className={cn(
           "c-button",

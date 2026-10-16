@@ -247,6 +247,7 @@ export const NavSection: React.FC<NavSectionProps> = ({
               {type === 'section'
                 ? (
                   <button
+                    type="button"
                     id={`navigation-section-tab-${section}`}
                     role='tab'
                     tabIndex={selected ? 0 : -1}

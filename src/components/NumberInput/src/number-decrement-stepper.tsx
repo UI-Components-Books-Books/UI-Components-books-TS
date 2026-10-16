@@ -21,6 +21,7 @@ export const NumberDecrementStepper: React.FC<NumberDecrementStepperProps> = ({
   return (
     <button
       tabIndex={-1}
+      type="button"
       onClick={onDecrementValue}
       disabled={validate(min)}
       aria-label={label}

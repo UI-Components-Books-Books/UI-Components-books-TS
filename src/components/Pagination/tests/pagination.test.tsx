@@ -131,6 +131,52 @@ describe('Pagination', () => {
   it('expone PaginationItem como submódulo', () => {
     expect(Pagination.Item).toBeTypeOf('function')
   })
+
+  describe('Pagination.Item con un element propio', () => {
+    const withElement = (element: JSX.Element, extra: Record<string, unknown> = {}) =>
+      render(
+        <Pagination
+          count={3}
+          defaultPage={2}
+          onChange={() => {}}
+          renderItem={(item) => <Pagination.Item {...item} element={element} {...extra} />}
+        />
+      )
+
+    const current = () => screen.getAllByRole('button').find((b) => b.getAttribute('aria-current') === 'page') as HTMLElement
+
+    it('suma la clase del element a las del item en lugar de reemplazarlas', () => {
+      withElement(<button className="mi-boton" />)
+
+      expect(current()).toHaveClass('mi-boton', 'c-pagination-item', 'c-pagination-item--selected')
+    })
+
+    it('las páginas no seleccionadas conservan la clase base y la del element, sin la de seleccionada', () => {
+      withElement(<button className="mi-boton" />)
+
+      const other = screen.getByRole('button', { name: 'Ir a la página 3' })
+      expect(other).toHaveClass('mi-boton', 'c-pagination-item')
+      expect(other).not.toHaveClass('c-pagination-item--selected')
+    })
+
+    it('también conserva addClass junto con la clase del element', () => {
+      withElement(<button className="mi-boton" />, { addClass: 'extra' })
+
+      expect(current()).toHaveClass('mi-boton', 'extra', 'c-pagination-item', 'c-pagination-item--selected')
+    })
+
+    it('sin className en el element sigue aplicando las clases de siempre', () => {
+      withElement(<button />)
+
+      expect(current()).toHaveClass('c-pagination-item', 'c-pagination-item--selected')
+    })
+
+    it('el botón por defecto lleva type="button"', () => {
+      render(<Pagination count={3} onChange={() => {}} />)
+
+      screen.getAllByRole('button').forEach((button) => expect(button).toHaveAttribute('type', 'button'))
+    })
+  })
 })
 
 describe('defaultAriaLabel', () => {

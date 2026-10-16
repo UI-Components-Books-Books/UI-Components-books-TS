@@ -12,6 +12,7 @@ export const DragMoveButton: React.FC<DragMoveButtonProps> = ({ handleMove, chil
     <>
       <Popover.Button>
         <button
+          type="button"
           disabled={validate}
           data-type={DragAndDropTypes.DRAGGABLE_MOVE_BUTTON}
           aria-label={`Control para mover la opción ${label} a los diferentes espacios.`}
@@ -39,14 +40,14 @@ export const DragMoveButton: React.FC<DragMoveButtonProps> = ({ handleMove, chil
             {availableDropTargets && availableDropTargets.length > 0
               ? availableDropTargets.map((dropTarget) => (
                   <li key={dropTarget.id}>
-                    <button onClick={() => handleMove(dropTarget.id)}>
+                    <button type="button" onClick={() => handleMove(dropTarget.id)}>
                       Mover al {dropTarget.label || dropTarget.id}
                     </button>
                   </li>
                 ))
               : ["top", "up", "down", "bottom"].map((position) => (
                   <li key={position}>
-                    <button onClick={() => handleMove(position)}>
+                    <button type="button" onClick={() => handleMove(position)}>
                       Mover a la posición {position}
                     </button>
                   </li>

@@ -53,6 +53,7 @@ const PlayButton = () => {
     <button
       aria-label={label}
       className="video-player__button js-button-video-play"
+      type="button"
       onClick={togglePlayVideo}
     >
       <Icon>{isPlaying ? <PauseIcon /> : <PlayIcon />}</Icon>
@@ -85,6 +86,7 @@ const TranscriptButton = () => {
   return caption ? (
     <button
       aria-pressed={activeVideoTranscription}
+      type="button"
       aria-label="Transcripción"
       onClick={toggleTranscription}
       className={cn("video-player__button", {
@@ -112,6 +114,7 @@ const CaptionButton = () => {
   return caption ? (
     <button
       aria-pressed={activeCaption}
+      type="button"
       aria-label="Subtítulos"
       onClick={toggleCaptions}
       className={cn("video-player__button", {
@@ -145,6 +148,7 @@ const FullScreenButton = () => {
       aria-pressed={isFullScreen}
       aria-label={label}
       className="video-player__button"
+      type="button"
       onClick={onClickFullScreen}
       disabled={!isFullScreenEnable}
     >
@@ -171,6 +175,7 @@ const AudioDescriptionButton = () => {
   return audio ? (
     <button
       aria-pressed={showAD}
+      type="button"
       aria-label="Audio descriptivo"
       onClick={toogleAudioDescription}
       className={cn("video-player__button", {

@@ -92,4 +92,57 @@ describe('Button', () => {
     expect(ref.current).toBe(screen.getByTestId('btn'))
     expect(ref.current).toHaveAttribute('type', 'submit')
   })
+
+  describe('atributo type', () => {
+    it('es type="button" por defecto', () => {
+      render(<Button label="Ok" />)
+
+      expect(screen.getByRole('button')).toHaveAttribute('type', 'button')
+    })
+
+    it.each(['submit', 'reset'] as const)('se puede sobrescribir con type="%s"', (type) => {
+      render(<Button label="Ok" type={type} />)
+
+      expect(screen.getByRole('button')).toHaveAttribute('type', type)
+    })
+
+    it('por defecto NO envía el formulario que lo contiene', async () => {
+      const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault())
+      render(
+        <form onSubmit={onSubmit}>
+          <Button label="Cancelar" />
+        </form>
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
+
+      expect(onSubmit).not.toHaveBeenCalled()
+    })
+
+    it('con type="submit" sí envía el formulario', async () => {
+      const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault())
+      render(
+        <form onSubmit={onSubmit}>
+          <Button label="Guardar" type="submit" />
+        </form>
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Guardar' }))
+
+      expect(onSubmit).toHaveBeenCalledTimes(1)
+    })
+
+    it('el onClick sigue funcionando dentro de un formulario', async () => {
+      const onClick = vi.fn()
+      render(
+        <form onSubmit={(event) => event.preventDefault()}>
+          <Button label="Acción" onClick={onClick} />
+        </form>
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Acción' }))
+
+      expect(onClick).toHaveBeenCalledTimes(1)
+    })
+  })
 })

@@ -1,3 +1,5 @@
+import { createRef } from 'react'
+
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
@@ -247,6 +249,53 @@ describe('Tooltip', () => {
       await userEvent.click(screen.getByRole('button'))
 
       expect(onClick).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('ref del hijo', () => {
+    it('conserva una ref de objeto del hijo y el tooltip sigue funcionando', async () => {
+      const ref = createRef<HTMLButtonElement>()
+      render(
+        <Tooltip label="Ayuda" id="tip">
+          <button ref={ref}>Con ref</button>
+        </Tooltip>
+      )
+
+      expect(ref.current).toBe(screen.getByRole('button'))
+      await userEvent.hover(screen.getByRole('button'))
+      expect(isOpen()).toBe(true)
+    })
+
+    it('conserva una ref de tipo callback del hijo', () => {
+      const ref = vi.fn()
+      render(
+        <Tooltip label="Ayuda" id="tip">
+          <button ref={ref}>Con ref</button>
+        </Tooltip>
+      )
+
+      expect(ref).toHaveBeenCalledWith(screen.getByRole('button'))
+    })
+
+    it('suelta la ref del hijo al desmontarse', () => {
+      const ref = createRef<HTMLButtonElement>()
+      const { unmount } = render(
+        <Tooltip label="Ayuda" id="tip">
+          <button ref={ref}>Con ref</button>
+        </Tooltip>
+      )
+
+      unmount()
+
+      expect(ref.current).toBeNull()
+    })
+
+    it('sin ref en el hijo sigue funcionando igual', async () => {
+      setup()
+
+      await userEvent.hover(screen.getByRole('button'))
+
+      expect(isOpen()).toBe(true)
     })
   })
 })

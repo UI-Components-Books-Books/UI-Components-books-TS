@@ -21,6 +21,7 @@ export const NumberIncrementStepper: React.FC<NumberIncrementStepperProps> = ({
   return (
     <button
       tabIndex={-1}
+      type="button"
       onClick={onIncrementValue}
       disabled={validate(max)}
       aria-label={label}

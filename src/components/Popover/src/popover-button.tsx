@@ -1,10 +1,20 @@
-import { cloneElement, Children } from 'react'
+import { cloneElement, Children, useMemo } from 'react'
+
+import { getChildRef } from '@utils/getChildRef'
+import { mergeRefs } from '@utils/mergeRefs'
 
 import { usePopoverContext } from './popover-context'
 
 export const PopoverButton = ({ children }: { children: JSX.Element }) => {
   // Obtenemos la función togglePopover y setPopoverButtonRef del contexto
   const { togglePopover, setPopoverButtonRef, popoverButtonRef, isPopoverOpen } = usePopoverContext();
+
+  // Ref del popover combinada con la que el botón ya traiga, para no dejarlo sin ref.
+  const childRef = getChildRef<HTMLButtonElement>(children);
+  const mergedRef = useMemo(
+    () => mergeRefs<HTMLButtonElement>((node) => { if (node) setPopoverButtonRef(node) }, childRef),
+    [childRef, setPopoverButtonRef]
+  );
 
 
   // Si tiene más de un hijo no retornar nada.
@@ -40,7 +50,7 @@ export const PopoverButton = ({ children }: { children: JSX.Element }) => {
     // Clonamos el elemento hijo y agregamos eventos
     return cloneElement(child, {
       ...child.props,
-      ref: setPopoverButtonRef, // Asignamos la referencia del botón
+      ref: mergedRef, // Asignamos la referencia del botón (y la que él ya traiga)
       onBlur: (event: React.FocusEvent<HTMLElement>) => {
         if (child.props.onBlur) {
           child.props.onBlur(event);

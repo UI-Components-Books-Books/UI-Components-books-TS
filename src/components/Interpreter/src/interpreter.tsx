@@ -87,6 +87,7 @@ export const Interpreter: React.FC<InterpreterProps> = ({
       {...props}
     >
       <button
+        type="button"
         disabled={!hidden}
         aria-label="Intérprete de lenguaje de señas"
         onClick={toggleHidden}
@@ -295,6 +296,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                       className={cn("c-interpreter__button", {
                         "c-interpreter__button--hidden": !accesibilityURL,
                       })}
+                      type="button"
                       aria-label="Video descriptivo"
                       onClick={() =>
                         toggleDisplayVideo(SHOW_VIDEO.ACCESIBILITY)
@@ -311,6 +313,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                       className={cn("c-interpreter__button", {
                         "c-interpreter__button--hidden": !contentURL,
                       })}
+                      type="button"
                       aria-label="Video de contenido"
                       onClick={() => toggleDisplayVideo(SHOW_VIDEO.CONTENT)}
                     >
@@ -323,6 +326,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                   <li>
                     <button
                       className="c-interpreter__button"
+                      type="button"
                       aria-label="Incrementar zoom del interprete"
                       onClick={increaseZoom}
                     >
@@ -334,6 +338,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                   <li>
                     <button
                       className="c-interpreter__button c-interpreter__button--drag js-c-interpreter-draggable"
+                      type="button"
                       aria-label="Arrastrar video"
                     >
                       <MoveArrowIcon />
@@ -345,6 +350,7 @@ const Video: React.FC<InterpreterVideoProps> = ({
                     <button
                       className="c-interpreter__button interpreter-btn--close"
                       onClick={handleClose}
+                      type="button"
                       aria-label="Cerrar"
                     >
                       <CloseIcon />

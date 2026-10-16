@@ -1,5 +1,6 @@
 import {
   useRef,
+  useMemo,
   Children,
   cloneElement,
   isValidElement,
@@ -10,6 +11,8 @@ import {
 import { Portal } from '@components'
 import { callAll } from '@utils/callAll'
 import { cn } from '@utils/cn'
+import { getChildRef } from '@utils/getChildRef'
+import { mergeRefs } from '@utils/mergeRefs'
 import { usePopper } from 'react-popper'
 
 import type { TooltipProps } from '../types/types'
@@ -38,7 +41,11 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const [isOpen, setIsOpen] = useState(false)
 
   // Referencia del elemento que va a tener el tooltip
-  const refElement = useRef(null)
+  const refElement = useRef<HTMLElement>(null)
+
+  // Ref propia combinada con la que el hijo ya traiga, para no dejar sin ref a quien usa el hijo.
+  const childRef = getChildRef<HTMLElement>(children)
+  const mergedRef = useMemo(() => mergeRefs(refElement, childRef), [childRef])
 
   // Referencia del tooltip
   const refTooltip = useRef(null)
@@ -154,7 +161,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       // Siempre se relaciona con el tooltip (usa el `uid`, que existe aunque no se pase `id`),
       // conservando lo que el hijo ya describiera.
       'aria-describedby': [props['aria-describedby'], uid].filter(Boolean).join(' '),
-      ref: refElement,
+      ref: mergedRef,
       onFocus: callAll(props.onFocus, onFocus),
       onBlur: callAll(props.onBlur, onBlur),
       onMouseEnter: callAll(props.onMouseEnter, onMouseEnter),

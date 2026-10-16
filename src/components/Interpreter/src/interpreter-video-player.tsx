@@ -200,7 +200,7 @@ const TooglePlayButton: React.FC<TooglePlayButtonProps> = ({ isPlaying, onPlay, 
     const label = isPlaying ? 'Pausar video' : 'Reproducir video';
 
     return (
-        <button className="c-video__toggle-button" aria-label={label} onClick={onPlay} {...props}>
+        <button type="button" className="c-video__toggle-button" aria-label={label} onClick={onPlay} {...props}>
             <Icon>
                 {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </Icon>

@@ -1,3 +1,5 @@
+import { createRef } from 'react'
+
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
@@ -249,6 +251,45 @@ describe('Toggletip', () => {
       fireEvent.keyDown(trigger(), { key: 'Escape', keyCode: 27 })
 
       expect(isActive()).toBe(true)
+    })
+  })
+
+  describe('ref del hijo', () => {
+    it('conserva una ref de objeto del hijo y el toggletip sigue funcionando', async () => {
+      const ref = createRef<HTMLButtonElement>()
+      render(
+        <Toggletip label="Info" id="tg">
+          <button ref={ref}>Disparador</button>
+        </Toggletip>
+      )
+
+      expect(ref.current).toBe(trigger())
+      await userEvent.click(trigger())
+      expect(isActive()).toBe(true)
+    })
+
+    it('conserva una ref de tipo callback del hijo', () => {
+      const ref = vi.fn()
+      render(
+        <Toggletip label="Info" id="tg">
+          <button ref={ref}>Disparador</button>
+        </Toggletip>
+      )
+
+      expect(ref).toHaveBeenCalledWith(trigger())
+    })
+
+    it('suelta la ref del hijo al desmontarse', () => {
+      const ref = createRef<HTMLButtonElement>()
+      const { unmount } = render(
+        <Toggletip label="Info" id="tg">
+          <button ref={ref}>Disparador</button>
+        </Toggletip>
+      )
+
+      unmount()
+
+      expect(ref.current).toBeNull()
     })
   })
 })

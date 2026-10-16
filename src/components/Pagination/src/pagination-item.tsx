@@ -14,7 +14,7 @@ export const PaginationItem: React.FC<PaginationItemProps> = ({
     addClass,
     disabled,
     selected,
-    element = <button aria-label="default aria" />,
+    element = <button type="button" aria-label="default aria" />,
     icons = {
         first: <DoubleArrowLeftIcon />,
         last: <DoubleArrowRightIcon />,
@@ -49,12 +49,14 @@ export const PaginationItem: React.FC<PaginationItemProps> = ({
                 element,
                 {
                     disabled,
+                    ...element.props,
+                    ...props,
+                    // La clase propia del `element` se suma a las del item (incluida la de página
+                    // seleccionada) en lugar de reemplazarlas.
                     className: cn('c-pagination-item', {
                         'c-pagination-item--selected': selected,
                         [addClass ?? ""]: addClass
-                    }),
-                    ...element.props,
-                    ...props
+                    }, element.props.className)
                 },
                 [
                     // Si es de tipo página colocar la página e.g 1,2,3.

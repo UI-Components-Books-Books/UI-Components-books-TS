@@ -171,6 +171,7 @@ export const VideoAudioDescriptionToolbar = () => {
             </p>
             <button
               className="video-audio-description__button video-audio-description__button--close"
+              type="button"
               aria-label="Cerrar los controles del audio descriptivo"
               onClick={closeAudioDescriptionControls}
             >
@@ -217,6 +218,7 @@ export const VideoAudioDescriptionToolbar = () => {
             className="video-audio-description__controls"
           >
             <button
+              type="button"
               aria-label="Retroceder 10 segundos del video"
               className="video-audio-description__button video-audio-description__button--control"
               onMouseDown={rewindVideoBy10Seconds}
@@ -230,6 +232,7 @@ export const VideoAudioDescriptionToolbar = () => {
               &nbsp; 10s Atrás
             </button>
             <button
+              type="button"
               onClick={toggleVideoPlayback}
               aria-label={isPlaying ? "Pausar video" : "Reproducir video"}
               className="video-audio-description__button video-audio-description__button--control"
@@ -238,6 +241,7 @@ export const VideoAudioDescriptionToolbar = () => {
               {isPlaying ? "Pausar" : "Reproducir"}
             </button>
             <button
+              type="button"
               aria-label="Avanzar 10 segundos del video"
               className="video-audio-description__button video-audio-description__button--control"
               onMouseDown={fastForwardVideoBy10Seconds}

@@ -1,3 +1,5 @@
+import { createRef } from 'react'
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
@@ -387,6 +389,56 @@ describe('Popover', () => {
       fireEvent.keyDown(screen.getByTestId('ultimo'), { key: 'Tab', keyCode: 9 })
 
       expect(trigger()).toHaveFocus()
+    })
+  })
+
+  describe('ref del botón', () => {
+    const withRef = (ref: React.Ref<HTMLButtonElement>) =>
+      render(
+        <Popover>
+          <>
+            <Popover.Button>
+              <button ref={ref}>Abrir</button>
+            </Popover.Button>
+            <Popover.Content id="pop">
+              <button>Primero</button>
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+
+    it('conserva una ref de objeto del botón y el popover sigue abriéndose', async () => {
+      const ref = createRef<HTMLButtonElement>()
+      withRef(ref)
+
+      expect(ref.current).toBe(trigger())
+      await userEvent.click(trigger())
+      expect(isOpen()).toBe(true)
+    })
+
+    it('conserva una ref de tipo callback del botón', () => {
+      const ref = vi.fn()
+      withRef(ref)
+
+      expect(ref).toHaveBeenCalledWith(trigger())
+    })
+
+    it('el popover sigue devolviendo el foco al botón con Escape aunque el botón tenga ref propia', async () => {
+      withRef(createRef<HTMLButtonElement>())
+      await userEvent.click(trigger())
+
+      fireEvent.keyDown(content(), { key: 'Escape', keyCode: 27 })
+
+      expect(trigger()).toHaveFocus()
+    })
+
+    it('suelta la ref del botón al desmontarse', () => {
+      const ref = createRef<HTMLButtonElement>()
+      const { unmount } = withRef(ref)
+
+      unmount()
+
+      expect(ref.current).toBeNull()
     })
   })
 })
