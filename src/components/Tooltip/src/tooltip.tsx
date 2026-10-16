@@ -21,10 +21,10 @@ import './tooltip.css'
 
 /**
  * Se crea un objeto que no se puede cambiar para
- * almacenar el keyCode de la tecla "ESC".
+ * almacenar el valor `key` de la tecla "ESC".
  */
-const KEYCODE = Object.freeze({
-  ESC: 27
+const KEY = Object.freeze({
+  ESC: 'Escape'
 })
 
 export const Tooltip: React.FC<TooltipProps> = ({
@@ -116,7 +116,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
    * @param {React.KeyboardEvent} e - El evento de teclado.
    */
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.keyCode || e.which) === KEYCODE.ESC && isOpen) {
+    if (e.key === KEY.ESC && isOpen) {
       setIsOpen(false);
     }
   }

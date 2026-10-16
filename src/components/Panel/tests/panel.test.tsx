@@ -25,12 +25,10 @@ const visibleIds = () =>
 const tabs = () => screen.getAllByRole('tab')
 const selectedTab = () => tabs().findIndex((t) => t.getAttribute('aria-selected') === 'true')
 
-// La navegación con flechas lee `event.keyCode` (37 = izquierda, 39 = derecha), que los
-// navegadores sí rellenan pero `userEvent.keyboard` no.
+// Se simula con fireEvent para controlar el elemento que recibe cada tecla.
 const arrow = (element: HTMLElement, direction: 'left' | 'right') =>
   fireEvent.keyDown(element, {
     key: direction === 'left' ? 'ArrowLeft' : 'ArrowRight',
-    keyCode: direction === 'left' ? 37 : 39,
   })
 
 describe('Panel', () => {
@@ -304,7 +302,7 @@ describe('Panel', () => {
         expect(screen.getByRole('button', { name: 'Ir a la anterior sección' })).toHaveFocus()
       })
 
-      it('funciona también con eventos que solo informan `key` (sin keyCode)', async () => {
+      it('funciona con las teclas pulsadas como lo haría un usuario (userEvent)', async () => {
         setup()
         tabs()[0].focus()
 
@@ -319,7 +317,7 @@ describe('Panel', () => {
         setup()
         tabs()[0].focus()
 
-        fireEvent.keyDown(tabs()[0], { key: 'a', keyCode: 65 })
+        fireEvent.keyDown(tabs()[0], { key: 'a' })
 
         expect(tabs()[0]).toHaveFocus()
       })

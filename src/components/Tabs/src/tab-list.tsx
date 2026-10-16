@@ -9,11 +9,11 @@ import './tabs.css'
 
 /**
  * Se crea un objeto que no se puede cambiar para
- * almacenar el keyCode de las teclas up, down, end y home.
+ * almacenar el valor `key` de las teclas left y right.
  */
-const KEYCODE = Object.freeze({
-  LEFT: 37,
-  RIGHT: 39
+const KEY = Object.freeze({
+  LEFT: 'ArrowLeft',
+  RIGHT: 'ArrowRight'
 })
 
 export const TabList: React.FC<TabListProps> = ({
@@ -57,7 +57,7 @@ export const TabList: React.FC<TabListProps> = ({
     const LAST_TAB = refTabs.current[refTabs.current.length - 1] as HTMLButtonElement;
 
     // Si la tecla pulsada ArrowLeft
-    if (e.keyCode === KEYCODE.LEFT) {
+    if (e.key === KEY.LEFT) {
       if (e.target === FIRST_TAB) {
         LAST_TAB.focus();
       } else {
@@ -65,7 +65,7 @@ export const TabList: React.FC<TabListProps> = ({
         // Agregamos el focus al botón anterior
         refTabs.current[prevFocusButton].focus();
       }
-    } else if (e.keyCode === KEYCODE.RIGHT) {
+    } else if (e.key === KEY.RIGHT) {
       // Si la tecla pulsada es ArrowRight
       if (e.target === LAST_TAB) {
         FIRST_TAB.focus();

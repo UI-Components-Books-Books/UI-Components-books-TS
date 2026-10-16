@@ -244,19 +244,17 @@ describe('VideoPlayer', () => {
 
     it('la barra espaciadora alterna la reproducción', () => {
       setup()
-
-      // El componente lee `event.keyCode` (32), que los navegadores sí rellenan.
-      fireEvent.keyDown(slider(), { key: ' ', keyCode: 32 })
+      fireEvent.keyDown(slider(), { key: ' ' })
       expect(tool('Pausar video')).toBeInTheDocument()
 
-      fireEvent.keyDown(slider(), { key: ' ', keyCode: 32 })
+      fireEvent.keyDown(slider(), { key: ' ' })
       expect(tool('Reproducir video')).toBeInTheDocument()
     })
 
     it('otras teclas no alteran la reproducción', () => {
       setup()
 
-      fireEvent.keyDown(slider(), { key: 'a', keyCode: 65 })
+      fireEvent.keyDown(slider(), { key: 'a' })
 
       expect(tool('Reproducir video')).toBeInTheDocument()
     })
@@ -272,7 +270,7 @@ describe('VideoPlayer', () => {
         setup()
         loadVideo(100)
 
-        fireEvent.keyDown(slider(), { key: 'ArrowRight', keyCode: 39 })
+        fireEvent.keyDown(slider(), { key: 'ArrowRight' })
 
         expect(now()).toBe(5)
         expect(videoEl().currentTime).toBe(5)
@@ -349,7 +347,7 @@ describe('VideoPlayer', () => {
       it('la barra espaciadora sigue alternando la reproducción', () => {
         setup()
 
-        fireEvent.keyDown(slider(), { key: ' ', keyCode: 32 })
+        fireEvent.keyDown(slider(), { key: ' ' })
 
         expect(tool('Pausar video')).toBeInTheDocument()
       })

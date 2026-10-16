@@ -12,7 +12,7 @@ import "./modal.css";
  * Se crea un objeto que no se puede cambiar para
  * almacenar la key de la tecla "ESC".
  */
-const KEYCODE = Object.freeze({
+const KEY = Object.freeze({
   ESC: "Escape",
 });
 
@@ -69,7 +69,7 @@ export const ModalContent: React.FC<ModalContentProps> = ({
    * @param {event} event - Evento del teclado
    */
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === KEYCODE.ESC) {
+    if (event.key === KEY.ESC) {
       onClose();
     }
   };

@@ -9,13 +9,13 @@ import './number-input.css'
 
 /**
 * Se crea un objeto que no se puede cambiar para
-* almacenar el keyCode de las teclas up, down, end y home.
+* almacenar el valor `key` de las teclas up, down, end y home.
 */
-const KEYCODE = Object.freeze({
-  UP: 38,
-  DOWN: 40,
-  END: 35,
-  HOME: 36
+const KEY = Object.freeze({
+  UP: 'ArrowUp',
+  DOWN: 'ArrowDown',
+  END: 'End',
+  HOME: 'Home'
 })
 
 export const NumberInputField = forwardRef<HTMLInputElement, NumberInputFieldProps>(
@@ -79,23 +79,23 @@ export const NumberInputField = forwardRef<HTMLInputElement, NumberInputFieldPro
      * @param {React.KeyboardEvent<HTMLInputElement>} e - Evento del teclado.
      */
     const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      switch (e.keyCode || e.which) {
-        case KEYCODE.UP:
+      switch (e.key) {
+        case KEY.UP:
           // Si se presiona la flecha hacia arriba, incrementa el valor
           onIncrementValue();
           break;
 
-        case KEYCODE.DOWN:
+        case KEY.DOWN:
           // Si se presiona la flecha hacia abajo, decrementa el valor
           onDecrementValue();
           break;
 
-        case KEYCODE.END:
+        case KEY.END:
           // Si se presiona la tecla End, establece el valor en el máximo
           onChangeValue(max);
           break;
 
-        case KEYCODE.HOME:
+        case KEY.HOME:
           // Si se presiona la tecla Home, establece el valor en el mínimo
           onChangeValue(min);
           break;

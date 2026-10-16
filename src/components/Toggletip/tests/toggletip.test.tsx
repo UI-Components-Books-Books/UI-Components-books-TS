@@ -150,9 +150,7 @@ describe('Toggletip', () => {
     it('se cierra al presionar Escape', async () => {
       setup()
       await userEvent.click(trigger())
-
-      // El componente lee `event.keyCode` (27), que los navegadores sí rellenan.
-      fireEvent.keyDown(trigger(), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
 
       expect(isActive()).toBe(false)
     })
@@ -160,7 +158,7 @@ describe('Toggletip', () => {
     it('Escape no hace nada si ya estaba cerrado', () => {
       setup()
 
-      fireEvent.keyDown(trigger(), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
 
       expect(isActive()).toBe(false)
     })
@@ -209,7 +207,7 @@ describe('Toggletip', () => {
       )
       await userEvent.click(trigger())
 
-      fireEvent.keyDown(trigger(), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
       expect(onKeyDown).toHaveBeenCalledTimes(1)
       expect(isActive()).toBe(false)
 
@@ -248,7 +246,7 @@ describe('Toggletip', () => {
       setup({ disabledInteractOutside: true })
       await userEvent.click(trigger())
 
-      fireEvent.keyDown(trigger(), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
 
       expect(isActive()).toBe(true)
     })

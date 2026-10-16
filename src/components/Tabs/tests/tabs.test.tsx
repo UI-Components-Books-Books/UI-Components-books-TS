@@ -23,12 +23,10 @@ const setup = (props: Partial<TabsProps> = {}) =>
 
 const tab = (name: string) => screen.getByRole('tab', { name })
 
-// La navegación con flechas lee `event.keyCode` (37 = izquierda, 39 = derecha).
-// `userEvent.keyboard` no lo rellena, pero los navegadores sí.
+// Se simula con fireEvent para controlar el elemento que recibe cada tecla.
 const arrow = (element: HTMLElement, direction: 'left' | 'right') =>
   fireEvent.keyDown(element, {
     key: direction === 'left' ? 'ArrowLeft' : 'ArrowRight',
-    keyCode: direction === 'left' ? 37 : 39,
   })
 
 describe('Tabs', () => {
@@ -265,7 +263,7 @@ describe('Tabs', () => {
       setup()
       tab('Uno').focus()
 
-      fireEvent.keyDown(tab('Uno'), { key: 'a', keyCode: 65 })
+      fireEvent.keyDown(tab('Uno'), { key: 'a' })
 
       expect(tab('Uno')).toHaveFocus()
     })

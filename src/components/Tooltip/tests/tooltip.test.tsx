@@ -180,9 +180,7 @@ describe('Tooltip', () => {
       setup()
       await act(async () => screen.getByRole('button').focus())
       expect(isOpen()).toBe(true)
-
-      // El componente lee `event.keyCode` (27), que los navegadores sí rellenan.
-      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape' })
 
       expect(isOpen()).toBe(false)
       expect(screen.getByRole('button')).toHaveFocus()
@@ -191,7 +189,7 @@ describe('Tooltip', () => {
     it('Escape no hace nada si el tooltip ya estaba cerrado', () => {
       setup()
 
-      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape' })
 
       expect(isOpen()).toBe(false)
     })
@@ -228,7 +226,7 @@ describe('Tooltip', () => {
       expect(onMouseEnter).toHaveBeenCalledTimes(1)
       expect(isOpen()).toBe(true)
 
-      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(screen.getByRole('button'), { key: 'Escape' })
       expect(onKeyDown).toHaveBeenCalledTimes(1)
       expect(isOpen()).toBe(false)
 

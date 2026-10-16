@@ -9,7 +9,7 @@ import { PlayerActionKind } from "../types/types";
 
 import "./video.css";
 
-const KEYCODE_SPACE_BAR = 32;
+const KEY_SPACE_BAR = " ";
 
 // Segundos que avanza o retrocede cada pulsación de las flechas.
 const KEYBOARD_SEEK_SECONDS = 5;
@@ -54,7 +54,7 @@ export const Slider = () => {
     });
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if ((event.keyCode || event.which) === KEYCODE_SPACE_BAR) {
+    if (event.key === KEY_SPACE_BAR) {
       dispatch({ type: PlayerActionKind.PLAY_PAUSE, payload: !isPlaying });
       return;
     }

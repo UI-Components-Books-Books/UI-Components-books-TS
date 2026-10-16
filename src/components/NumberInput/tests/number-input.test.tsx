@@ -221,7 +221,7 @@ describe('NumberInput', () => {
       const { input } = setup({ keepWithinRange: true, min: 0, max: 5, defaultValue: 5 })
 
       // El botón de incremento está deshabilitado en el máximo, pero el teclado no lo estaba.
-      fireEvent.keyDown(input, { key: 'ArrowUp', keyCode: 38 })
+      fireEvent.keyDown(input, { key: 'ArrowUp' })
 
       expect(input).toHaveValue('5')
     })
@@ -263,11 +263,9 @@ describe('NumberInput', () => {
   })
 
   describe('teclado', () => {
-    // El componente lee `event.keyCode`. `userEvent.keyboard` no lo rellena para las flechas,
-    // Home y End (solo `key`/`code`), pero los navegadores sí, así que se simula con fireEvent.
-    const KEY_CODES = { ArrowUp: 38, ArrowDown: 40, End: 35, Home: 36, Escape: 27 } as const
-    const press = (input: HTMLElement, key: keyof typeof KEY_CODES) =>
-      fireEvent.keyDown(input, { key, keyCode: KEY_CODES[key] })
+    // Se simula con fireEvent para controlar el elemento que recibe cada tecla.
+    const press = (input: HTMLElement, key: 'ArrowUp' | 'ArrowDown' | 'End' | 'Home' | 'Escape') =>
+      fireEvent.keyDown(input, { key })
 
     it('flecha arriba incrementa y flecha abajo decrementa', () => {
       const { input } = setup({ defaultValue: 5 })

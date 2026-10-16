@@ -20,11 +20,11 @@ const getSpanishType = Object.freeze({
 
 /**
  * Se crea un objeto que no se puede cambiar para
- * almacenar el keyCode de las teclas left y right.
+ * almacenar el valor `key` de las teclas left y right.
  */
-const KEYCODE = Object.freeze({
-  LEFT: 37,
-  RIGHT: 39
+const KEY = Object.freeze({
+  LEFT: 'ArrowLeft',
+  RIGHT: 'ArrowRight'
 })
 
 
@@ -162,9 +162,8 @@ export const NavSection: React.FC<NavSectionProps> = ({
    * @param {Event} event - Evento disparado por KeyDown
    */
   const onNavigation = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    const keyCode = event.keyCode || event.which
-    const isLeft = event.key === 'ArrowLeft' || keyCode === KEYCODE.LEFT
-    const isRight = event.key === 'ArrowRight' || keyCode === KEYCODE.RIGHT
+    const isLeft = event.key === KEY.LEFT
+    const isRight = event.key === KEY.RIGHT
 
     if (!isLeft && !isRight) return
 

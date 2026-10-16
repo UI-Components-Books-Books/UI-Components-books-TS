@@ -21,10 +21,10 @@ import './toggletip.css'
 
 /**
  * Se crea un objeto que no se puede cambiar para
- * almacenar el keyCode de la tecla "ESC".
+ * almacenar el valor `key` de la tecla "ESC".
  */
-const KEYCODE = Object.freeze({
-    ESC: 27
+const KEY = Object.freeze({
+    ESC: 'Escape'
 })
 
 export const Toggletip: React.FC<ToggletipProps> = ({
@@ -86,7 +86,7 @@ export const Toggletip: React.FC<ToggletipProps> = ({
      * @param {React.KeyboardEvent} event - Evento de teclado
      */
     const onKeyDown = (event: React.KeyboardEvent) => {
-        if ((event.keyCode || event.which) === KEYCODE.ESC && isOpen) {
+        if (event.key === KEY.ESC && isOpen) {
             setIsOpen(false)
         }
     }
