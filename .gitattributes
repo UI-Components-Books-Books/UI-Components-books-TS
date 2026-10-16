@@ -1,0 +1,5 @@
+# Los hooks de Husky y los scripts de shell deben conservar saltos de línea LF en todos los
+# sistemas. Con `core.autocrlf=true` (por defecto en Windows) se descargarían con CRLF y el shell
+# fallaría con errores como "env: 'sh\r'" o "command not found".
+.husky/* text eol=lf
+*.sh text eol=lf

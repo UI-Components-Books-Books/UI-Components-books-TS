@@ -1,0 +1,62 @@
+name: CI
+
+# Se ejecuta en cada Pull Request y en cada push a main.
+# Los commits de versión y changelog de `auto` llevan `[skip ci]` en el mensaje, y GitHub no
+# lanza el workflow para ellos.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Si llega un commit nuevo a la misma rama o PR, cancela la ejecución anterior.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# El workflow solo lee el repositorio.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, tipos, tests y build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # `npm ci` ejecuta el script `prepare` (husky). En CI no hay hooks que instalar.
+      HUSKY: 0
+
+    steps:
+      # Las acciones están fijadas por SHA (un tag puede moverse); el comentario indica la versión.
+      - name: Descargar el código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      # Vitest 5 requiere Node 22.12 o superior.
+      - name: Instalar Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tipos
+        run: npx tsc --noEmit
+
+      - name: Tests
+        run: npm test
+
+      - name: Build de la librería
+        run: npm run build
+
+      # Comprueba que existen los archivos que declara package.json (main, module, types y exports).
+      # Evita publicar un paquete cuyo `import "books-ui/styles"` apunta a un archivo inexistente.
+      - name: Verificar los archivos publicados
+        run: npm run check:dist

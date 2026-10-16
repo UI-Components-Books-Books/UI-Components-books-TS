@@ -145,7 +145,22 @@ npm run storybook
 
 # Construir la biblioteca
 npm run build
+
+# Ejecutar los tests (requieren Node 22.12 o superior)
+npm test
+
+# Revisar el código con ESLint
+npm run lint
 ```
+
+### Verificaciones automáticas
+
+- **Antes de cada commit**, Husky ejecuta ESLint sobre los archivos TypeScript modificados, la
+  comprobación de tipos y los tests relacionados con esos archivos. Para saltarlo en un caso
+  puntual: `git commit --no-verify`.
+- **En cada Pull Request y en cada push a `main`**, GitHub Actions (`.github/workflows/ci.yml`)
+  ejecuta el lint, los tipos, toda la suite de tests, el build y la comprobación de que existen los
+  archivos que declara `package.json` (`npm run check:dist`).
 
 ## 🔗 Enlaces
 
