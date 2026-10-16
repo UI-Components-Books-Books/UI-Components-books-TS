@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { Accordion } from '../index'
+import { ExpandLessIcon, ExpandMoreIcon } from '../src/accordion-icons'
 import type { AccordionProps } from '../types/types'
 
 const setup = (props: Partial<AccordionProps> = {}) =>
@@ -171,6 +172,23 @@ describe('Accordion', () => {
       expect(button('Botón')).toHaveAttribute('aria-expanded', 'true')
     })
 
+    it('por defecto muestra la flecha hacia abajo con el item cerrado y hacia arriba con el abierto', async () => {
+      const pathOf = (icon: React.ReactElement) =>
+        render(icon).container.querySelector('path')?.getAttribute('d')
+      const down = pathOf(<ExpandMoreIcon />)
+      const up = pathOf(<ExpandLessIcon />)
+      setup()
+      const currentPath = () => button('Uno').querySelector('svg path')?.getAttribute('d')
+
+      expect(currentPath()).toBe(down)
+
+      await userEvent.click(button('Uno'))
+      expect(currentPath()).toBe(up)
+
+      await userEvent.click(button('Uno'))
+      expect(currentPath()).toBe(down)
+    })
+
     it('muestra un ícono por defecto, que cambia al expandirse', async () => {
       setup()
       const pathBefore = button('Uno').querySelector('svg path')?.getAttribute('d')
@@ -183,9 +201,9 @@ describe('Accordion', () => {
       expect(pathAfter).not.toBe(pathBefore)
     })
 
-    // OJO: el código muestra `expandedIcon` mientras el item está CERRADO y `closedIcon`
-    // mientras está ABIERTO; es decir, al revés de lo que dice la documentación de los tipos.
-    // Este test fija el comportamiento actual; si se corrige el nombre/doc, actualizarlo.
+    // `expandedIcon` es el ícono que invita a expandir (visible con el item cerrado) y `closedIcon`
+    // el que invita a cerrar (visible con el item abierto). Es así desde la primera versión y es lo
+    // que muestra la story: invertirlo cambiaría los íconos de quien ya pasa las dos props.
     it('usa expandedIcon con el item cerrado y closedIcon con el item abierto', async () => {
       render(
         <Accordion>

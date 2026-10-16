@@ -39,6 +39,8 @@ export const AccordionButton: React.FC<AccordionButtonProps> = ({
       {...props}
     >
       {children}
+      {/* Con el item cerrado se muestra el ícono que invita a expandirlo (expandedIcon) y con el
+          item abierto el que invita a cerrarlo (closedIcon). Es así desde la primera versión. */}
       {isExpanded ? closedIcon : expandedIcon}
     </button>
   )

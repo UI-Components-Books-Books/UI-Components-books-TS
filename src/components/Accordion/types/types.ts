@@ -139,12 +139,14 @@ export interface AccordionButtonProps {
     addClass?: string;
 
     /**
-     * Icono que se muestra cuando el item está expandido.
+     * Ícono que invita a expandir el item: se muestra mientras el item está **cerrado**.
+     * Por defecto, una flecha hacia abajo.
      */
     expandedIcon?: React.ReactNode;
 
     /**
-     * Icono que se muestra cuando el item está cerrado.
+     * Ícono que invita a cerrar el item: se muestra mientras el item está **expandido**.
+     * Por defecto, una flecha hacia arriba.
      */
     closedIcon?: React.ReactNode;
 

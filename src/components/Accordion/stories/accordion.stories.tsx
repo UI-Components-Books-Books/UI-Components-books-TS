@@ -134,7 +134,7 @@ export const WithCustomButtonIcons: Story = {
     docs: {
       description: {
         story:
-          "Por defecto, el `<Accordion.Button/>` muestra una flecha en formato SVG. Con las propiedades `closedIcon` y `expandedIcon`, puedes pasarle cualquier string, SVG o HTML para ser colocado dentro del botón que abre el acordeón. Ten en cuenta que este elemento estará dentro de una etiqueta `Button`, por lo que no debes pasarle otro `Button`.",
+          "Por defecto, el `<Accordion.Button/>` muestra una flecha en formato SVG. Con las propiedades `expandedIcon` (se muestra con el item cerrado y invita a expandirlo) y `closedIcon` (se muestra con el item abierto y invita a cerrarlo), puedes pasarle cualquier string, SVG o HTML para ser colocado dentro del botón que abre el acordeón. Ten en cuenta que este elemento estará dentro de una etiqueta `Button`, por lo que no debes pasarle otro `Button`.",
       },
     },
   },
