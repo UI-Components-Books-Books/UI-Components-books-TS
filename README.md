@@ -12,7 +12,7 @@
   <img alt="NPM Downloads" src="https://img.shields.io/npm/dm/books-ui">
   <img alt="NPM Version" src="https://img.shields.io/npm/v/books-ui">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.2-blue">
-  <img alt="React" src="https://img.shields.io/badge/React-18.2-61dafb">
+  <img alt="React" src="https://img.shields.io/badge/React-18-61dafb">
   <img alt="License" src="https://img.shields.io/npm/l/books-ui">
 </p>
 
@@ -46,11 +46,14 @@ pnpm add books-ui @popperjs/core gsap
 
 ### Peer Dependencies
 
-Books UI requiere React 18.2 o superior:
+Books UI requiere React 18 (`^18.0.0`):
 
 ```bash
-npm install react@^18.2.0 react-dom@^18.2.0
+npm install react@^18 react-dom@^18
 ```
+
+React 19 todavía no es compatible: la dependencia `react-popper`, que usan Tooltip, Toggletip, Popover y
+Tour, solo admite hasta React 18.
 
 ## 🚀 Inicio Rápido
 

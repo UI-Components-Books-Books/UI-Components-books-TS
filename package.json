@@ -38,6 +38,13 @@
   "sideEffects": [
     "*.css"
   ],
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22.12.0",
+      "onFail": "warn"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build --base=/books-ui/dist/ && rm -rf dist/assets",
@@ -123,11 +130,6 @@
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "prepare-commit-msg": "exec < /dev/tty && npx cz --hook || true"
     }
   }
 }
