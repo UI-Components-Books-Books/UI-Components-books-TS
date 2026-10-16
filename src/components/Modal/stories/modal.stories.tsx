@@ -47,7 +47,7 @@ usa \`role="alertdialog"\`.
 ## Gestión de foco
 
 El modal automáticamente:
-- Enfoca el propio diálogo al abrir (si el foco ya está dentro, no lo mueve)
+- Enfoca el propio diálogo al abrir. Si un campo con \`autoFocus\` (o enfocado desde un efecto) ya tiene el foco dentro del modal, no se lo quita
 - Bloquea el resto de la página con \`inert\` sobre \`#root\`, así el foco no escapa del modal
 - Restaura el foco al cerrar: al elemento indicado en \`finalFocusRef\` o, si no existe, al que lo tenía antes de abrir
         `,

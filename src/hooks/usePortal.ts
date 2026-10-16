@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useInsertionEffect } from 'react'
 
 /**
  * Crea el elemento DOM que se utilizará como padre.
@@ -42,7 +42,14 @@ const addRootElement = (rootElem: HTMLElement) => {
 const usePortal = (id: string): HTMLElement => {
     const rootElement = useRef<HTMLElement | null>(null);
 
-    useEffect(() => {
+    /**
+     * El elemento se agrega al DOM en un efecto de inserción, que React ejecuta antes que cualquier
+     * efecto de layout y antes de que los hijos del portal terminen de montarse. Así el contenido
+     * ya está dentro del documento cuando se monta: el atributo `autoFocus`, o enfocar desde un
+     * useEffect o un useLayoutEffect, funcionan. Con un useEffect el contenido se montaba antes que
+     * su contenedor estuviera en el documento, y enfocarlo no tenía ningún efecto.
+     */
+    useInsertionEffect(() => {
         // Busca si ya existe un elemento en el DOM con el ID proporcionado
         const existingParent = document.querySelector(`#${id}`) as HTMLElement;
 

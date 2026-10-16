@@ -1,3 +1,5 @@
+import { StrictMode, useEffect, useLayoutEffect, useRef } from 'react'
+
 import { render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -87,5 +89,59 @@ describe('Portal', () => {
 
     expect(screen.getByText('contenido')).toBeInTheDocument()
     expect(document.querySelector('[id^="inseguro-"][id$="-parent"]')).toBeInTheDocument()
+  })
+
+  describe('foco inicial dentro del portal', () => {
+    // El contenido del portal se monta con su contenedor ya dentro del documento: antes enfocar
+    // desde el montaje no hacía nada, porque un elemento fuera del documento no puede tener foco.
+    const FocusOnMount = ({ when }: { when: 'effect' | 'layout' }) => {
+      const ref = useRef<HTMLInputElement>(null)
+      const useHook = when === 'effect' ? useEffect : useLayoutEffect
+      useHook(() => ref.current?.focus(), [])
+      return <input ref={ref} aria-label="Campo" />
+    }
+
+    it('el atributo autoFocus enfoca el campo', () => {
+      render(
+        <Portal id="foco">
+          <input aria-label="Campo" autoFocus />
+        </Portal>
+      )
+
+      expect(screen.getByRole('textbox', { name: 'Campo' })).toHaveFocus()
+    })
+
+    it('enfocar desde un useEffect del contenido funciona', () => {
+      render(
+        <Portal id="foco">
+          <FocusOnMount when="effect" />
+        </Portal>
+      )
+
+      expect(screen.getByRole('textbox', { name: 'Campo' })).toHaveFocus()
+    })
+
+    it('enfocar desde un useLayoutEffect del contenido funciona', () => {
+      render(
+        <Portal id="foco">
+          <FocusOnMount when="layout" />
+        </Portal>
+      )
+
+      expect(screen.getByRole('textbox', { name: 'Campo' })).toHaveFocus()
+    })
+
+    it('funciona también con StrictMode', () => {
+      render(
+        <StrictMode>
+          <Portal id="foco">
+            <input aria-label="Campo" autoFocus />
+          </Portal>
+        </StrictMode>
+      )
+
+      expect(screen.getByRole('textbox', { name: 'Campo' })).toHaveFocus()
+      expect(document.querySelectorAll('[id^="foco-"][id$="-parent"]')).toHaveLength(1)
+    })
   })
 })

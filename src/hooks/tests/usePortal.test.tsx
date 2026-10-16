@@ -1,3 +1,5 @@
+import { StrictMode, useEffect, useLayoutEffect } from 'react'
+
 import { render } from '@testing-library/react'
 import { createPortal } from 'react-dom'
 import { describe, expect, it } from 'vitest'
@@ -50,5 +52,68 @@ describe('usePortal', () => {
 
     expect(document.getElementById('stable-wrapper')).toBe(first)
     expect(first).toHaveTextContent('dos')
+  })
+
+  describe('el contenido se monta con su contenedor ya dentro del documento', () => {
+    // Un elemento fuera del documento no puede recibir el foco, así que el contenido necesita que
+    // su contenedor ya esté en el documento cuando se monta.
+    const Content = ({ seen }: { seen: Record<string, boolean> }) => (
+      <input
+        aria-label="Campo"
+        ref={(node) => {
+          if (node) seen.enRef = document.contains(node)
+        }}
+      />
+    )
+    const Probe = ({ seen }: { seen: Record<string, boolean> }) => {
+      const target = usePortal('conectado')
+      return createPortal(<Content seen={seen} />, target)
+    }
+
+    it('antes de que se ejecuten los efectos de layout de los hijos', () => {
+      const seen: Record<string, boolean> = {}
+      const Child = () => {
+        useLayoutEffect(() => {
+          seen.enLayoutEffect = document.contains(document.getElementById('conectado-wrapper'))
+        }, [])
+        useEffect(() => {
+          seen.enEffect = document.contains(document.getElementById('conectado-wrapper'))
+        }, [])
+        return null
+      }
+      const Page = () => {
+        const target = usePortal('conectado')
+        return createPortal(<Child />, target)
+      }
+
+      render(<Page />)
+
+      expect(seen).toEqual({ enLayoutEffect: true, enEffect: true })
+    })
+
+    it('cuando se asigna la ref de sus hijos', () => {
+      const seen: Record<string, boolean> = {}
+
+      render(<Probe seen={seen} />)
+
+      expect(seen.enRef).toBe(true)
+    })
+
+    it('con StrictMode deja un único contenedor y lo limpia al desmontar', () => {
+      const seen: Record<string, boolean> = {}
+      const { unmount } = render(
+        <StrictMode>
+          <Probe seen={seen} />
+        </StrictMode>
+      )
+
+      expect(document.querySelectorAll('#conectado-parent')).toHaveLength(1)
+      expect(document.querySelectorAll('#conectado-wrapper')).toHaveLength(1)
+      expect(seen.enRef).toBe(true)
+
+      unmount()
+
+      expect(document.getElementById('conectado-parent')).toBeNull()
+    })
   })
 })

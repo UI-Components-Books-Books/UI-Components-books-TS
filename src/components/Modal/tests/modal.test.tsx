@@ -206,6 +206,24 @@ describe('Modal', () => {
       await waitFor(() => expect(screen.getByRole('button', { name: 'Segundo' })).toHaveFocus())
     })
 
+    it('un campo con autoFocus recibe el foco al abrir y el modal no se lo quita', async () => {
+      render(
+        <Modal isOpen onClose={() => {}}>
+          <Modal.Content>
+            <input aria-label="Nombre" autoFocus />
+          </Modal.Content>
+        </Modal>,
+        { container: appRoot }
+      )
+      const input = screen.getByRole('textbox', { name: 'Nombre' })
+      expect(input).toHaveFocus()
+
+      // El modal enfoca su contenedor a los 100 ms: debe dejar el foco donde estaba.
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      expect(input).toHaveFocus()
+    })
+
     it('no le quita el foco a un campo que ya lo tiene dentro del modal', async () => {
       render(
         <Modal isOpen onClose={() => {}}>
