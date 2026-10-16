@@ -26,5 +26,7 @@ node_modules
 !/public/logo.jpg
 /dist
 .env
+# Guarda el token de npm para publicar: nunca debe subirse al repositorio.
+.npmrc
 /storybook-static
 /coverage
