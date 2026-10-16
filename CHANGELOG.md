@@ -1,3 +1,45 @@
+# v1.1.0 (Fri Oct 16 2026)
+
+#### 🚀 Enhancement
+
+- feat(tests): add comprehensive tests for hooks and utilities ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- feat: enhance useMedia hook with improved value matching and media query handling ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### 🐛 Bug Fix
+
+- fix: upgrade typescript-eslint to 8 and apply the last lockfile fix for the audit ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: update the dependencies that have a safe fix for the audit warnings ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: track the logo so the README and Storybook can find it ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: make the release script and the build reliable and stop shipping public/ ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: remove the loadedmetadata listener when the interpreter video changes ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: stop repeating ids in the tour and the interpreter ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: stop repeating ids in the panel ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: keep the mute button label fixed and expose its state with aria-pressed ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: stop repeating ids in the video player ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: make portal content mount inside the document so autofocus works ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: improve Popover and Modal accessibility ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: make components and hooks safe to render on the server ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: stop library buttons from submitting forms and keep user refs and classes ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix: resolve known component bugs and enable the tests that documented them ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### ⚠️ Pushed to `main`
+
+- chore: stop chore, refactor and docs commits from cancelling the release ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: version from conventional commits and warn when there is nothing to release ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- refactor: read event.key instead of the deprecated keyCode ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: fix the dev page, drop the dead husky config and document the supported versions ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: skip type generation when building Storybook ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- docs: fix the description of the Accordion expanded and closed icons ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: update settings to exclude test files from the workspace ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: update dependencies and improve Vite configuration ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- refactor: improve documentation and logic in useDarkMode hook ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v1.0.10 (Mon Apr 20 2026)
 
 #### ⚠️ Pushed to `main`
