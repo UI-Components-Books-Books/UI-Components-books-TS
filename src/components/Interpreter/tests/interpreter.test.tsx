@@ -323,4 +323,34 @@ describe('Interpreter', () => {
       expect(screen.getByLabelText('Tiempo transcurrido')).toHaveValue('42')
     })
   })
+
+  describe('ids', () => {
+    const repeatedIds = () => {
+      const ids = Array.from(document.querySelectorAll('[id]'), (element) => element.id)
+      return ids.filter((id, index) => ids.indexOf(id) !== index)
+    }
+
+    it('el ícono del botón flotante no lleva ningún id', () => {
+      render(<Interpreter />)
+
+      expect(floatButton().querySelector('[id]')).toBeNull()
+    })
+
+    it('dos intérpretes en la página no repiten ningún id, cerrados ni abiertos', async () => {
+      render(
+        <>
+          <Interpreter />
+          <Interpreter />
+        </>
+      )
+      expect(repeatedIds()).toEqual([])
+
+      const buttons = screen.getAllByRole('button', { name: 'Intérprete de lenguaje de señas' })
+      await userEvent.click(buttons[0])
+      await userEvent.click(buttons[1])
+
+      expect(document.querySelectorAll('.c-interpreter')).toHaveLength(2)
+      expect(repeatedIds()).toEqual([])
+    })
+  })
 })

@@ -190,13 +190,36 @@ describe('Tour', () => {
       expect(bar().style.transform).toBe('scaleX(1)')
     })
 
-    it('el contenedor lleva un id con el número del paso', async () => {
+    it('el contenedor lleva un id propio con el número del paso', async () => {
       renderTour()
-      expect(dialog()).toHaveAttribute('id', 'unique-id-tour-element-1')
+      const firstStepId = dialog().id
+      expect(firstStepId).toMatch(/-element-1$/)
 
       await userEvent.click(next())
 
-      expect(dialog()).toHaveAttribute('id', 'unique-id-tour-element-2')
+      // Cambia el número del paso y se conserva la parte propia de este tour.
+      expect(dialog().id).toBe(firstStepId.replace(/-element-1$/, '-element-2'))
+    })
+
+    it('dos tours abiertos a la vez no repiten ningún id', () => {
+      const TwoTours = ({ isOpen }: { isOpen: boolean }) => (
+        <>
+          <button id="paso-1">Uno</button>
+          <button id="final">Final</button>
+          <Tour steps={[{ target: '#paso-1', content: 'Primero' }]} isOpen={isOpen} onClose={() => {}} finalFocusRef="#final">
+            <Tour.Modal />
+          </Tour>
+          <Tour steps={[{ target: '#paso-1', content: 'Segundo' }]} isOpen={isOpen} onClose={() => {}} finalFocusRef="#final">
+            <Tour.Modal />
+          </Tour>
+        </>
+      )
+      const { rerender } = render(<TwoTours isOpen={false} />, { container: appRoot })
+      rerender(<TwoTours isOpen />)
+
+      expect(screen.getAllByRole('dialog')).toHaveLength(2)
+      const ids = Array.from(document.querySelectorAll('[id]'), (element) => element.id)
+      expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([])
     })
   })
 

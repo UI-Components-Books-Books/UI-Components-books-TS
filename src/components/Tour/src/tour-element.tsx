@@ -1,4 +1,4 @@
-import { createElement, isValidElement, useRef, useEffect } from 'react'
+import { createElement, isValidElement, useId, useRef, useEffect } from 'react'
 
 import { Button,  Icon } from '@components';
 import { cn } from '@utils/cn'
@@ -36,6 +36,10 @@ export const TourElement: React.FC<TourElementProps> = ({
 
   // Obtenemos la referencia del contenedor.
   const refContainer = useRef<HTMLDivElement>(null)
+
+  // Id propio de este tour, del que se deriva el id del contenedor. Con uno fijo se repetiría si
+  // hay más de un tour abierto en la página.
+  const tourId = useId()
 
   /**
    * Desestructuramos el objeto "methods" que
@@ -102,7 +106,7 @@ export const TourElement: React.FC<TourElementProps> = ({
       />
       <div
         ref={refContainer}
-        id={`unique-id-tour-element-${id}`}
+        id={`${tourId}-element-${id}`}
         style={styles.popper}
         className={cn('c-tour-content', addClass)}
         {...ariaAttributes}
