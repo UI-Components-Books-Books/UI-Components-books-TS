@@ -178,7 +178,7 @@ export const Audio: React.FC<AudioProps> = ({
     if (!refAudio.current) return;
 
     setDuration(Math.round(refAudio.current.duration));
-    isTouchScreen ? setVolume(1) : setVolume(refAudio.current.volume);
+    setVolume(isTouchScreen ? 1 : refAudio.current.volume);
   }
 
 
