@@ -28,12 +28,16 @@ const ToogleMutedButton = () => {
         });
     }
 
+    // La etiqueta es siempre la misma y el estado va en aria-pressed: cambiar la etiqueta según el
+    // estado (como antes: "Mutear video" estando ya silenciado) hace que describa lo contrario de lo
+    // que pasa al pulsarlo.
     return (
         <button
             className={cn('video-player__button js-button-video-volumen', {
                 'video-player__button--disabled': muted
             })}
-            aria-label={muted ? 'Mutear video' : 'Volumen'}
+            aria-label="Mutear video"
+            aria-pressed={muted}
             type="button"
             onClick={toogleMuted}
         >

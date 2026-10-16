@@ -53,7 +53,7 @@ describe('VideoPlayer', () => {
 
       expect(videoEl().querySelector('source')).toHaveAttribute('src', SRC)
       expect(tool('Reproducir video')).toBeInTheDocument()
-      expect(tool('Volumen')).toBeInTheDocument()
+      expect(tool('Mutear video')).toBeInTheDocument()
       expect(slider()).toBeInTheDocument()
     })
 
@@ -439,7 +439,7 @@ describe('VideoPlayer', () => {
     it('el botón de silencio mutea el video y deja el volumen en 0', async () => {
       setup()
 
-      await userEvent.click(tool('Volumen'))
+      await userEvent.click(tool('Mutear video'))
 
       expect(videoEl().muted).toBe(true)
       expect(volumeSlider()).toHaveValue('0')
@@ -449,7 +449,7 @@ describe('VideoPlayer', () => {
     it('al quitar el silencio recupera el último volumen elegido', async () => {
       setup()
       fireEvent.change(volumeSlider(), { target: { value: '40' } })
-      await userEvent.click(tool('Volumen'))
+      await userEvent.click(tool('Mutear video'))
 
       await userEvent.click(tool('Mutear video'))
 
@@ -457,9 +457,51 @@ describe('VideoPlayer', () => {
       expect(volumeSlider()).toHaveValue('40')
     })
 
+    describe('etiqueta y estado del botón de silencio', () => {
+      it('su nombre es siempre el mismo, también estando silenciado', async () => {
+        setup()
+        const button = tool('Mutear video')
+        expect(button).toHaveAccessibleName('Mutear video')
+
+        await userEvent.click(button)
+        expect(button).toHaveAccessibleName('Mutear video')
+
+        await userEvent.click(button)
+        expect(button).toHaveAccessibleName('Mutear video')
+      })
+
+      it('el estado va en aria-pressed: sin silenciar false, silenciado true', async () => {
+        setup()
+        const button = tool('Mutear video')
+        expect(button).toHaveAttribute('aria-pressed', 'false')
+
+        await userEvent.click(button)
+        expect(button).toHaveAttribute('aria-pressed', 'true')
+
+        await userEvent.click(button)
+        expect(button).toHaveAttribute('aria-pressed', 'false')
+      })
+
+      it('ya no se llama "Volumen" (ese es el nombre del control deslizante)', () => {
+        setup()
+
+        expect(within(toolbar()).queryByRole('button', { name: 'Volumen' })).not.toBeInTheDocument()
+      })
+
+      it('subir el volumen estando silenciado también lo refleja en aria-pressed', async () => {
+        setup()
+        await userEvent.click(tool('Mutear video'))
+        expect(tool('Mutear video')).toHaveAttribute('aria-pressed', 'true')
+
+        fireEvent.change(volumeSlider(), { target: { value: '70' } })
+
+        expect(tool('Mutear video')).toHaveAttribute('aria-pressed', 'false')
+      })
+    })
+
     it('subir el volumen estando muteado quita el silencio', async () => {
       setup()
-      await userEvent.click(tool('Volumen'))
+      await userEvent.click(tool('Mutear video'))
       expect(videoEl().muted).toBe(true)
 
       fireEvent.change(volumeSlider(), { target: { value: '70' } })
