@@ -4,7 +4,7 @@
     "**/.github": true,
     "**/.storybook": false,
     "**/tests": false,
-    ".npmrc": true,
+    ".npmrc": false,
     "babel.config.json": true,
     "**jest.config.cjs": true,
     "**jest.setup.js": true,
