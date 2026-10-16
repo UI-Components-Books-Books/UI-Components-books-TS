@@ -78,20 +78,17 @@ describe('VideoPlayer', () => {
       expect(videoEl()).toHaveAttribute('poster', '/portada.png')
     })
 
-    it('usa el id recibido en el video', () => {
+    it('usa el id recibido en el contenedor del reproductor', () => {
       setup({ id: 'mi-video' })
 
-      expect(videoEl()).toHaveAttribute('id', 'mi-video')
+      expect(document.getElementById('mi-video')).toBe(videoEl().closest('.video-player__container'))
     })
 
-    // CARACTERIZACIÓN: el contenedor y el <video> comparten el mismo id. Es un id duplicado (HTML
-    // inválido), pero el resto del código depende de ello: useFullScreen hace getElementById(uid)
-    // para obtener el contenedor y useTranscript busca `video[id="uid"]`. Si se corrige, hay que
-    // cambiar ambos hooks a la vez.
-    it('el contenedor y el <video> comparten el mismo id', () => {
+    it('el id del reproductor aparece una sola vez: el <video> no lo comparte', () => {
       setup({ id: 'mi-video' })
 
-      expect(document.querySelectorAll('#mi-video')).toHaveLength(2)
+      expect(document.querySelectorAll('#mi-video')).toHaveLength(1)
+      expect(videoEl()).not.toHaveAttribute('id')
     })
 
     it('sin subtítulos ni audio no muestra los botones opcionales', () => {
@@ -494,7 +491,7 @@ describe('VideoPlayer', () => {
 
   describe('transcripción', () => {
     const openTranscript = async () => {
-      setup({ caption: CAPTION })
+      setup({ caption: CAPTION, id: 'reproductor' })
       await userEvent.click(tool('Transcripción'))
       return screen.findByRole('button', { name: 'Primer segmento' })
     }
@@ -511,7 +508,7 @@ describe('VideoPlayer', () => {
 
       expect(fetch).toHaveBeenCalledWith(CAPTION.src)
       expect(screen.getByRole('button', { name: 'Segundo segmento' })).toBeInTheDocument()
-      const first = document.getElementById('cue-0') as HTMLElement
+      const first = document.getElementById('reproductor-cue-0') as HTMLElement
       expect(first).toHaveTextContent('00:05')
       expect(first).toHaveTextContent('00:09')
     })
@@ -783,6 +780,98 @@ describe('VideoPlayer', () => {
       })
 
       expect(timeText()).toBe('00:10/01:40')
+    })
+  })
+
+  describe('varios reproductores en la página', () => {
+    const renderPlayers = (players: Array<Partial<VideoPlayerProps>>) => {
+      render(
+        <>
+          {players.map((props, index) => (
+            <VideoPlayer key={index} src={SRC} caption={CAPTION} audio={AUDIO} {...props} />
+          ))}
+        </>
+      )
+      return Array.from(document.querySelectorAll<HTMLElement>('.video-player'))
+    }
+    const toolOf = (player: HTMLElement, name: string) =>
+      within(player.querySelector('.video-player__toolbar') as HTMLElement).getByRole('button', { name })
+    const openEverything = async (player: HTMLElement) => {
+      await userEvent.click(toolOf(player, 'Transcripción'))
+      await userEvent.click(toolOf(player, 'Audio descriptivo'))
+      await within(player).findByRole('button', { name: 'Primer segmento' })
+    }
+    const repeatedIds = () => {
+      const ids = Array.from(document.querySelectorAll('[id]'), (element) => element.id)
+      return ids.filter((id, index) => ids.indexOf(id) !== index)
+    }
+
+    it('ningún id se repite, con ids automáticos', async () => {
+      const players = renderPlayers([{}, {}])
+      await openEverything(players[0])
+      await openEverything(players[1])
+
+      expect(repeatedIds()).toEqual([])
+    })
+
+    it('ningún id se repite, con ids propios', async () => {
+      const players = renderPlayers([{ id: 'uno' }, { id: 'dos' }])
+      await openEverything(players[0])
+      await openEverything(players[1])
+
+      expect(repeatedIds()).toEqual([])
+    })
+
+    it('un solo reproductor tampoco repite ningún id', async () => {
+      const [player] = renderPlayers([{ id: 'solo' }])
+      await openEverything(player)
+
+      expect(repeatedIds()).toEqual([])
+    })
+
+    it('cada grupo de audio descriptivo se nombra con su propio título', async () => {
+      const players = renderPlayers([{}, {}])
+      await openEverything(players[0])
+      await openEverything(players[1])
+
+      players.forEach((player) => {
+        const group = within(player).getByRole('group', { name: 'Audio descriptivo' })
+        const title = document.getElementById(group.getAttribute('aria-labelledby') as string)
+        expect(player).toContainElement(title)
+      })
+    })
+
+    it('al elegir un segmento la transcripción se desplaza en su propio reproductor', async () => {
+      const scrollTo = vi.spyOn(Element.prototype, 'scrollTo')
+      const players = renderPlayers([{}, {}])
+      await openEverything(players[0])
+      await openEverything(players[1])
+      const listOf = (player: HTMLElement) =>
+        player.querySelector('.video-player__transcription__segment-list')
+      scrollTo.mockClear()
+
+      await userEvent.click(within(players[1]).getByRole('button', { name: 'Primer segmento' }))
+
+      await waitFor(() => expect(scrollTo).toHaveBeenCalled())
+      expect(scrollTo.mock.contexts).toContain(listOf(players[1]))
+      expect(scrollTo.mock.contexts).not.toContain(listOf(players[0]))
+    })
+
+    it('el segmento activo se marca en el reproductor cuyo video cambió de subtítulo', async () => {
+      const players = renderPlayers([{}, {}])
+      await openEverything(players[0])
+      await openEverything(players[1])
+      const videos = players.map((player) => player.querySelector('video') as HTMLVideoElement)
+      const track = videos[1].textTracks[0] as unknown as {
+        activeCues: Array<{ startTime: number; endTime: number }>
+        oncuechange: () => void
+      }
+
+      track.activeCues = [{ startTime: 10, endTime: 14 }]
+      act(() => track.oncuechange())
+
+      expect(players[1].querySelector('[data-is-active="true"]')).toHaveTextContent('Segundo segmento')
+      expect(players[0].querySelector('[data-is-active="true"]')).toBeNull()
     })
   })
 })

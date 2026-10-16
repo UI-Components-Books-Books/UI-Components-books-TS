@@ -81,7 +81,7 @@ const parseVTT = (vttText: string): Cue[] => {
  * @example
  *  const { transcript, currentCueId } = useTranscript('myVideo', 'subtitles.vtt');
  *
- * @param {string} uid - Identificador único del elemento de video al que se asociará la transcripción.
+ * @param {string} uid - Id del contenedor del reproductor, que contiene el elemento de video al que se asociará la transcripción.
  * @param {string} [caption] - URL del archivo VTT que contiene la transcripción del video.
  *
  * @returns {Object} Hook de transcripción.
@@ -113,9 +113,10 @@ export const useTranscript = (uid: string, caption?: string) => {
 
     // Configurar el evento cuechange
     useEffect(() => {
-        const videoElement = document.querySelector(
-            `video[id="${uid}"]`
-        ) as HTMLVideoElement | null;
+        // El video es el único <video> del contenedor que lleva el id del reproductor.
+        const videoElement = document
+            .getElementById(uid)
+            ?.querySelector('video') ?? null;
 
         if (videoElement && transcript.length > 0) {
             const textTrack = videoElement.textTracks[0]; // Selecciona la primera pista de texto

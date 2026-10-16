@@ -92,13 +92,12 @@ const VolumeSlider = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [muted])
 
-    // El input está dentro del label: la asociación es implícita y no depende de un id fijo
-    // (que se duplicaría y cruzaría etiquetas si hay dos reproductores en la página).
+    // El input está dentro del label: la asociación es implícita y no necesita ningún id
+    // (uno fijo se duplicaría si hay dos reproductores en la página).
     return (
         <label className='video-player__volume'>
             <span className='u-sr-only'>Controlar volumen</span>
             <input
-                id='volume-slider'
                 className='video-player__volume-slider'
                 type='range'
                 min='0'

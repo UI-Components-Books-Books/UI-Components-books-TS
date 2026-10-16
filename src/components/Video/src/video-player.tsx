@@ -51,6 +51,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           className={cn("video-player", addClass)}
         >
           <VideoAudioDescriptionToolbar />
+          {/* El único elemento con el id del reproductor: el resto de ids se derivan de él. */}
           <div
             id={uid}
             className="video-player__container"

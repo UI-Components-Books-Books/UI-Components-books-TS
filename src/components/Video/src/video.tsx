@@ -10,7 +10,6 @@ import "./video.css";
 
 export const Video = () => {
   const {
-    uid,
     src,
     caption,
     poster,
@@ -153,7 +152,6 @@ export const Video = () => {
   return (
     <video
       ref={videoRef}
-      id={uid}
       onClick={togglePlayVideo}
       onLoadedData={handleLoadedData}
       onTimeUpdate={handleTimeUpdate}

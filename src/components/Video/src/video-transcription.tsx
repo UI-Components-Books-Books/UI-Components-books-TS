@@ -59,7 +59,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
   
     if (currentCueId !== -1) {
       // Obtiene el elemento del cue activo y su contenedor
-      const cueElement = document.getElementById(`cue-${currentCueId}`);
+      const cueElement = document.getElementById(`${uid}-cue-${currentCueId}`);
       const container = cueElement?.parentElement;
   
       if (cueElement && container) {
@@ -68,7 +68,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
         container.scrollTo({ top: offsetTop - container.clientHeight / 2, behavior: "smooth" });
       }
     }
-  }, [transcript, currentTime]);
+  }, [uid, transcript, currentTime]);
 
   return (
     <>
@@ -104,7 +104,7 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
             {transcript.map((cue, index) => (
               <li
                 key={index}
-                id={`cue-${index}`}
+                id={`${uid}-cue-${index}`}
                 data-is-active={index === currentCueId}
                 className="video-player__transcription__segment"
               >

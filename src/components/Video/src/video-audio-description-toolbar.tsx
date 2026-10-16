@@ -16,7 +16,10 @@ import { PlayerActionKind } from "../types/types";
 
 export const VideoAudioDescriptionToolbar = () => {
   const refElement = useRef<HTMLDivElement>(null);
-  const { showAD, isActiveAD, isPlaying } = usePlayerContext();
+  const { uid, showAD, isActiveAD, isPlaying } = usePlayerContext();
+
+  // Id derivado del reproductor, para que no se repita si hay más de uno en la página.
+  const titleId = `${uid}-audio-description-title`;
   const dispatch = usePlayerDispatchContext();
   const [shouldRender, setShouldRender] = useState(false);
 
@@ -192,11 +195,12 @@ export const VideoAudioDescriptionToolbar = () => {
           </p>
 
           <div
-            aria-labelledby="audio-description-header"
+            role="group"
+            aria-labelledby={titleId}
             className="video-audio-description__content u-flow"
           >
-            <div className="video-audio-description__content-header" id="audio-description-header">
-              <p>
+            <div className="video-audio-description__content-header">
+              <p id={titleId}>
                 <Icon>
                   <AudioDescription />
                 </Icon>
@@ -288,12 +292,11 @@ const VolumenSlider = () => {
   return (
     <div>
       <p>Volumen del audio descriptivo ({(volumeAD * 100).toFixed(0)}%)</p>
-      {/* El input está dentro del label, así que se asocian sin necesidad de `htmlFor`
-          (que además apuntaba a un id que no existía y dejaba el control sin nombre accesible). */}
+      {/* El input está dentro del label, así que se asocian sin necesidad de `htmlFor` ni de un id
+          (uno fijo se duplicaría si hay dos reproductores en la página). */}
       <label className="video-player__volume video-audio-description__volume">
         <span className="u-sr-only">Controlar volumen del audio descriptivo</span>
         <input
-          id="volume-audio-description"
           className="video-player__volume-slider video-audio-description__slider"
           type="range"
           min="0"

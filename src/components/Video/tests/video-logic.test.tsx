@@ -265,16 +265,19 @@ describe('useTranscript', () => {
         activeCues: [],
         oncuechange: null,
       }
+      // El video va dentro de un contenedor con el id del reproductor, que es el único con ese id.
+      const container = document.createElement('div')
+      container.id = 'vid'
       const video = document.createElement('video')
-      video.id = 'vid'
       Object.defineProperty(video, 'textTracks', { value: [track] })
-      document.body.appendChild(video)
-      return { video, track }
+      container.appendChild(video)
+      document.body.appendChild(container)
+      return { container, track }
     }
 
     it('informa qué cue está activo cuando el video dispara cuechange', async () => {
       stubFetch(VTT)
-      const { video, track } = makeVideo()
+      const { container, track } = makeVideo()
 
       const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
       await waitFor(() => expect(result.current.transcript).toHaveLength(2))
@@ -287,12 +290,29 @@ describe('useTranscript', () => {
       act(() => track.oncuechange?.())
       expect(result.current.currentCueId).toBeNull()
 
-      video.remove()
+      container.remove()
+    })
+
+    it('escucha el video de su propio contenedor aunque haya otros reproductores en la página', async () => {
+      stubFetch(VTT)
+      const other = makeVideo()
+      other.container.id = 'otro'
+      const own = makeVideo()
+      const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+      await waitFor(() => expect(result.current.transcript).toHaveLength(2))
+
+      own.track.activeCues = [{ startTime: 65.25, endTime: 3600 }]
+      act(() => own.track.oncuechange?.())
+
+      expect(result.current.currentCueId).toBe(1)
+      expect(other.track.oncuechange).toBeNull()
+      other.container.remove()
+      own.container.remove()
     })
 
     it('si el cue activo no está en la transcripción, no hay cue actual', async () => {
       stubFetch(VTT)
-      const { video, track } = makeVideo()
+      const { container, track } = makeVideo()
       const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
       await waitFor(() => expect(result.current.transcript).toHaveLength(2))
 
@@ -300,7 +320,7 @@ describe('useTranscript', () => {
       act(() => track.oncuechange?.())
 
       expect(result.current.currentCueId).toBeNull()
-      video.remove()
+      container.remove()
     })
   })
 })
