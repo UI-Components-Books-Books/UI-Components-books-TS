@@ -30,6 +30,11 @@ export default defineConfig({
   },
   plugins: plugins,
   build: {
+    // `public/` es para las historias de Storybook (logo, audio y subtítulos de ejemplo) y para
+    // documentos de trabajo que no se versionan. Ninguno forma parte de la librería, así que no se
+    // copia a `dist/` y por tanto no se publica en npm. Storybook no depende de esta opción: copia
+    // `public/` por su cuenta (comprobado con Storybook 10).
+    copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'books-ui',

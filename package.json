@@ -47,7 +47,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/books-ui/dist/ && rm -rf dist/assets",
+    "build": "tsc && vite build --base=/books-ui/dist/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
