@@ -1,24 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 /**
- * Obtiene uno de los valores de values basado en la propiedad matches
- * de cada media query.
- *
- * @returns El valor relacionado con la primera media query que haga match o el defaultValue si no hay ninguna.
+ * Índice que representa "ninguna media query hace match".
+ * También es el valor que se usa al renderizar en el servidor, donde no existe `window`.
  */
-const getMatchedValue = <T>(mediaQueryList: MediaQueryList[], values: T[], defaultValue: T): T => {
-  // Obtenemos el index del primer media query que haya hecho match.
-  const index = mediaQueryList.findIndex((mediaQuery) => mediaQuery.matches);
+const NO_MATCH = -1;
 
-  // Retornamos el valor relacionado o el defaultValue si no hay ninguno.
-  return typeof values[index] !== 'undefined' ? values[index] : defaultValue;
-};
+/**
+ * En el servidor no hay media queries: se asume que ninguna hace match,
+ * así el HTML generado y el primer render de la hidratación usan siempre el defaultValue.
+ */
+const getServerSnapshot = (): number => NO_MATCH;
 
 /**
  * Hook para crear Media Queries.
  *
  * Realiza la creación y control de Media queries personalizadas.
  * Esto facilita el uso de estas en la lógica de cualquier componente.
+ *
+ * Es seguro en el servidor (SSR): allí devuelve el defaultValue. Al hidratar en el navegador,
+ * el primer render también usa el defaultValue para coincidir con el HTML del servidor y
+ * enseguida se actualiza con el valor real.
  *
  * @example
  *  // Media query para controlar el número de columnas en una página.
@@ -40,68 +42,52 @@ const getMatchedValue = <T>(mediaQueryList: MediaQueryList[], values: T[], defau
  */
 const useMedia = <T>(queries: string[], values: T[], defaultValue: T): T => {
   /**
-   * Guardamos siempre los últimos values y defaultValue en una ref.
-   * Normalmente llegan como literales nuevos en cada render, así que no pueden ser
-   * dependencias del efecto sin que este se vuelva a suscribir en cada render.
-   */
-  const valuesRef = useRef(values);
-  const defaultValueRef = useRef(defaultValue);
-
-  useEffect(() => {
-    valuesRef.current = values;
-    defaultValueRef.current = defaultValue;
-  });
-
-  /**
-   * Las queries serializadas son la dependencia estable del efecto:
-   * solo cambian cuando cambia su contenido, no su referencia.
+   * Las queries serializadas son la dependencia estable de todo lo que sigue:
+   * solo cambian cuando cambia su contenido, no su referencia (normalmente
+   * llegan como un arreglo literal nuevo en cada render).
    */
   const queriesKey = JSON.stringify(queries);
 
   /**
-   * Estado que almacena el valor de la propiedad matches
-   * del MediaQueryList.
+   * Arreglo que contiene una media query list por cada una de las queries.
+   * Se crean una sola vez por cada conjunto de queries.
    *
-   * @link https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/matches
+   * @link https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList
    */
-  const [value, setValue] = useState<T>(() =>
-    getMatchedValue(
-      queries.map((query) => window.matchMedia(query)),
-      values,
-      defaultValue
-    )
-  );
+  const mediaQueryLists = useMemo<MediaQueryList[]>(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return [];
 
-  useEffect(() => {
-    /**
-     * Arreglo que contiene una media query list
-     * por cada una de las queries.
-     */
-    const mediaQueryList = (JSON.parse(queriesKey) as string[]).map((query) =>
-      window.matchMedia(query)
-    );
-
-    /**
-     * Función callback que se llama cada vez que
-     * cambia el estado de la media query.
-     *
-     */
-    const handler = () =>
-      setValue(() => getMatchedValue(mediaQueryList, valuesRef.current, defaultValueRef.current));
-
-    // Sincronizamos el valor por si las queries cambiaron después del primer render.
-    handler();
-
-    // Agregamos un eventListener por cada uno de las media query.
-    mediaQueryList.forEach((mediaQuery) => mediaQuery.addEventListener('change', handler));
-
-    return () => {
-      // Eliminamos el eventListener de cada media query.
-      mediaQueryList.forEach((mediaQuery) => mediaQuery.removeEventListener('change', handler));
-    };
+    return (JSON.parse(queriesKey) as string[]).map((query) => window.matchMedia(query));
   }, [queriesKey]);
 
-  return value;
+  /**
+   * Se suscribe al evento change de cada media query.
+   * Retorna la función que elimina los eventListener.
+   */
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      mediaQueryLists.forEach((mediaQuery) => mediaQuery.addEventListener('change', onChange));
+
+      return () => {
+        mediaQueryLists.forEach((mediaQuery) => mediaQuery.removeEventListener('change', onChange));
+      };
+    },
+    [mediaQueryLists]
+  );
+
+  /**
+   * Índice de la primera media query que haga match o -1 si no hay ninguna.
+   * Es un número, por lo que React solo vuelve a renderizar cuando cambia la query ganadora.
+   */
+  const getSnapshot = useCallback(
+    (): number => mediaQueryLists.findIndex((mediaQuery) => mediaQuery.matches),
+    [mediaQueryLists]
+  );
+
+  const index = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // Retornamos el valor relacionado o el defaultValue si no hay ninguno.
+  return typeof values[index] !== 'undefined' ? values[index] : defaultValue;
 };
 
 export { useMedia };

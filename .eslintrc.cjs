@@ -35,6 +35,8 @@ module.exports = {
         }
       }
     ],
+    // useIsomorphicLayoutEffect es useLayoutEffect, así que sus dependencias se revisan igual.
+    'react-hooks/exhaustive-deps': ['warn', { additionalHooks: 'useIsomorphicLayoutEffect' }],
     "unused-imports/no-unused-imports": "warn",
     'jsx-a11y/alt-text': 'warn',
   },

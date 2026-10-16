@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 import { Icon } from "@components";
 import { cn } from '@utils/cn';
@@ -128,12 +128,24 @@ const CaptionButton = () => {
   ) : null;
 };
 
+const subscribeToNothing = () => () => {};
+const getFullScreenEnabled = () => Boolean(document.fullscreenEnabled);
+const getServerFullScreenEnabled = () => false;
+
 const FullScreenButton = () => {
   const { uid } = usePlayerContext();
   const dispatch = usePlayerDispatchContext();
   const [isFullScreen, onClickFullScreen] = useFullScreen(uid);
 
-  const isFullScreenEnable = document.fullscreenEnabled;
+  /**
+   * Indica si el navegador permite la pantalla completa. En el servidor, y durante la hidratación,
+   * se asume que no y se corrige enseguida en el navegador.
+   */
+  const isFullScreenEnable = useSyncExternalStore(
+    subscribeToNothing,
+    getFullScreenEnabled,
+    getServerFullScreenEnabled
+  );
 
   useEffect(() => {
     dispatch({ type: PlayerActionKind.FULLSCREEN, payload: isFullScreen });

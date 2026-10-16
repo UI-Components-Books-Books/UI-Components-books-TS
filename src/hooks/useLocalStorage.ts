@@ -1,10 +1,102 @@
-import { useState } from 'react'
+import { useCallback, useMemo, useRef, useSyncExternalStore } from 'react'
+
+/**
+ * Funciones que React nos entrega para avisar que el almacenamiento cambió.
+ * El evento nativo `storage` solo se dispara en las OTRAS pestañas, así que los cambios
+ * hechos desde esta se avisan manualmente por medio de este conjunto.
+ */
+const listeners = new Set<() => void>()
+
+/**
+ * Valores que no se pudieron guardar en el localStorage (almacenamiento bloqueado, lleno, etc.).
+ * Se conservan en memoria para que el hook siga funcionando durante la sesión.
+ * `null` significa que la clave se eliminó.
+ */
+const fallback = new Map<string, string | null>()
+
+const warn = (error: unknown) => console.warn(`Error in useLocalStorage: ${error}`)
+
+/**
+ * Lee el texto guardado (sin convertirlo de JSON).
+ * Nunca lanza: React vuelve a llamar esta función en cada render.
+ */
+const readRaw = (key: string): string | null => {
+    if (fallback.has(key)) return fallback.get(key) ?? null
+
+    try {
+        return window.localStorage.getItem(key)
+    } catch {
+        // El acceso al localStorage puede estar bloqueado por el navegador.
+        return null
+    }
+}
+
+/**
+ * Guarda (o elimina, si es undefined) el texto de una clave y avisa a todos los hooks suscritos.
+ */
+const writeRaw = (key: string, raw: string | undefined) => {
+    try {
+        if (raw === undefined) {
+            window.localStorage.removeItem(key)
+        } else {
+            window.localStorage.setItem(key, raw)
+        }
+        fallback.delete(key)
+    } catch (error) {
+        warn(error)
+        fallback.set(key, raw ?? null)
+    }
+
+    listeners.forEach((listener) => listener())
+}
+
+/**
+ * Convierte el texto guardado en el valor que representa, o retorna `initialValue`
+ * si no hay nada guardado o el JSON es inválido.
+ */
+const parseRaw = <T>(raw: string | null, initialValue: T): T => {
+    if (!raw) return initialValue
+
+    try {
+        return JSON.parse(raw) as T
+    } catch (error) {
+        warn(error)
+        return initialValue
+    }
+}
+
+/**
+ * Se suscribe a los cambios del almacenamiento, tanto de esta pestaña como de las demás.
+ */
+const subscribe = (onChange: () => void) => {
+    listeners.add(onChange)
+    window.addEventListener('storage', onChange)
+
+    return () => {
+        listeners.delete(onChange)
+        window.removeEventListener('storage', onChange)
+    }
+}
+
+/**
+ * En el servidor no existe el localStorage: se lee como si estuviera vacío,
+ * así el HTML generado y el primer render de la hidratación usan siempre el valor inicial.
+ */
+const getServerSnapshot = (): string | null => null
+
 /**
  * Hook para manejar el localStorage.
  *
  * Maneja automáticamente la creación y actualización de la información en el localStorage.
  * El uso es similar a useState, excepto que pasamos una clave de almacenamiento local para que podamos
  * usar ese valor de forma predeterminada en la carga de la página en lugar del valor inicial especificado.
+ *
+ * Es seguro en el servidor (SSR): allí devuelve el valor inicial. Al hidratar en el navegador,
+ * el primer render también usa el valor inicial para coincidir con el HTML del servidor y
+ * enseguida se actualiza con el valor guardado.
+ *
+ * Todos los hooks que usen la misma clave se mantienen sincronizados, incluso entre pestañas.
+ * Guardar `undefined` elimina la clave.
  *
  * @example
  * // Uso similar a useState, pero con la clave del valor en el localStorage como primer argumento
@@ -17,54 +109,43 @@ import { useState } from 'react'
  */
 const useLocalStorage = <T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] => {
     /**
-     * Estado que va a almacenar nuestro valor.
-     * Pasamos la función para el estado inicial a useState,
-     * para que esta solo se ejecute una vez.
+     * Guardamos el valor inicial del primer render: normalmente llega como un literal
+     * nuevo en cada render, y así el valor retornado conserva su identidad.
      */
-    const [storedValue, setStoredValue] = useState<T>(() => {
-        /**
-         * Dado que la API del localStorage no está disponible
-         * en server-side rendering, comprobamos su existencia.
-         */
-        if (typeof window === 'undefined') {
-            return initialValue;
-        }
+    const initialValueRef = useRef(initialValue)
 
-        try {
-            // Obtenemos el valor del localStorage usando la clave.
-            const item = window.localStorage.getItem(key);
+    /**
+     * Texto guardado en el localStorage para la clave.
+     */
+    const getSnapshot = useCallback(() => readRaw(key), [key])
+    const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
-            // Convertimos de JSON si no retornamos el valor inicial.
-            return item ? JSON.parse(item) : initialValue;
-        } catch (error) {
-            // Si hay un error, retornamos el valor inicial.
-            console.warn(`Error in useLocalStorage: ${error}`);
-            return initialValue;
-        }
-    });
+    /**
+     * Convertimos de JSON si hay algo guardado; si no (o si el JSON es inválido),
+     * retornamos el valor inicial.
+     */
+    const storedValue = useMemo<T>(() => parseRaw(raw, initialValueRef.current), [raw])
 
     /**
        * Función utilizada para actualizar el valor del localStorage.
        *
        * @param {*} value - Nuevo valor del localStorage.
        */
-    const setValue = (value: T | ((val: T) => T)) => {
+    const setValue = useCallback((value: T | ((val: T) => T)) => {
+        // En el servidor no hay dónde guardar nada.
+        if (typeof window === 'undefined') return
+
         try {
             // Permitimos que 'value' sea una función para tener la misma API que useState.
-            const valueToStore = value instanceof Function ? value(storedValue) : value;
+            const valueToStore = value instanceof Function ? value(parseRaw(readRaw(key), initialValueRef.current)) : value
 
-            // Guardamos el valor en el estado.
-            setStoredValue(valueToStore);
-
-            if (typeof window !== 'undefined') {
-                // Guardamos en el localStorage.
-                window.localStorage.setItem(key, JSON.stringify(valueToStore));
-            }
+            // Guardamos en el localStorage y avisamos a quienes lo estén leyendo.
+            writeRaw(key, JSON.stringify(valueToStore))
         } catch (error) {
             // Si hay un error, mostramos un mensaje en la consola.
-            console.warn(`Error in useLocalStorage: ${error}`);
+            warn(error)
         }
-    };
+    }, [key])
 
     return [storedValue, setValue]
 }

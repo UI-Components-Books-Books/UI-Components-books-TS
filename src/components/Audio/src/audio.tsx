@@ -1,7 +1,7 @@
 import { useState, useRef, useId } from 'react'
 
 import { Button, Icon } from '@components'
-import { useInteractOutside } from '@hooks'
+import { useInteractOutside, useMedia } from '@hooks'
 import { cn } from '@utils/cn'
 
 import { A11yIcon, PauseIcon, PlayIcon, VolumenDownIcon, VolumenOffIcon, VolumenOnIcon } from './audio-icons'
@@ -150,9 +150,15 @@ export const Audio: React.FC<AudioProps> = ({
   }
 
 
-  const isTouchScreen: boolean = window.matchMedia(
-    '(any-hover: none) and (any-pointer: coarse)'
-  ).matches
+  /**
+   * Indica si el dispositivo es táctil. En el servidor, y durante la hidratación,
+   * se asume que no lo es y se corrige enseguida en el navegador.
+   */
+  const isTouchScreen: boolean = useMedia<boolean>(
+    ['(any-hover: none) and (any-pointer: coarse)'],
+    [true],
+    false
+  )
 
 
 

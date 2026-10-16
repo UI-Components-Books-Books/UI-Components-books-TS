@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { mockMatchMedia } from '../../test/matchMedia'
 import { useMedia } from '../useMedia'
@@ -8,6 +8,10 @@ const BIG = '(min-width: 1000px)'
 const MEDIUM = '(min-width: 600px)'
 
 describe('useMedia', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('devuelve el valor de la primera media query que hace match', () => {
     const media = mockMatchMedia({ [BIG]: true, [MEDIUM]: true })
 
@@ -85,5 +89,29 @@ describe('useMedia', () => {
     unmount()
 
     expect(media.activeListeners()).toBe(0)
+  })
+
+  it('devuelve el valor por defecto si el navegador no tiene matchMedia', () => {
+    vi.stubGlobal('matchMedia', undefined)
+    expect(window.matchMedia).toBeUndefined()
+
+    const { result } = renderHook(() => useMedia([BIG], [4], 2))
+
+    expect(result.current).toBe(2)
+  })
+
+  it('no vuelve a renderizar cuando cambia una media query pero gana la misma', () => {
+    const media = mockMatchMedia({ [MEDIUM]: true })
+    let renders = 0
+    renderHook(() => {
+      renders++
+      return useMedia([BIG, MEDIUM], [4, 3], 2)
+    })
+    const rendersAfterMount = renders
+
+    // BIG sigue sin cumplirse: el resultado (MEDIUM) no cambia.
+    act(() => media.fire(BIG))
+
+    expect(renders).toBe(rendersAfterMount)
   })
 })

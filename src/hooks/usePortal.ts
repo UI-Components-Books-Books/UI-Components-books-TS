@@ -27,6 +27,11 @@ const addRootElement = (rootElem: HTMLElement) => {
  *
  * Maneja automaticamente la creación y desmontaje del elemento padre, por lo que no es
  * necesario asegurarse que el elemento ya exista en el Body.
+ *
+ * Solo funciona en el navegador: crea elementos del DOM durante el render, así que no puede
+ * usarse en el servidor (SSR). Para eso existe el componente `Portal`, que no renderiza nada
+ * hasta estar en el cliente. Si se usa este hook directamente, hay que hacerlo desde un
+ * componente que solo se monte en el navegador.
  * @example
  *  const target = usePortal(id);
  *  return createPortal(children, target);

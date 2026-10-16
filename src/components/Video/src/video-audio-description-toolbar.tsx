@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { Icon, Switch } from "@components";
+import { useIsomorphicLayoutEffect } from "@utils/useIsomorphicLayoutEffect";
 import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
@@ -113,14 +114,14 @@ export const VideoAudioDescriptionToolbar = () => {
     }
   };
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!shouldRender || !refElement.current) return;
 
     // Enfoca el primer elemento del toolbar
     refElement.current.focus();
   }, [shouldRender, refElement]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (showAD) {
       // Mostrar el componente y ejecutar la animación de entrada
       setShouldRender(true);
@@ -140,7 +141,7 @@ export const VideoAudioDescriptionToolbar = () => {
     }
   }, [showAD, shouldRender]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!refElement.current || !shouldRender) return;
 
     // Animación de entrada del toolbar

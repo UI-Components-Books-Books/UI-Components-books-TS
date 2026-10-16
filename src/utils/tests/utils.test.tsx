@@ -9,6 +9,7 @@ import { convertTime, formatTime } from '../converterTime'
 import { createContext } from '../createcontext'
 import { getChildRef } from '../getChildRef'
 import { mergeRefs } from '../mergeRefs'
+import { useIsomorphicLayoutEffect } from '../useIsomorphicLayoutEffect'
 
 describe('mergeRefs', () => {
   it('asigna el nodo a refs de objeto y a refs de tipo callback', () => {
@@ -186,5 +187,44 @@ describe('createContext', () => {
     )
 
     expect(getByText('42')).toBeInTheDocument()
+  })
+})
+
+describe('useIsomorphicLayoutEffect', () => {
+  it('en el navegador ejecuta el efecto antes de que el navegador pinte, con el DOM ya actualizado', () => {
+    const seen: Array<string | null | undefined> = []
+    const Probe = () => {
+      useIsomorphicLayoutEffect(() => {
+        seen.push(document.getElementById('target')?.textContent)
+      }, [])
+      return <p id="target">listo</p>
+    }
+
+    render(<Probe />)
+
+    expect(seen).toEqual(['listo'])
+  })
+
+  it('vuelve a ejecutar el efecto solo cuando cambian las dependencias y limpia al desmontar', () => {
+    const effect = vi.fn()
+    const cleanup = vi.fn()
+    const Probe = ({ value }: { value: number }) => {
+      useIsomorphicLayoutEffect(() => {
+        effect(value)
+        return cleanup
+      }, [value])
+      return null
+    }
+
+    const { rerender, unmount } = render(<Probe value={1} />)
+    rerender(<Probe value={1} />)
+    expect(effect).toHaveBeenCalledTimes(1)
+
+    rerender(<Probe value={2} />)
+    expect(effect).toHaveBeenCalledTimes(2)
+    expect(cleanup).toHaveBeenCalledTimes(1)
+
+    unmount()
+    expect(cleanup).toHaveBeenCalledTimes(2)
   })
 })

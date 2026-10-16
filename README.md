@@ -134,6 +134,19 @@ import { Button } from "books-ui";
 </Button>
 ```
 
+## 🌐 Renderizado en el servidor (SSR)
+
+Los componentes y los hooks se pueden renderizar en el servidor (Next.js, Remix, `renderToString`…) e
+hidratar en el navegador sin diferencias con el HTML recibido:
+
+- `useMedia`, `useDarkMode` y `useLocalStorage` devuelven su valor por defecto en el servidor y en el
+  primer render de la hidratación; justo después pasan al valor real del navegador.
+- Los componentes que usan `Portal` (`Modal`, `Tooltip`, `Toggletip`, `Popover`, `Tour` y
+  `DragAndDrop`) no renderizan su contenido flotante en el servidor: aparece en el navegador al
+  terminar de hidratar.
+- El hook `usePortal` crea elementos del DOM al renderizar, así que solo puede usarse en
+  componentes que se monten en el navegador. Para el resto de casos usa el componente `Portal`.
+
 ## 🛠️ Desarrollo
 
 ```bash

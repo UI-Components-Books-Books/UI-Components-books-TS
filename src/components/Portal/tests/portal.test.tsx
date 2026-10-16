@@ -1,9 +1,13 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { Portal } from '../index'
 
 describe('Portal', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('renderiza los hijos fuera del árbol del componente, dentro del body', () => {
     const { container } = render(
       <div>
@@ -67,5 +71,21 @@ describe('Portal', () => {
 
     expect(screen.queryByText('efímero')).not.toBeInTheDocument()
     expect(document.querySelector('[id^="temporal-"]')).toBeNull()
+  })
+
+  it.each([
+    ['sin crypto.randomUUID (contextos no seguros, como HTTP en una red local)', {}],
+    ['sin crypto', undefined],
+  ])('funciona %s', (_name, crypto) => {
+    vi.stubGlobal('crypto', crypto)
+
+    render(
+      <Portal id="inseguro">
+        <p>contenido</p>
+      </Portal>
+    )
+
+    expect(screen.getByText('contenido')).toBeInTheDocument()
+    expect(document.querySelector('[id^="inseguro-"][id$="-parent"]')).toBeInTheDocument()
   })
 })
