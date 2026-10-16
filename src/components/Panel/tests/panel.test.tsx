@@ -68,7 +68,9 @@ describe('Panel', () => {
 
       expect(sectionEl('s1').querySelector('.u-sr-only')).toHaveTextContent('Sección 1')
       expect(sectionEl('s3').querySelector('.u-sr-only')).toHaveTextContent('Sección 3')
-      expect(sectionEl('s2')).toHaveAttribute('aria-labelledby', 'section-s2')
+      const label = document.getElementById(sectionEl('s2').getAttribute('aria-labelledby') as string)
+      expect(label).toHaveTextContent('Sección 2')
+      expect(sectionEl('s2')).toContainElement(label)
     })
 
     it('genera ids únicos cuando las secciones no reciben id', () => {
@@ -372,6 +374,102 @@ describe('Panel', () => {
 
         expect(onValue.mock.calls.map(([section]) => section)).toEqual([2, 0])
       })
+    })
+  })
+
+  describe('ids únicos', () => {
+    const repeatedIds = () => {
+      const ids = Array.from(document.querySelectorAll('[id]'), (element) => element.id)
+      return ids.filter((id, index) => ids.indexOf(id) !== index)
+    }
+
+    it('un solo panel con navegación no repite ningún id', () => {
+      render(
+        <Panel>
+          <Panel.Nav />
+          <Panel.Section id="s1">Primera</Panel.Section>
+          <Panel.Section id="s2">Segunda</Panel.Section>
+        </Panel>
+      )
+
+      expect(repeatedIds()).toEqual([])
+      expect(document.querySelectorAll('[role="tab"][id]')).toHaveLength(2)
+    })
+
+    const renderTwoPanels = () =>
+      render(
+        <>
+          <Panel>
+            <Panel.Nav label="Capítulos" />
+            <Panel.Section id="intro">Uno</Panel.Section>
+            <Panel.Section id="fin">Dos</Panel.Section>
+          </Panel>
+          <Panel>
+            <Panel.Nav label="Ejercicios" />
+            <Panel.Section id="intro">Tres</Panel.Section>
+            <Panel.Section id="fin">Cuatro</Panel.Section>
+          </Panel>
+        </>
+      )
+
+    it('dos paneles con los mismos ids de sección no repiten ningún id', () => {
+      renderTwoPanels()
+
+      expect(repeatedIds()).toEqual([])
+    })
+
+    it('cada lista de pestañas se nombra con el título de su propia navegación', () => {
+      renderTwoPanels()
+
+      expect(screen.getByRole('tablist', { name: 'Capítulos' })).toBeInTheDocument()
+      expect(screen.getByRole('tablist', { name: 'Ejercicios' })).toBeInTheDocument()
+    })
+
+    it('cada sección se nombra con su propio texto "Sección N", dentro de su panel', () => {
+      renderTwoPanels()
+
+      const panels = Array.from(document.querySelectorAll<HTMLElement>('.c-panel'))
+      const sections = panels.map((panel) => Array.from(panel.querySelectorAll('section')))
+      sections.forEach((panelSections, panelIndex) => {
+        panelSections.forEach((section, index) => {
+          const label = document.getElementById(section.getAttribute('aria-labelledby') as string)
+          expect(label).toHaveTextContent(`Sección ${index + 1}`)
+          expect(panels[panelIndex]).toContainElement(label)
+        })
+      })
+    })
+
+    it('dos navegaciones dentro del mismo panel tampoco repiten ids y se nombran cada una', () => {
+      render(
+        <Panel>
+          <Panel.Nav label="Arriba" />
+          <Panel.Section id="s1">Primera</Panel.Section>
+          <Panel.Section id="s2">Segunda</Panel.Section>
+          <Panel.Nav label="Abajo" />
+        </Panel>
+      )
+
+      expect(repeatedIds()).toEqual([])
+      expect(screen.getByRole('tablist', { name: 'Arriba' })).toBeInTheDocument()
+      expect(screen.getByRole('tablist', { name: 'Abajo' })).toBeInTheDocument()
+    })
+
+    it('con ids de sección automáticos tampoco se repite ninguno', () => {
+      render(
+        <>
+          <Panel>
+            <Panel.Nav />
+            <Panel.Section>Uno</Panel.Section>
+            <Panel.Section>Dos</Panel.Section>
+          </Panel>
+          <Panel>
+            <Panel.Nav />
+            <Panel.Section>Tres</Panel.Section>
+          </Panel>
+        </>
+      )
+
+      expect(repeatedIds()).toEqual([])
     })
   })
 

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from 'react'
+import { useId, useRef, useState, useEffect, useMemo } from 'react'
 
 import { cn } from '@utils/cn'
 
@@ -71,6 +71,15 @@ export const NavSection: React.FC<NavSectionProps> = ({
    * onToggle, listId y currentSection del contexto.
    */
   const { validation, handleToggle, sectionsId, isOpen } = usePanelContext()
+
+
+  /**
+   * Id propio de esta navegación, del que se derivan los ids de su título y de sus pestañas.
+   * Con uno fijo se repetirían si hay más de un Panel (o más de una navegación) en la página,
+   * y el nombre de la lista de pestañas apuntaría al título de otra.
+   */
+  const navId = useId()
+  const titleId = `${navId}-title`
 
 
   /**
@@ -227,12 +236,12 @@ export const NavSection: React.FC<NavSectionProps> = ({
 
   return (
     <>
-      <h2 id='section-list-navigation' className='u-sr-only'>
+      <h2 id={titleId} className='u-sr-only'>
         {label}
       </h2>
       <ul
         role='tablist'
-        aria-labelledby='section-list-navigation'
+        aria-labelledby={titleId}
         aria-orientation="horizontal"
         className={cn('c-navigation', addClass)}
       >
@@ -248,7 +257,7 @@ export const NavSection: React.FC<NavSectionProps> = ({
                 ? (
                   <button
                     type="button"
-                    id={`navigation-section-tab-${section}`}
+                    id={`${navId}-tab-${section}`}
                     role='tab'
                     tabIndex={selected ? 0 : -1}
                     aria-selected={selected}

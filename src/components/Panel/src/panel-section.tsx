@@ -16,6 +16,10 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
     // Si `id` está definido, usa `id`; de lo contrario, usa `reactId`
     const uid = id ?? reactId;
 
+    // Id del texto que nombra la sección. Se deriva del id propio de React y no de `uid`, que puede
+    // venir del usuario y repetirse en otro Panel de la misma página.
+    const labelId = `${reactId}-label`;
+
     /**
      * Obtiene todos los elementos <audio>,
      * y los pausa si están reproduciéndose,
@@ -59,14 +63,14 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
         hidden={!isSelected}
         aria-hidden={!isSelected}
         data-value={uid}
-        aria-labelledby={`section-${uid}`}
+        aria-labelledby={labelId}
         className={cn('c-section', addClass)}
         {...(type === 'carrousel' && {
           'aria-roledescription': 'Sección'
         })}
         {...props}
       >
-        <span id={`section-${uid}`} className='u-sr-only'>
+        <span id={labelId} className='u-sr-only'>
           Sección {getSectionIndex(uid)}
         </span>
         {children}
