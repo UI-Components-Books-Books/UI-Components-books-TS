@@ -100,6 +100,30 @@ export interface ModalContentProps {
      * Elementos hijos que se mostrarán dentro del contenido del modal.
      */
     children?: JSX.Element | JSX.Element[];
+
+    /**
+     * Rol del modal. Usa `alertdialog` cuando el modal interrumpe al usuario para pedirle
+     * una respuesta, como una confirmación.
+     *
+     * @default 'dialog'
+     */
+    role?: 'dialog' | 'alertdialog';
+
+    /**
+     * Nombre accesible del modal. Es necesario si el modal no tiene un título
+     * al que apuntar con `aria-labelledby`.
+     */
+    'aria-label'?: string;
+
+    /**
+     * Id del elemento que nombra al modal, normalmente su título.
+     */
+    'aria-labelledby'?: string;
+
+    /**
+     * Id del elemento que describe al modal.
+     */
+    'aria-describedby'?: string;
 }
 
 

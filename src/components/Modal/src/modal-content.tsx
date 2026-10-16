@@ -19,6 +19,7 @@ const KEYCODE = Object.freeze({
 export const ModalContent: React.FC<ModalContentProps> = ({
   addClass,
   children,
+  role = "dialog",
   ...props
 }) => {
   /**
@@ -36,11 +37,13 @@ export const ModalContent: React.FC<ModalContentProps> = ({
    * Efecto para enfocar el modal y aplicar la animación de entrada.
    */
   useLayoutEffect(() => {
-    if (!refModalContent.current) return;
+    const modalContent = refModalContent.current;
+
+    if (!modalContent) return;
 
     // Aplicamos la animación de entrada
     gsap.fromTo(
-      refModalContent.current,
+      modalContent,
       { y: "-100vh", opacity: 0 },
       {
         y: "-50%",
@@ -50,10 +53,15 @@ export const ModalContent: React.FC<ModalContentProps> = ({
       }
     );
 
-    setTimeout(() => {
-      // Establecemos el enfoque en el elemento del modal
-      refModalContent.current?.focus();
+    const focusTimeout = setTimeout(() => {
+      // Establecemos el enfoque en el elemento del modal, salvo que el focus ya esté
+      // dentro (p. ej. un campo con autoFocus), para no quitárselo.
+      if (!modalContent.contains(document.activeElement)) {
+        modalContent.focus();
+      }
     }, 100);
+
+    return () => clearTimeout(focusTimeout);
   }, []);
 
   /**
@@ -69,7 +77,7 @@ export const ModalContent: React.FC<ModalContentProps> = ({
   return (
     <div
       ref={refModalContent}
-      role="dialog"
+      role={role}
       tabIndex={-1}
       aria-modal="true"
       onKeyDown={handleKeyDown}

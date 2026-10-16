@@ -20,7 +20,7 @@ El componente **Modal** es una ventana emergente accesible que muestra contenido
 - **Restauración de foco**: Devuelve el foco al elemento especificado al cerrar
 - **Teclado**: Cierra con tecla Escape
 - **Overlay configurable**: Control del comportamiento al hacer clic fuera
-- **Accesible**: Implementa WAI-ARIA con roles y atributos apropiados
+- **Accesible**: Implementa WAI-ARIA: \`role="dialog"\` (o \`alertdialog\`), \`aria-modal\` y nombre accesible
 - **Animaciones**: Transiciones suaves al abrir y cerrar
 
 ## Composición
@@ -28,19 +28,28 @@ El componente **Modal** es una ventana emergente accesible que muestra contenido
 \`\`\`tsx
 <Modal isOpen={isOpen} onClose={handleClose} finalFocusRef=".trigger-button">
   <Modal.Overlay />
-  <Modal.Content>
+  <Modal.Content aria-labelledby="modal-title">
+    <h2 id="modal-title">Título del modal</h2>
     {/* Tu contenido aquí */}
     <Modal.CloseButton />
   </Modal.Content>
 </Modal>
 \`\`\`
 
+## Nombre accesible
+
+Un modal debe tener nombre para los lectores de pantalla. Pásalo a \`Modal.Content\` con
+\`aria-labelledby\` (el id de su título, la opción preferida) o con \`aria-label\`.
+También acepta \`aria-describedby\` para apuntar a una descripción.
+Para un modal que interrumpe al usuario y le pide una respuesta, como una confirmación,
+usa \`role="alertdialog"\`.
+
 ## Gestión de foco
 
 El modal automáticamente:
-- Enfoca el primer elemento interactivo al abrir
-- Mantiene el foco dentro del modal
-- Restaura el foco al elemento especificado en \`finalFocusRef\` al cerrar
+- Enfoca el propio diálogo al abrir (si el foco ya está dentro, no lo mueve)
+- Bloquea el resto de la página con \`inert\` sobre \`#root\`, así el foco no escapa del modal
+- Restaura el foco al cerrar: al elemento indicado en \`finalFocusRef\` o, si no existe, al que lo tenía antes de abrir
         `,
       },
     },
@@ -77,7 +86,7 @@ El modal usa el atributo \`inert\` en el resto del DOM para evitar que el foco e
     children: (
       <>
         <Modal.Overlay />
-        <Modal.Content>
+        <Modal.Content aria-label="Modal de ejemplo">
           <p style={{ margin: "3rem" }}>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque earum
             illo quibusdam commodi saepe sunt ad, rerum voluptate recusandae,

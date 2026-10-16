@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 
 import { PopoverButton } from './popover-button'
 import { PopoverContent } from './popover-content'
@@ -14,12 +14,29 @@ const Popover: React.FC<PopoverProps> & PopoverSubComponents = ({ children, isVi
     const popoverButtonRef = useRef<HTMLButtonElement>();
 
 
+    // Id del contenido, que el propio contenido registra al montarse (puede venir de su prop `id`).
+    // El botón lo usa en `aria-controls`.
+    const [contentId, setContentId] = useState<string | undefined>();
+
+
+    // Id que se le da al botón si no trae uno propio, para poder nombrar el popover con su texto.
+    const triggerId = `${useId()}-trigger`;
+
+
     /**
      * Función para abrir y cerrar el popover
      */
-    const togglePopover = () => {
+    const togglePopover = useCallback(() => {
         setIsPopoverOpen(prevState => !prevState);
-    };
+    }, []);
+
+
+    /**
+     * Función para cerrar el popover (no hace nada si ya está cerrado)
+     */
+    const closePopover = useCallback(() => {
+        setIsPopoverOpen(false);
+    }, []);
 
 
     /**
@@ -42,7 +59,18 @@ const Popover: React.FC<PopoverProps> & PopoverSubComponents = ({ children, isVi
 
 
     return (
-        <PopoverProvider value={{ isPopoverOpen, togglePopover, setPopoverButtonRef, popoverButtonRef }}>
+        <PopoverProvider
+            value={{
+                isPopoverOpen,
+                togglePopover,
+                closePopover,
+                setPopoverButtonRef,
+                popoverButtonRef,
+                contentId,
+                setContentId,
+                triggerId,
+            }}
+        >
             {children}
         </PopoverProvider>
     )

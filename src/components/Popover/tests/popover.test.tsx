@@ -43,11 +43,11 @@ describe('Popover', () => {
       expect(content()).not.toHaveClass('c-popover-modal--active')
     })
 
-    it('monta el contenido en un portal en el body, con role status', () => {
+    it('monta el contenido en un portal en el body, con role dialog', () => {
       const { container } = setup()
 
       expect(container).not.toContainElement(content())
-      expect(content()).toHaveAttribute('role', 'status')
+      expect(content()).toHaveAttribute('role', 'dialog')
       expect(document.querySelector('[id^="js-popover-modal-portal-"][id$="-parent"]')).toBeInTheDocument()
     })
 
@@ -65,7 +65,7 @@ describe('Popover', () => {
         </Popover>
       )
 
-      expect(screen.getByText('Sin id').closest('[role="status"]')?.id).toBeTruthy()
+      expect(screen.getByText('Sin id').closest('[role="dialog"]')?.id).toBeTruthy()
     })
 
     it('agrega addClass y la flecha cuando se pide', () => {
@@ -279,14 +279,14 @@ describe('Popover', () => {
   })
 
   describe('teclado dentro del popover', () => {
-    // El componente lee `event.keyCode` (27 = Esc, 9 = Tab), que los navegadores sí rellenan
-    // pero `userEvent.keyboard` no, así que se simula con fireEvent.
-    it('Escape devuelve el foco al disparador', async () => {
+    // Se simula con fireEvent para controlar el elemento que recibe cada tecla.
+    it('Escape cierra el popover y devuelve el foco al disparador', async () => {
       setup()
       await userEvent.click(trigger())
 
-      fireEvent.keyDown(content(), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(content(), { key: 'Escape' })
 
+      expect(isOpen()).toBe(false)
       expect(trigger()).toHaveFocus()
     })
 
@@ -297,7 +297,6 @@ describe('Popover', () => {
 
       const notPrevented = fireEvent.keyDown(screen.getByRole('button', { name: 'Último' }), {
         key: 'Tab',
-        keyCode: 9,
       })
 
       expect(trigger()).toHaveFocus()
@@ -311,7 +310,6 @@ describe('Popover', () => {
 
       fireEvent.keyDown(screen.getByRole('button', { name: 'Primero' }), {
         key: 'Tab',
-        keyCode: 9,
         shiftKey: true,
       })
 
@@ -336,7 +334,7 @@ describe('Popover', () => {
       await userEvent.click(trigger())
       screen.getByRole('button', { name: 'B' }).focus()
 
-      fireEvent.keyDown(screen.getByRole('button', { name: 'B' }), { key: 'Tab', keyCode: 9 })
+      fireEvent.keyDown(screen.getByRole('button', { name: 'B' }), { key: 'Tab' })
 
       expect(screen.getByRole('button', { name: 'B' })).toHaveFocus()
     })
@@ -360,7 +358,6 @@ describe('Popover', () => {
 
       fireEvent.keyDown(screen.getByRole('button', { name: 'B' }), {
         key: 'Tab',
-        keyCode: 9,
         shiftKey: true,
       })
 
@@ -386,7 +383,7 @@ describe('Popover', () => {
       await userEvent.click(trigger())
       screen.getByTestId('ultimo').focus()
 
-      fireEvent.keyDown(screen.getByTestId('ultimo'), { key: 'Tab', keyCode: 9 })
+      fireEvent.keyDown(screen.getByTestId('ultimo'), { key: 'Tab' })
 
       expect(trigger()).toHaveFocus()
     })
@@ -423,12 +420,13 @@ describe('Popover', () => {
       expect(ref).toHaveBeenCalledWith(trigger())
     })
 
-    it('el popover sigue devolviendo el foco al botón con Escape aunque el botón tenga ref propia', async () => {
+    it('el popover sigue cerrándose con Escape y devolviendo el foco al botón aunque el botón tenga ref propia', async () => {
       withRef(createRef<HTMLButtonElement>())
       await userEvent.click(trigger())
 
-      fireEvent.keyDown(content(), { key: 'Escape', keyCode: 27 })
+      fireEvent.keyDown(content(), { key: 'Escape' })
 
+      expect(isOpen()).toBe(false)
       expect(trigger()).toHaveFocus()
     })
 
@@ -439,6 +437,250 @@ describe('Popover', () => {
       unmount()
 
       expect(ref.current).toBeNull()
+    })
+  })
+
+  describe('accesibilidad del disparador', () => {
+    it('declara que abre un diálogo y que está cerrado', () => {
+      setup()
+
+      expect(trigger()).toHaveAttribute('aria-haspopup', 'dialog')
+      expect(trigger()).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('aria-expanded sigue el estado del popover', async () => {
+      setup()
+
+      await userEvent.click(trigger())
+      expect(trigger()).toHaveAttribute('aria-expanded', 'true')
+
+      await userEvent.click(trigger())
+      expect(trigger()).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('aria-controls apunta al contenido, con id propio o generado', () => {
+      setup()
+      expect(trigger()).toHaveAttribute('aria-controls', 'pop')
+
+      render(
+        <Popover>
+          <>
+            <Popover.Button>
+              <button>Otro</button>
+            </Popover.Button>
+            <Popover.Content>
+              <p>Sin id</p>
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+      const controlled = document.getElementById(
+        screen.getByRole('button', { name: 'Otro' }).getAttribute('aria-controls') as string
+      )
+      expect(controlled).toBe(screen.getByText('Sin id').closest('[role="dialog"]'))
+    })
+
+    it('con isDisabled sigue marcado como cerrado', async () => {
+      setup({}, { isDisabled: true })
+
+      await userEvent.click(trigger())
+
+      expect(trigger()).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('respeta el aria-haspopup y el aria-controls que el botón ya declare', () => {
+      setup({}, {}, { 'aria-haspopup': 'menu', 'aria-controls': 'otro' })
+
+      expect(trigger()).toHaveAttribute('aria-haspopup', 'menu')
+      expect(trigger()).toHaveAttribute('aria-controls', 'otro')
+    })
+
+    it('conserva el id del botón o le da uno si no lo tiene', () => {
+      const first = setup({}, {}, { id: 'mi-boton' })
+      expect(trigger()).toHaveAttribute('id', 'mi-boton')
+      first.unmount()
+
+      setup()
+      expect(trigger().id).toBeTruthy()
+    })
+
+    it('conserva el onKeyDown del botón original', () => {
+      const onKeyDown = vi.fn()
+      setup({}, {}, { onKeyDown })
+
+      fireEvent.keyDown(trigger(), { key: 'a' })
+
+      expect(onKeyDown).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('accesibilidad del contenido', () => {
+    it('es un diálogo no modal', async () => {
+      setup()
+      await userEvent.click(trigger())
+
+      expect(screen.getByRole('dialog')).toBe(content())
+      expect(content()).not.toHaveAttribute('aria-modal')
+    })
+
+    it('cerrado no forma parte del árbol de accesibilidad', () => {
+      setup()
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+
+    it('sin nombre propio se nombra con el texto del botón que lo abre', async () => {
+      setup()
+      await userEvent.click(trigger())
+
+      expect(screen.getByRole('dialog', { name: 'Abrir' })).toBe(content())
+    })
+
+    it('se nombra con el id del propio botón si este ya tenía uno', async () => {
+      setup({}, {}, { id: 'mi-boton' })
+      await userEvent.click(trigger())
+
+      expect(content()).toHaveAttribute('aria-labelledby', 'mi-boton')
+    })
+
+    it('aria-label es su nombre y no se mezcla con el del botón', async () => {
+      setup({}, { 'aria-label': 'Detalles del autor' })
+      await userEvent.click(trigger())
+
+      expect(screen.getByRole('dialog', { name: 'Detalles del autor' })).toBe(content())
+      expect(content()).not.toHaveAttribute('aria-labelledby')
+    })
+
+    it('aria-labelledby propio tiene prioridad sobre el botón', async () => {
+      render(
+        <Popover>
+          <>
+            <h2 id="titulo">Título propio</h2>
+            <Popover.Button>
+              <button>Abrir</button>
+            </Popover.Button>
+            <Popover.Content id="pop" aria-labelledby="titulo">
+              <p>Contenido</p>
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+      await userEvent.click(trigger())
+
+      expect(screen.getByRole('dialog', { name: 'Título propio' })).toBe(content())
+    })
+
+    it('acepta aria-describedby', async () => {
+      render(
+        <Popover>
+          <>
+            <Popover.Button>
+              <button>Abrir</button>
+            </Popover.Button>
+            <Popover.Content id="pop" aria-describedby="descripcion">
+              <p id="descripcion">Una descripción</p>
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+      await userEvent.click(trigger())
+
+      expect(screen.getByRole('dialog')).toHaveAccessibleDescription('Una descripción')
+    })
+  })
+
+  describe('Escape', () => {
+    it('cierra el popover desde el disparador cuando está abierto', async () => {
+      setup()
+      await userEvent.click(trigger())
+      trigger().focus()
+
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
+
+      expect(isOpen()).toBe(false)
+      expect(trigger()).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('con el popover cerrado no hace nada y deja pasar la tecla', () => {
+      const onKeyDown = vi.fn()
+      render(
+        <div onKeyDown={onKeyDown}>
+          <Popover>
+            <>
+              <Popover.Button>
+                <button>Abrir</button>
+              </Popover.Button>
+              <Popover.Content id="pop">
+                <button>Primero</button>
+              </Popover.Content>
+            </>
+          </Popover>
+        </div>
+      )
+
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
+
+      expect(isOpen()).toBe(false)
+      expect(onKeyDown).toHaveBeenCalledTimes(1)
+    })
+
+    it('no llega a cerrar lo que contenga al popover (p. ej. un Modal)', async () => {
+      const onKeyDown = vi.fn()
+      render(
+        <div onKeyDown={onKeyDown}>
+          <Popover>
+            <>
+              <Popover.Button>
+                <button>Abrir</button>
+              </Popover.Button>
+              <Popover.Content id="pop">
+                <button>Primero</button>
+              </Popover.Content>
+            </>
+          </Popover>
+        </div>
+      )
+      await userEvent.click(trigger())
+
+      fireEvent.keyDown(screen.getByRole('button', { name: 'Primero' }), { key: 'Escape' })
+      expect(isOpen()).toBe(false)
+
+      // Desde el disparador pasa lo mismo.
+      await userEvent.click(trigger())
+      fireEvent.keyDown(trigger(), { key: 'Escape' })
+      expect(isOpen()).toBe(false)
+      expect(onKeyDown).not.toHaveBeenCalled()
+    })
+
+    it('no cierra el popover si lo de dentro ya usó la tecla', async () => {
+      render(
+        <Popover>
+          <>
+            <Popover.Button>
+              <button>Abrir</button>
+            </Popover.Button>
+            <Popover.Content id="pop">
+              <input aria-label="Campo" onKeyDown={(event) => event.preventDefault()} />
+            </Popover.Content>
+          </>
+        </Popover>
+      )
+      await userEvent.click(trigger())
+
+      fireEvent.keyDown(screen.getByRole('textbox', { name: 'Campo' }), { key: 'Escape' })
+
+      expect(isOpen()).toBe(true)
+    })
+
+    it('se puede volver a abrir después de cerrarlo con Escape', async () => {
+      setup()
+      await userEvent.click(trigger())
+      fireEvent.keyDown(content(), { key: 'Escape' })
+
+      await userEvent.click(trigger())
+
+      expect(isOpen()).toBe(true)
+      expect(content()).toHaveFocus()
     })
   })
 })

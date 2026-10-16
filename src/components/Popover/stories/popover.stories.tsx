@@ -17,9 +17,9 @@ El componente **Popover** muestra contenido flotante contextual al hacer click.
 - **Posicionamiento inteligente**: Powered by Popper.js
 - **12 posiciones**: top, bottom, left, right y sus variantes
 - **Click outside**: Cierra al interactuar fuera (configurable)
-- **Navegación por teclado**: ESC para cerrar
+- **Navegación por teclado**: ESC cierra el popover y devuelve el foco al botón
 - **Trap focus**: Mantiene el foco dentro del popover
-- **Accesible**: Implementa WAI-ARIA disclosure pattern
+- **Accesible**: El popover es un diálogo no modal (\`role="dialog"\`); el botón declara \`aria-haspopup\`, \`aria-expanded\` y \`aria-controls\`
 - **Portal**: Se renderiza fuera del flujo del DOM
 
 ## Composición
@@ -34,6 +34,12 @@ El componente **Popover** muestra contenido flotante contextual al hacer click.
   </Popover.Content>
 </Popover>
 \`\`\`
+
+## Nombre accesible
+
+Por defecto el popover se nombra con el texto del botón que lo abre. Si el botón no describe
+bien el contenido (p. ej. solo tiene un icono), indica el nombre en \`Popover.Content\` con
+\`aria-label\` o \`aria-labelledby\`. También acepta \`aria-describedby\`.
 
 ## Diferencia con Tooltip
 

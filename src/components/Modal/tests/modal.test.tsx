@@ -1,19 +1,32 @@
+import { StrictMode } from 'react'
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import gsap from 'gsap'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Modal } from '../index'
-import type { ModalProps } from '../types/types'
+import type { ModalContentProps, ModalProps } from '../types/types'
 
 vi.mock('gsap', () => ({ default: { fromTo: vi.fn(), to: vi.fn() } }))
 
-type ExampleProps = Partial<ModalProps> & { onOverlayClick?: () => void; contentClass?: string }
+type ExampleProps = Partial<ModalProps> & {
+  onOverlayClick?: () => void
+  contentClass?: string
+  contentProps?: Partial<ModalContentProps>
+}
 
-const Example = ({ isOpen = true, onClose = () => {}, onOverlayClick, contentClass, ...rest }: ExampleProps) => (
+const Example = ({
+  isOpen = true,
+  onClose = () => {},
+  onOverlayClick,
+  contentClass,
+  contentProps,
+  ...rest
+}: ExampleProps) => (
   <Modal isOpen={isOpen} onClose={onClose} {...rest}>
     <Modal.Overlay onClick={onOverlayClick} />
-    <Modal.Content addClass={contentClass}>
+    <Modal.Content addClass={contentClass} {...contentProps}>
       <p>Contenido del modal</p>
       <Modal.CloseButton />
     </Modal.Content>
@@ -192,6 +205,125 @@ describe('Modal', () => {
 
       await waitFor(() => expect(screen.getByRole('button', { name: 'Segundo' })).toHaveFocus())
     })
+
+    it('no le quita el foco a un campo que ya lo tiene dentro del modal', async () => {
+      render(
+        <Modal isOpen onClose={() => {}}>
+          <Modal.Content>
+            <input aria-label="Nombre" />
+          </Modal.Content>
+        </Modal>,
+        { container: appRoot }
+      )
+      const input = screen.getByRole('textbox', { name: 'Nombre' })
+
+      // Un campo que se enfoca antes de que el modal enfoque su contenedor (a los 100 ms).
+      setTimeout(() => input.focus(), 20)
+      await waitFor(() => expect(input).toHaveFocus())
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      expect(input).toHaveFocus()
+    })
+
+    it('cancela el enfoque pendiente si se desmonta antes de que ocurra', () => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+      try {
+        const { unmount } = render(<Example />, { container: appRoot })
+        expect(vi.getTimerCount()).toBe(1)
+
+        unmount()
+
+        expect(vi.getTimerCount()).toBe(0)
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('el foco se queda en el diálogo con StrictMode (que ejecuta dos veces los efectos)', async () => {
+      const Page = () => (
+        <StrictMode>
+          <button>Disparador</button>
+          <Example />
+        </StrictMode>
+      )
+      render(<Page />, { container: appRoot })
+
+      await waitFor(() => expect(dialog()).toHaveFocus())
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
+      expect(dialog()).toHaveFocus()
+    })
+
+    it('devuelve el foco aunque el modal se desmonte estando abierto', async () => {
+      const Page = ({ showModal }: { showModal: boolean }) => (
+        <>
+          <button>Abrir modal</button>
+          {showModal && <Example />}
+        </>
+      )
+      const { rerender } = render(<Page showModal={false} />, { container: appRoot })
+      const trigger = screen.getByRole('button', { name: 'Abrir modal' })
+      trigger.focus()
+
+      rerender(<Page showModal />)
+      await waitFor(() => expect(dialog()).toHaveFocus())
+      rerender(<Page showModal={false} />)
+
+      await waitFor(() => expect(trigger).toHaveFocus())
+    })
+
+    it('devuelve el foco aunque la página no tenga #root', async () => {
+      appRoot.remove()
+      const container = document.createElement('div')
+      document.body.appendChild(container)
+      const Page = ({ isOpen }: { isOpen: boolean }) => (
+        <>
+          <button>Abrir modal</button>
+          <Example isOpen={isOpen} />
+        </>
+      )
+      const { rerender } = render(<Page isOpen={false} />, { container })
+      const trigger = screen.getByRole('button', { name: 'Abrir modal' })
+      trigger.focus()
+
+      rerender(<Page isOpen />)
+      await waitFor(() => expect(dialog()).toHaveFocus())
+      rerender(<Page isOpen={false} />)
+
+      await waitFor(() => expect(trigger).toHaveFocus())
+      container.remove()
+      document.body.appendChild(appRoot)
+    })
+
+    it('si ningún selector de finalFocusRef coincide, vuelve al elemento que tenía el foco', async () => {
+      const Page = ({ isOpen }: { isOpen: boolean }) => (
+        <>
+          <button>Abrir modal</button>
+          <Example isOpen={isOpen} finalFocusRef={['#no-existe', '.tampoco']} />
+        </>
+      )
+      const { rerender } = render(<Page isOpen={false} />, { container: appRoot })
+      const trigger = screen.getByRole('button', { name: 'Abrir modal' })
+      trigger.focus()
+
+      rerender(<Page isOpen />)
+      // finalFocusRef llega como un arreglo nuevo en cada render: no debe afectar al modal abierto.
+      rerender(<Page isOpen />)
+      await waitFor(() => expect(dialog()).toHaveFocus())
+      rerender(<Page isOpen={false} />)
+
+      await waitFor(() => expect(trigger).toHaveFocus())
+    })
+
+    it('mantiene #root inert mientras está abierto aunque finalFocusRef sea un arreglo nuevo en cada render', () => {
+      const Page = () => <Example finalFocusRef={['#destino']} />
+      const { rerender } = render(<Page />, { container: appRoot })
+
+      rerender(<Page />)
+      rerender(<Page />)
+
+      expect(appRoot).toHaveAttribute('inert')
+    })
   })
 
   describe('bloqueo del resto de la página (#root inert)', () => {
@@ -240,6 +372,51 @@ describe('Modal', () => {
       const targets = vi.mocked(gsap.fromTo).mock.calls.map(([target]) => target)
       expect(targets).toContain(dialog())
       expect(targets).toContain(document.querySelector('.c-layout'))
+    })
+  })
+
+  describe('accesibilidad', () => {
+    it('aria-label da nombre al diálogo', () => {
+      render(<Example contentProps={{ 'aria-label': 'Confirmar compra' }} />, { container: appRoot })
+
+      expect(screen.getByRole('dialog', { name: 'Confirmar compra' })).toBe(dialog())
+    })
+
+    it('aria-labelledby y aria-describedby apuntan al título y a la descripción', () => {
+      render(
+        <Modal isOpen onClose={() => {}}>
+          <Modal.Content aria-labelledby="titulo" aria-describedby="descripcion">
+            <h2 id="titulo">Eliminar cuenta</h2>
+            <p id="descripcion">Esta acción no se puede deshacer.</p>
+          </Modal.Content>
+        </Modal>,
+        { container: appRoot }
+      )
+
+      expect(screen.getByRole('dialog', { name: 'Eliminar cuenta' })).toHaveAccessibleDescription(
+        'Esta acción no se puede deshacer.'
+      )
+    })
+
+    it('mantiene aria-modal aunque se pasen atributos ARIA', () => {
+      render(<Example contentProps={{ 'aria-label': 'Confirmar' }} />, { container: appRoot })
+
+      expect(dialog()).toHaveAttribute('aria-modal', 'true')
+    })
+
+    it('por defecto es un dialog', () => {
+      render(<Example />, { container: appRoot })
+
+      expect(dialog()).toHaveAttribute('role', 'dialog')
+    })
+
+    it('se puede cambiar a alertdialog', () => {
+      render(<Example contentProps={{ role: 'alertdialog', 'aria-label': 'Alerta' }} />, {
+        container: appRoot,
+      })
+
+      expect(screen.getByRole('alertdialog', { name: 'Alerta' })).toBeInTheDocument()
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
   })
 })

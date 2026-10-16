@@ -46,6 +46,11 @@ export type PopoverContextType = {
      * Función para alternar la visibilidad del popover.
      */
     togglePopover: () => void;
+
+    /**
+     * Función para cerrar el popover (no hace nada si ya está cerrado).
+     */
+    closePopover: () => void;
     
     /**
      * Establece una referencia al botón que activa el popover.
@@ -56,6 +61,22 @@ export type PopoverContextType = {
      * Referencia al botón que activa el popover.
      */
     popoverButtonRef: React.MutableRefObject<HTMLButtonElement | undefined>;
+
+    /**
+     * Id del contenido del popover, que el botón declara en `aria-controls`.
+     * Es undefined mientras el contenido no está montado.
+     */
+    contentId: string | undefined;
+
+    /**
+     * Registra el id del contenido del popover.
+     */
+    setContentId: (id: string | undefined) => void;
+
+    /**
+     * Id que recibe el botón si no trae uno propio.
+     */
+    triggerId: string;
 }
 
 
@@ -123,4 +144,20 @@ export interface PopoverContentProps {
      * Indica si se deshabilita la interacción fuera del popover.
      */
     disabledInteractOutside?: boolean;
+
+    /**
+     * Nombre accesible del popover. Si no se indica ni este ni `aria-labelledby`,
+     * el popover se nombra con el texto del botón que lo abre.
+     */
+    'aria-label'?: string;
+
+    /**
+     * Id del elemento que nombra al popover.
+     */
+    'aria-labelledby'?: string;
+
+    /**
+     * Id del elemento que describe al popover.
+     */
+    'aria-describedby'?: string;
 }

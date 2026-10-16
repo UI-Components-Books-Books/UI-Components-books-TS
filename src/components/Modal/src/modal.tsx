@@ -18,48 +18,61 @@ const Modal: React.FC<ModalProps> & ModalSubModules = ({
   finalFocusRef,
 }) => {
   /**
-   * Guarda la referencia del elemento que tenía el focus antes de abrir el modal.
-   * Esto garantiza que restauremos el focus al elemento correcto al cerrar.
+   * `finalFocusRef` como un único selector. Cuando llega como arreglo suele ser un literal nuevo
+   * en cada render, así que se compara su contenido y no su referencia.
    */
-  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const finalFocusSelector = Array.isArray(finalFocusRef) ? finalFocusRef.join(', ') : finalFocusRef;
+
+  /**
+   * Siempre el último selector, para leerlo al cerrar sin que un cambio suyo
+   * mientras el modal está abierto vuelva a ejecutar el efecto de apertura.
+   */
+  const finalFocusSelectorRef = useRef(finalFocusSelector);
+
+  useEffect(() => {
+    finalFocusSelectorRef.current = finalFocusSelector;
+  }, [finalFocusSelector]);
+
+  /**
+   * Frame pendiente que devuelve el focus al cerrar.
+   */
+  const restoreFocusFrameRef = useRef<number>();
 
   /**
    * Efecto encargado de manejar el estado inert del root
    * y gestionar el focus al abrir/cerrar el modal.
    */
   useEffect(() => {
-    // Selecciona el elemento root
-    const root = document.querySelector("#root") as HTMLDivElement;
-    
-    if (!root) return;
+    if (!isOpen) return;
 
-    if (isOpen) {
-      // Guardar el elemento que actualmente tiene el focus ANTES de aplicar inert
-      previousFocusRef.current = document.activeElement as HTMLElement;
-      
-      // Aplicamos el estado inert al #root para bloquear interacciones
-      root.inert = true;
-    } else {
-      // Cuando se cierra, restaurar el focus inmediatamente
-      if (previousFocusRef.current) {
-        requestAnimationFrame(() => {
-          if (finalFocusRef) {
-            const elements = document.querySelectorAll<HTMLElement>(
-              Array.isArray(finalFocusRef) ? finalFocusRef.join(', ') : finalFocusRef
-            );
-            elements[0]?.focus();
-          } else {
-            previousFocusRef.current?.focus();
-          }
-        });
-      }
+    // Si había un cierre pendiente (p. ej. React ejecuta dos veces los efectos en desarrollo)
+    // el modal sigue abierto y no se debe mover el focus.
+    if (restoreFocusFrameRef.current !== undefined) {
+      cancelAnimationFrame(restoreFocusFrameRef.current);
+      restoreFocusFrameRef.current = undefined;
     }
 
-    // Cleanup: se ejecuta cuando el componente se desmonta
+    // Guardar el elemento que actualmente tiene el focus ANTES de aplicar inert
+    const previousFocus = document.activeElement as HTMLElement | null;
+
+    // Aplicamos el estado inert al #root para bloquear interacciones.
+    // Si la página no tiene #root el focus se gestiona igual, pero el resto no se bloquea.
+    const root = document.querySelector<HTMLElement>("#root");
+    if (root) root.inert = true;
+
+    // Cleanup: se ejecuta al cerrar el modal y también si se desmonta estando abierto
     return () => {
-      root.inert = false;
+      if (root) root.inert = false;
+
+      // Devolvemos el focus: al elemento indicado en finalFocusRef (o, si no existe, al que
+      // lo tenía antes de abrir el modal).
+      restoreFocusFrameRef.current = requestAnimationFrame(() => {
+        const selector = finalFocusSelectorRef.current;
+        const target = (selector && document.querySelector<HTMLElement>(selector)) || previousFocus;
+        target?.focus();
+      });
     };
-  }, [isOpen, finalFocusRef]);
+  }, [isOpen]);
 
   return (
     <ModalProvider value={{ onClose }}>

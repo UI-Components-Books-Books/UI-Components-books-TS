@@ -3,6 +3,7 @@ import { useRef, useEffect, useId } from 'react'
 import { Portal } from '@components'
 import { useInteractOutside } from '@hooks'
 import { cn } from '@utils/cn'
+import { useIsomorphicLayoutEffect } from '@utils/useIsomorphicLayoutEffect'
 import { usePopper } from 'react-popper'
 
 import { usePopoverContext } from './popover-context'
@@ -12,11 +13,11 @@ import './popover.css'
 
 /**
  * Se crea un objeto que no se puede cambiar para
- * almacenar el keyCode de la tecla "ESC".
+ * almacenar el valor `key` de las teclas que maneja el popover.
  */
-const KEYCODE = Object.freeze({
-  ESC: 27,
-  TAB: 9
+const KEY = Object.freeze({
+  ESC: 'Escape',
+  TAB: 'Tab'
 })
 
 // Lista de elementos a los cuales se les puede hacer focus.
@@ -32,12 +33,25 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
   placement = 'auto',
   isDisabled = false,
   disabledInteractOutside = false,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledby,
+  'aria-describedby': ariaDescribedby,
 }) => {
-  // Obtenemos la función isOpen y la referencia del botón del contexto
-  const { togglePopover, isPopoverOpen: isContextOpen, popoverButtonRef } = usePopoverContext();
+  // Obtenemos las funciones, el estado y la referencia del botón del contexto
+  const {
+    togglePopover,
+    closePopover,
+    isPopoverOpen: isContextOpen,
+    popoverButtonRef,
+    setContentId,
+  } = usePopoverContext();
 
   // Con `isDisabled` el popover nunca se muestra, aunque el botón intente abrirlo.
   const isPopoverOpen = isContextOpen && !isDisabled;
+
+  // Sin `aria-label` ni `aria-labelledby`, el popover se nombra con el texto del botón que lo abre.
+  // Se lee del DOM porque el botón puede traer su propio id (o no tenerlo si no lo acepta).
+  const triggerId = popoverButtonRef.current?.id || undefined;
 
   // Si el botón lo abrió estando deshabilitado, se devuelve el contexto a "cerrado" para que no
   // quede un estado abierto oculto que aparezca de golpe al volver a habilitarlo.
@@ -57,6 +71,14 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
 
   // Si `id` está definido, usa `id`; de lo contrario, usa `reactId`
   const uid = id ?? reactId;
+
+
+  // El botón necesita conocer el id del contenido para declararlo en `aria-controls`.
+  useIsomorphicLayoutEffect(() => {
+    setContentId(uid);
+
+    return () => setContentId(undefined);
+  }, [uid, setContentId]);
 
 
   /**
@@ -111,7 +133,7 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
     // Con shift + tab desde el último elemento se retrocede al anterior, así que no se intercepta.
     if (
       !e.shiftKey &&
-      (e.keyCode || e.which) === KEYCODE.TAB &&
+      e.key === KEY.TAB &&
       document.activeElement === LAST_ELEMENT
     ) {
       buttonElement?.focus()
@@ -121,16 +143,20 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
     // Si va hacia atrás usando shift + tab y el primer elemento está activo, entonces agregar el focus al elemento padre.
     if (
       e.shiftKey &&
-      (e.keyCode || e.which) === KEYCODE.TAB &&
+      e.key === KEY.TAB &&
       document.activeElement === FIRST_ELEMENT
     ) {
       buttonElement.focus()
       e.preventDefault()
     }
 
-    // Retorna el focus al buttonElement al presionar Esc
-    if ((e.keyCode || e.which) === KEYCODE.ESC) {
+    // Esc cierra el popover y devuelve el focus al buttonElement.
+    // Si algo dentro ya usó la tecla (p. ej. cerró su propia lista) no se cierra, y no llega
+    // a cerrar también lo que contenga al popover (p. ej. un Modal).
+    if (e.key === KEY.ESC && !e.defaultPrevented) {
+      e.stopPropagation()
       buttonElement.focus()
+      closePopover()
     }
   }
 
@@ -178,7 +204,10 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
       <div
         id={uid}
         ref={refPopover}
-        role='status'
+        role='dialog'
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledby ?? (ariaLabel ? undefined : triggerId)}
+        aria-describedby={ariaDescribedby}
         tabIndex={-1}
         style={styles.popper}
         className={cn('c-popover-modal', {
