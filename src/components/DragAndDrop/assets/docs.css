@@ -47,8 +47,8 @@
 
 /* Estados de validación */
 .drag-story[data-validation="true"] {
-    background-color: #0ab454;
-    box-shadow: 0 4px 12px rgba(10, 180, 84, 0.3);
+    background-color: #0b6b34;
+    box-shadow: 0 4px 12px rgba(11, 107, 52, 0.3);
 }
 
 .drag-story[data-validation="false"] {
@@ -57,7 +57,7 @@
 }
 
 .drag-story[data-validation="true"]:hover {
-    background-color: #089643;
+    background-color: #095a2c;
 }
 
 .drag-story[data-validation="false"]:hover {
@@ -137,7 +137,8 @@
 }
 
 /* Estado cuando se arrastra sobre el drop zone */
-.drop-story[data-drop-active="true"] {
+.drop-story[data-over="true"],
+.drop-story--over {
     background-color: #e3f2fd;
     box-shadow: inset rgba(0, 102, 255, 0.5) 0 0 0 3px,
                 rgba(0, 102, 255, 0.3) 0px 8px 24px;
@@ -147,14 +148,14 @@
 .drop-story p {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #6c757d;
+    color: #495057;
     margin: 0;
     z-index: 1;
 }
 
 .drop-story:empty::after {
     content: 'Suelta elementos aquí';
-    color: #adb5bd;
+    color: #5c636a;
     font-size: 1rem;
     font-style: italic;
 }
@@ -226,4 +227,163 @@
     .drag-story {
         background-color: #2d3748;
     }
+}
+/* Celda fija de un drag: cada palabra tiene su propio lugar (un contenedor por drag). */
+.cell-story {
+    margin: 0;
+    min-height: 4.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+/* Espacio para completar dentro de una frase. */
+.blank-story {
+    display: inline-flex;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    min-width: 9.5rem;
+    min-height: 3.5rem;
+    margin: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 6px;
+    box-shadow: inset #495057 0 0 0 2px;
+}
+
+.blank-story[data-over="true"] {
+    box-shadow: inset #0066ff 0 0 0 3px;
+}
+
+/* Casilla numerada de una secuencia. */
+.step-story {
+    margin: 0;
+    min-height: 4.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.step-story > strong {
+    font-size: 1.5rem;
+}
+
+/* Mensaje de resultado de una actividad. */
+.result-story {
+    min-height: 1.5rem;
+    margin: 1rem 0 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Zona de una categoría: el título ocupa su propia fila y los elementos van debajo. */
+.category-story > h4 {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+/* Relacionar columnas: cada fila es un término y el espacio donde va su definición. */
+.pair-story {
+    margin: 2rem 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.pair-story > li {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.pair-drop-story {
+    margin: 0;
+    min-height: 4.5rem;
+}
+
+.definition-story {
+    justify-content: flex-start;
+    text-align: left;
+    font-weight: normal;
+}
+
+/* Etiquetar una imagen: el dibujo mantiene su proporción y los espacios se colocan encima. */
+.figure-story {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 4 / 3;
+    margin: 1rem auto;
+    background: #eef6ee;
+    border-radius: 12px;
+}
+
+.figure-story > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hotspot-story {
+    position: absolute;
+    width: 28%;
+    min-height: 3.5rem;
+    margin: 0;
+    padding: 0.25rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 8px;
+    box-shadow: inset #495057 0 0 0 2px;
+}
+
+.hotspot-story[data-over="true"] {
+    box-shadow: inset #0066ff 0 0 0 3px;
+}
+
+.hotspot-story .drag-story {
+    min-width: 0;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Botones de la actividad (comprobar / reintentar), juntos y centrados. */
+.actions-story {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.actions-story .button-story {
+    margin: 0;
+}
+
+/* Elemento bloqueado (dragDisabled): no se puede arrastrar, así que no debe parecerlo. */
+.drag-story[data-disabled] {
+    cursor: default;
+    background-color: #495057;
+}
+
+.drag-story[data-disabled]:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.drag-story[data-disabled][data-validation="true"] {
+    background-color: #0b6b34;
+}
+
+.drag-story[data-disabled][data-validation="false"] {
+    background-color: #b91818;
 }

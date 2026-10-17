@@ -35,3 +35,20 @@
     color: #fff;
     text-align: left;
 }
+/* WCAG 2.2 (2.5.8): el botón de mover mide al menos 24 × 24 px. */
+:where(.c-draggable [data-type="dnd-drag-move-button"]) {
+    min-inline-size: 24px;
+    min-block-size: 24px;
+}
+
+:where(.c-draggable-menu) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* El menú es oscuro: el foco debe verse sobre ese fondo. */
+:where(.c-draggable-menu button:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
