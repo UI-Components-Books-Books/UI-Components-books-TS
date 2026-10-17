@@ -1,3 +1,20 @@
+# v2.0.0 (Fri Oct 16 2026)
+
+#### 💥 Breaking Change
+
+- feat(draganddrop)!: rewrite with a registration store, flexible zones and an accessible move menu [#1](https://github.com/UI-Components-Books-Books/UI-Components-books-TS/pull/1) ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### ⚠️ Pushed to `main`
+
+- chore: update .npmrc exclusion in VSCode settings ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- chore: ignore .npmrc so the npm publish token is never committed ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v1.1.0 (Fri Oct 16 2026)
 
 #### 🚀 Enhancement
