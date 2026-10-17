@@ -66,6 +66,7 @@
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.7.7",
+    "@atlaskit/pragmatic-drag-and-drop-live-region": "2.1.0",
     "@react-aria/button": "3.9.3",
     "@react-aria/listbox": "3.11.5",
     "@react-aria/overlays": "3.21.1",
@@ -106,6 +107,7 @@
     "@vitejs/plugin-react": "4.7.0",
     "@vitest/coverage-v8": "5.0.5",
     "auto": "11.2.0",
+    "axe-core": "4.14.0",
     "commitizen": "4.3.2",
     "cz-conventional-changelog": "3.3.0",
     "dotenv": "16.4.5",

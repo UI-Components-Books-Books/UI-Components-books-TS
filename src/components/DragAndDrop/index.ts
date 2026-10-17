@@ -6,10 +6,12 @@ export type {
     DragAndDropProps,
     DragAndDropSubModules,
     DragAndDropContextType,
-    ContainerDragProps
+    ContainerDragProps,
+    ZoneProps,
+    ItemType,
+    Movement,
+    DndMessages,
+    DropTarget
 } from "./types/types"
 
-export { 
-    DragAndDropProvider, 
-    useDragAndDropContext
-} from "./src/drag-and-drop-context"
+export { useDragAndDropContext } from "./src/drag-and-drop-context"

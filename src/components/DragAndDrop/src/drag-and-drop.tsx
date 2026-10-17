@@ -1,462 +1,149 @@
-import { Children, cloneElement, isValidElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-
+import { announce } from '@atlaskit/pragmatic-drag-and-drop-live-region';
+import { useIsomorphicLayoutEffect } from '@utils/useIsomorphicLayoutEffect';
 
 import { ContainerDrag } from './container-drag';
 import { Draggable } from './drag';
-import { DragAndDropProvider } from './drag-and-drop-context';
+import { DndRoot } from './drag-and-drop-context';
 import { Droppable } from './drop';
-import type { DragAndDropProps, DragAndDropSubModules, ItemType } from '../types/types';
-import { DragAndDropTypes } from '../utils/const';
-import { getChildrenByType } from '../utils/getChildrenByType';
-
-
-// Interfaz para los destinos de drop disponibles
-interface DropTarget {
-  id: string;
-  label?: string;
-}
-
-/**
- * Indica si un elemento arrastrable es válido en el contenedor dado.
- * Solo las zonas de destino (Droppable) validan: llevan el atributo `data-validate` con los ids
- * que aceptan. Un Container (sin ese atributo) no valida nada.
- */
-const isValidIn = (containerId: string, dragId: string): boolean => {
-  const dropElement = document.querySelector(`[data-drop-id="${containerId}"]`);
-
-  if (!dropElement?.hasAttribute('data-validate')) return false;
-
-  const validIds = dropElement.getAttribute('data-validate')?.split(',').map((id) => id.trim()) || [];
-
-  return validIds.includes(dragId);
-};
+import { Items } from './items';
+import type { DragAndDropProps, DragAndDropSubModules } from '../types/types';
+import { createDndStore, type DndEvent, type DndStore } from '../utils/dnd-store';
+import { resolveMessages } from '../utils/messages';
 
 const DragAndDrop: React.FC<DragAndDropProps> & DragAndDropSubModules = ({
-  id: idDragAndDrop,
-  children: childrenProps,
-  multipleDrags = false,
-  onValidate,
+  id,
+  children,
   validate = false,
-  announcements,
+  onValidate,
   defaultState,
-  defaultValidate,
-  onState
+  onState,
+  onMove,
+  messages: customMessages,
 }) => {
-  // Estado para almacenar los "drags" validados
-  const [validateId, setValidateId] = useState<string[]>([]);
+  // Identifica a esta instancia frente a la librería de arrastre, que es global a toda la página.
+  const storeKey = useId();
 
-  // Estado para el elemento "drag" activo
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const storeRef = useRef<DndStore>();
 
-  // Estado para los destinos de drop disponibles
-  const [dropTargets, setDropTargets] = useState<DropTarget[]>([]);
+  if (!storeRef.current) storeRef.current = createDndStore(defaultState);
 
-  // Ref para rastrear si es el primer render
+  const store = storeRef.current;
+
+  const messages = useMemo(() => resolveMessages(customMessages), [customMessages]);
+
+  // Los callbacks se leen siempre en su versión más reciente, sin volver a suscribirse a cada render.
+  const latest = useRef({ id, onValidate, onState, onMove, messages });
+
+  useIsomorphicLayoutEffect(() => {
+    latest.current = { id, onValidate, onState, onMove, messages };
+  });
+
+  /**
+   * Avisa de cada acción: callbacks de quien usa el componente y anuncio para lectores de pantalla.
+   */
+  useEffect(() => {
+    const labelOf = (dragId: string) => store.getSnapshot().drags[dragId]?.label ?? dragId;
+    const zoneLabelOf = (zoneId: string) => store.getSnapshot().zones[zoneId]?.label ?? zoneId;
+
+    const announceEvent = (event: DndEvent, text: ReturnType<typeof resolveMessages>) => {
+      if (event.type === 'move') {
+        const [dragged, ...displaced] = event.movements;
+
+        announce(
+          text.moved({
+            drag: labelOf(dragged.dragId),
+            from: zoneLabelOf(dragged.from),
+            to: zoneLabelOf(dragged.to),
+            displaced: displaced.map((movement) => ({ drag: labelOf(movement.dragId), to: zoneLabelOf(movement.to) })),
+          })
+        );
+      } else if (event.type === 'reorder') {
+        const zoneId = Object.keys(event.layout).find((key) => event.layout[key].includes(event.dragId)) ?? '';
+
+        announce(
+          text.reordered({
+            drag: labelOf(event.dragId),
+            zone: zoneLabelOf(zoneId),
+            position: event.layout[zoneId].indexOf(event.dragId) + 1,
+            total: event.layout[zoneId].length,
+          })
+        );
+      } else {
+        announce(text.reset());
+      }
+    };
+
+    return store.subscribeEvents((event) => {
+      const current = latest.current;
+      const validIds = store.validIds();
+
+      if (event.type === 'move') {
+        current.onMove?.({ movements: event.movements, source: event.source });
+        current.onValidate?.({ validate: validIds, active: true });
+      } else if (event.type === 'reset') {
+        current.onValidate?.({ validate: [], active: false });
+      }
+
+      announceEvent(event, current.messages);
+      current.onState?.({ id: current.id, state: event.layout, validateId: validIds });
+    });
+  }, [store]);
+
+  /**
+   * Conecta el arrastre con el puntero: qué se está arrastrando y dónde se suelta.
+   * Solo atiende a los drags de esta instancia.
+   */
+  useEffect(
+    () =>
+      monitorForElements({
+        canMonitor: ({ source }) => source.data.storeKey === storeKey,
+        onDragStart: ({ source }) => {
+          if (typeof source.data.id === 'string') store.setDragging(source.data.id);
+        },
+        onDrop: ({ source, location }) => {
+          store.setDragging(null);
+
+          // El primer destino es el más interno; los que no aceptan el drag ya vienen descartados.
+          const target = location.current.dropTargets[0];
+          const dragId = source.data.id;
+          const zoneId = target?.data.zoneId;
+
+          if (typeof dragId === 'string' && typeof zoneId === 'string') {
+            store.move(dragId, zoneId, { source: 'pointer' });
+          }
+        },
+      }),
+    [store, storeKey]
+  );
+
+  /**
+   * Si `defaultState` cambia desde fuera, los drags se reubican. La primera vez no hace falta:
+   * el store ya se creó con esas posiciones.
+   */
+  const defaultStateKey = defaultState ? JSON.stringify(defaultState) : undefined;
   const isFirstRender = useRef(true);
 
-  /**
-   * Helper para obtener todos los contenedores (droppables + containers)
-   */
-  const getAllContainers = useMemo(() => {
-    const droppables = getChildrenByType(childrenProps, DragAndDropTypes.DROPPABLE);
-    const generalDraggables = getChildrenByType(childrenProps, DragAndDropTypes.CONTAINER);
-    return [...droppables, ...generalDraggables] as React.ReactNode[];
-  }, [childrenProps]);
-
-  /**
-   * Inicializa el estado de items basado en los hijos
-   */
-  const initialState: ItemType = useMemo(() => {
-    const allDraggables = getAllContainers;
-
-    const items = allDraggables.reduce((list, value) => {
-      if (!isValidElement(value)) return list;
-
-      const { id, children } = value.props;
-
-      let dragIds: string[] = [];
-      if (children) {
-        const dragChildren = getChildrenByType(children, DragAndDropTypes.DRAGGABLE);
-        dragIds = dragChildren.map((item) => (isValidElement(item) ? item.props.id : null)).filter(Boolean);
-      }
-
-      return {
-        ...list,
-        [id]: dragIds
-      };
-    }, {} as ItemType);
-
-    return items;
-  }, [getAllContainers]);
-
-  /**
-   * Actualiza los targets de drop disponibles cuando cambian los hijos
-   */
-  useEffect(() => {
-    const newDropTargets: DropTarget[] = [];
-
-    getAllContainers.forEach((value) => {
-      if (isValidElement(value)) {
-        const { id, label } = value.props;
-        if (id) {
-          newDropTargets.push({ id, label: label || id });
-        }
-      }
-    });
-
-    setDropTargets(newDropTargets);
-  }, [getAllContainers]);
-
-  /**
-   * Estado principal de posicionamiento de elementos
-   */
-  const [items, setItems] = useState<ItemType>(() =>
-    defaultState && Object.keys(defaultState).length > 0 ? defaultState : initialState
-  );
-
-  /**
-   * Encuentra el contenedor que contiene un elemento específico
-   */
-  const findContainer = useCallback((id: string): string | undefined => {
-    if (id in items) {
-      return id;
-    }
-    return Object.keys(items).find((key) => items[key].includes(id));
-  }, [items]);
-
-  /**
-   * Actualiza la lista de elementos válidos después de mover uno o más elementos.
-   *
-   * Cada elemento que cambió de contenedor se vuelve a evaluar desde cero en su nuevo contenedor
-   * (primero se quita de la lista y solo se agrega si es válido ahí). Así, un elemento que fue
-   * desplazado fuera de su zona deja de contar como válido.
-   *
-   * @param moved - Elementos que cambiaron de contenedor: el arrastrado y, si lo hay, el desplazado.
-   */
-  const validateDrags = useCallback((moved: Array<{ containerId: string; dragId: string }>) => {
-    setValidateId((prevValidateId) => {
-      const movedIds = moved.map(({ dragId }) => dragId);
-
-      const newArrayValidate = [
-        ...prevValidateId.filter((item) => !movedIds.includes(item)),
-        ...moved
-          .filter(({ containerId, dragId }) => isValidIn(containerId, dragId))
-          .map(({ dragId }) => dragId),
-      ];
-
-      // Notificamos cambios de validación
-      if (onValidate) {
-        onValidate({ validate: newArrayValidate, active: true });
-      }
-
-      return newArrayValidate;
-    });
-  }, [onValidate]);
-
-  /**
-   * Maneja el movimiento de elementos, sea por arrastre o menú contextual
-   */
-  // Función para garantizar que un elemento esté solo en un contenedor
-  const ensureElementExistsOnlyOnce = useCallback((
-    currentState: ItemType,
-    elementId: string,
-    targetContainerId: string
-  ): ItemType => {
-    // Crear una copia nueva del estado
-    const newState = { ...currentState };
-
-    // Eliminar el elemento de todos los contenedores
-    Object.keys(newState).forEach((containerId) => {
-      newState[containerId] = newState[containerId].filter((id) => id !== elementId);
-    });
-
-    // Añadir el elemento solo al contenedor destino
-    newState[targetContainerId] = [...newState[targetContainerId], elementId];
-
-    return newState;
-  }, []);
-
-  // Función de manejo de movimiento simplificada
-  const handleItemMove = useCallback((dragId: string, targetContainerId: string) => {
-    // Desactivamos el elemento activo
-    setActiveId(null);
-
-    // Actualizamos el estado garantizando que el elemento esté en un solo lugar
-    setItems((prevItems) => {
-      // Si no permitimos múltiples elementos y ya hay OTRO elemento en el destino
-      // (soltar un elemento sobre la zona donde ya está no desplaza a nadie).
-      const displacedItem = prevItems[targetContainerId].find((id) => id !== dragId);
-
-      if (!multipleDrags && displacedItem) {
-        const baseContainer = Object.keys(prevItems).pop() as string;
-
-        // Primero movemos el elemento desplazado al contenedor base
-        let newState = ensureElementExistsOnlyOnce(prevItems, displacedItem, baseContainer);
-
-        // Luego movemos el elemento arrastrado al destino
-        newState = ensureElementExistsOnlyOnce(newState, dragId, targetContainerId);
-
-        // Revalidamos a los dos: el arrastrado en su destino y el desplazado en el contenedor base
-        validateDrags([
-          { containerId: targetContainerId, dragId },
-          { containerId: baseContainer, dragId: displacedItem },
-        ]);
-
-        return newState;
-      }
-
-      // Caso simple: solo movemos el elemento arrastrado
-      const newState = ensureElementExistsOnlyOnce(prevItems, dragId, targetContainerId);
-
-      validateDrags([{ containerId: targetContainerId, dragId }]);
-
-      return newState;
-    });
-
-    setTimeout(() => {
-      announcements?.();
-    }, 100);
-  }, [announcements, ensureElementExistsOnlyOnce, multipleDrags, validateDrags]);
-
-  /**
-   * Maneja el movimiento por menú contextual
-   */
-  const handleDragMove = useCallback((dragId: string, targetDropId: string) => {
-    // Manejo de comandos especiales: top, up, down, bottom (reordenamiento)
-    if (['top', 'up', 'down', 'bottom'].includes(targetDropId)) {
-      setItems((prevItems) => {
-        const sourceContainerId = Object.keys(prevItems).find((key) => prevItems[key].includes(dragId));
-        if (!sourceContainerId) return prevItems;
-        
-        const orderedContainerId = Object.keys(prevItems).find((key) => prevItems[key].length > 1);
-        if (!orderedContainerId) return prevItems;
-
-        const containerItems = [...prevItems[orderedContainerId]];
-        const currentIndex = containerItems.indexOf(dragId);
-
-        if (currentIndex === -1) return prevItems;
-
-        // Reordenamos el elemento según el comando
-        containerItems.splice(currentIndex, 1);
-
-        switch (targetDropId) {
-          case 'top':
-            containerItems.unshift(dragId);
-            break;
-          case 'up':
-            containerItems.splice(Math.max(0, currentIndex - 1), 0, dragId);
-            break;
-          case 'down':
-            containerItems.splice(Math.min(containerItems.length, currentIndex + 1), 0, dragId);
-            break;
-          case 'bottom':
-            containerItems.push(dragId);
-            break;
-        }
-        
-        return {
-          ...prevItems,
-          [orderedContainerId]: containerItems
-        };
-      });
-      return;
-    }
-
-    // Para movimiento entre contenedores
-    handleItemMove(dragId, targetDropId);
-  }, [handleItemMove]);
-
-  /**
-   * Maneja el fin de un arrastre
-   */
-  const handleDragEnd = useCallback((dragId: string, dropId: string) => {
-    setActiveId(null);
-
-    const targetContainerId = findContainer(dropId);
-    const sourceContainerId = findContainer(dragId);
-
-    if (!sourceContainerId || !targetContainerId) {
-      return;
-    }
-
-    handleItemMove(dragId, dropId);
-  }, [findContainer, handleItemMove]);
-
-  /**
-   * Inicializamos los monitores de drag and drop
-   */
-  const initializeDragAndDrop = useCallback(() => {
-    return monitorForElements({
-      onDragStart: (event) => {
-        const dragId = event.source.element.getAttribute('data-drag-id');
-        if (dragId) {
-          setActiveId(dragId);
-        }
-      },
-      onDrop: (event) => {
-        if (!event.location.current.dropTargets.length) {
-          setActiveId(null);
-
-          return;
-        }
-
-        const dragId = event.source.element.getAttribute('data-drag-id');
-        const dropTarget = event.location.current.dropTargets[0];
-        const dropId = dropTarget.element.getAttribute('data-drop-id');
-
-        if (dragId && dropId) {
-          handleDragEnd(dragId, dropId);
-        } else {
-          setActiveId(null);
-        }
-      },
-      onDropTargetChange: () => {
-        // Podríamos actualizar un estado visual aquí para mostrar feedback
-        // de sobre qué contenedor está el elemento
-      }
-    });
-  }, [handleDragEnd]);
-
-  /**
-   * Map de draggables para búsquedas O(1)
-   */
-  const draggablesMap = useMemo(() => {
-    const originalDrags = getChildrenByType(childrenProps, DragAndDropTypes.DRAGGABLE);
-    const map = new Map<string, React.ReactElement>();
-    
-    originalDrags.forEach((drag) => {
-      if (isValidElement(drag) && drag.props.id) {
-        map.set(drag.props.id, drag);
-      }
-    });
-    
-    return map;
-  }, [childrenProps]);
-
-  /**
-   * Actualiza los hijos con el estado actual
-   */
-  const updatedChild = useCallback((children: React.ReactNode): React.ReactNode => {
-    return Children.map(children, (child) => {
-      if (!isValidElement(child)) return child;
-
-      // Para todos los elementos con ID en nuestro estado
-      if (child.props.id && child.props.id in items) {
-        // Solo necesitamos los draggables que corresponden a este contenedor según el estado
-        const containerId = child.props.id;
-        const containerItems = items[containerId];
-
-        // Obtenemos los elementos draggable que deben estar en este contenedor
-        const dragElements = containerItems
-          .map((dragId) => {
-            // Búsqueda O(1) en el Map
-            const matchingDrag = draggablesMap.get(dragId);
-
-            // Si encontramos el elemento, lo clonamos con las props necesarias
-            if (matchingDrag) {
-              return cloneElement(matchingDrag, {
-                ...matchingDrag.props,
-                key: dragId,
-                handleDrag: handleDragMove
-              });
-            }
-            return null;
-          })
-          .filter(Boolean);
-
-        // Devolvemos el contenedor con sus elementos correspondientes
-        return cloneElement(child, { ...child.props }, dragElements);
-      }
-
-      // Procesamiento recursivo para elementos con hijos
-      if (child.props.children) {
-        return cloneElement(child, {
-          ...child.props,
-          children: updatedChild(child.props.children)
-        });
-      }
-
-      return child;
-    });
-  }, [draggablesMap, handleDragMove, items]);
-
-  /**
-   * Reestablece el estado del componente
-   */
-  const handleResetDnd = useCallback(() => {
-    setItems(initialState);
-    setValidateId([]);
-
-    if (onValidate) {
-      onValidate({ validate: [], active: false });
-    }
-  }, [initialState, onValidate]);
-
-  // Efecto para inicializar el sistema de drag and drop
-  useEffect(() => {
-    const cleanup = initializeDragAndDrop();
-    return () => {
-      cleanup();
-    };
-  }, [initializeDragAndDrop]);
-
-  // Efecto para actualizar el estado cuando cambia defaultState
-  useEffect(() => {
-    if (defaultState && Object.keys(defaultState).length > 0) {
-      isFirstRender.current = true;
-      setItems(defaultState as ItemType);
-    }
-  }, [defaultState]);
-
-  // Efecto para actualizar validateId cuando cambia defaultValidate
-  useEffect(() => {
-    if (defaultValidate && defaultValidate.length > 0) {
-      setValidateId(defaultValidate as string[]);
-    }
-  }, [defaultValidate]);
-
-  // Efecto para notificar cambios de estado (excepto en el primer render y cuando viene de props)
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
+
       return;
     }
 
-    if (onState) {
-      onState({
-        id: idDragAndDrop,
-        state: { ...items },
-        validateId
-      });
-    }
-  }, [items, validateId, idDragAndDrop, onState]);
+    if (defaultStateKey !== undefined) store.syncLayout(JSON.parse(defaultStateKey));
+  }, [store, defaultStateKey]);
 
-  // Prevenir notificación cuando cambia defaultState desde props
-  useEffect(() => {
-    if (defaultState && Object.keys(defaultState).length > 0) {
-      isFirstRender.current = true;
-    }
-  }, [defaultState]);
+  const value = useMemo(() => ({ store, storeKey, validate, messages }), [store, storeKey, validate, messages]);
 
-  return (
-    <DragAndDropProvider
-      value={{
-        listId: validateId,
-        validate,
-        isDragging: activeId,
-        handleResetDnd,
-        availableDropTargets: dropTargets,
-        handleDragMove
-      }}>
-      {updatedChild(childrenProps)}
-    </DragAndDropProvider>
-  );
+  return <DndRoot value={value}>{children}</DndRoot>;
 };
 
 DragAndDrop.Container = ContainerDrag;
 DragAndDrop.Drag = Draggable;
 DragAndDrop.Drop = Droppable;
+DragAndDrop.Items = Items;
 
 export { DragAndDrop };
