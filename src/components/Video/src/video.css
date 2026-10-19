@@ -5,6 +5,9 @@
   --video-caption-bg: #242424;
   --video-slider-bg: #eb2517;
   --video-track-bg: #8a8a8a;
+  /* Pista del slider de progreso. Es clara para que el relleno se distinga de ella: WCAG 1.4.11
+     pide 3:1 entre las dos partes. Con `--video-track-bg` (gris) el contraste era de 1.26:1. */
+  --video-slider-track-bg: #e6e6e6;
   --video-transcription-border-color: #525255;
   --video-transcription-badge: #323235;
   --video-transcription-cue-hover: #49494d;
@@ -123,14 +126,15 @@
   opacity: 1;
 }
 
-.video-player__slider:hover .video-player__slider-thumb {
+.video-player__slider:hover .video-player__slider-thumb,
+.video-player__slider:focus-visible .video-player__slider-thumb {
   opacity: 1;
 }
 
 .video-player__slider-track {
   width: 100%;
   height: 100%;
-  background-color: var(--video-track-bg);
+  background-color: var(--video-slider-track-bg);
   position: absolute;
   pointer-events: auto;
 }
