@@ -1,6 +1,6 @@
 {
   "name": "books-ui",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Modern React component library with TypeScript - 20+ accessible, customizable UI components",
   "license": "MIT",
   "type": "module",
