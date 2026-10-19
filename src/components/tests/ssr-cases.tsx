@@ -47,7 +47,9 @@ export const ssrCases: Array<[string, ReactElement]> = [
   ['Image', <Image src="/a.png" alt="x" />],
   ['Filter', <Filter />],
   ['CheckBox', <CheckBox label="a" />],
+  ['CheckBox marcado con resultado', <CheckBox label="a" state="right" defaultChecked />],
   ['Radio', <Radio label="a" name="g" />],
+  ['Radio marcado con resultado', <Radio label="a" name="g" state="wrong" defaultChecked />],
   ['Switch', <Switch label="a" />],
   ['TextField', <TextField label="a" />],
   [

@@ -1,3 +1,3 @@
 export { CheckBox } from "./src/checkbox";
 
-export type { CheckBoxProps } from './types/types';
+export type { CheckBoxProps, CheckBoxMessages } from './types/types';

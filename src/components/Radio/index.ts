@@ -1,3 +1,3 @@
 export { Radio } from "./src/radio";
 
-export type { RadioProps } from './types/types'
+export type { RadioProps, RadioMessages } from './types/types';
