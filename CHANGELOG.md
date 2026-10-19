@@ -1,3 +1,22 @@
+# v2.1.0 (Mon Oct 19 2026)
+
+#### 🚀 Enhancement
+
+- Feat/text field [#6](https://github.com/UI-Components-Books-Books/UI-Components-books-TS/pull/6) ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- feat(textarea): add a multi-line text area [#4](https://github.com/UI-Components-Books-Books/UI-Components-books-TS/pull/4) ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- feat(textfield): add a text field with hint, error and activity result [#3](https://github.com/UI-Components-Books-Books/UI-Components-books-TS/pull/3) ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### 🐛 Bug Fix
+
+- fix(checkbox,radio): announce the result of a checked option to screen readers [#5](https://github.com/UI-Components-Books-Books/UI-Components-books-TS/pull/5) ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+- fix(video): accessibility of the audio description panel, the transcript and the progress slider [#2](https://github.com/UI-Components-Books-Books/UI-Components-books-TS/pull/2) ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+#### Authors: 1
+
+- Frontend-leader ([@bb-frontend-leader](https://github.com/bb-frontend-leader))
+
+---
+
 # v2.0.0 (Fri Oct 16 2026)
 
 #### 💥 Breaking Change
