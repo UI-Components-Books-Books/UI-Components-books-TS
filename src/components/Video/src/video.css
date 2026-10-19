@@ -254,6 +254,10 @@
   }
 }
 
+.video-audio-description__volume-container {
+  text-align: left;
+}
+
 :where(.video-player__volume) {
   display: grid;
   place-items: center;
@@ -352,6 +356,7 @@
   padding-inline: 0;
   margin-block: 0;
   overflow-y: auto;
+  text-align: left;
 }
 
 .video-player__transcription__segment-list::-webkit-scrollbar {
@@ -456,6 +461,7 @@
 .video-audio-description__header p {
   font-weight: bold;
   flex: 2 0 auto;
+  text-align: left;
 }
 
 button.video-audio-description__button--close {

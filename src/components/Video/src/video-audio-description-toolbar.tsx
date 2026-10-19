@@ -290,7 +290,7 @@ const VolumenSlider = () => {
   };
 
   return (
-    <div>
+    <div className="video-audio-description__volume-container">
       <p>Volumen del audio descriptivo ({(volumeAD * 100).toFixed(0)}%)</p>
       {/* El input está dentro del label, así que se asocian sin necesidad de `htmlFor` ni de un id
           (uno fijo se duplicaría si hay dos reproductores en la página). */}
