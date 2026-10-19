@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import { Radio } from "@components";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
@@ -38,6 +40,8 @@ Para crear un grupo de opciones mutuamente excluyentes:
 - **right**: Muestra ✓ para respuestas correctas
 - **wrong**: Muestra ✗ para respuestas incorrectas
 - **normal**: Estado estándar sin validación
+
+El resultado se muestra y se anuncia a los lectores de pantalla («Correcto» / «Incorrecto») solo en la opción **marcada**.
 
 ## Casos de uso
 
@@ -91,6 +95,8 @@ Radio button con estados de validación visual.
 - **wrong**: Muestra icono de error (✗)
 
 Útil para quizzes, exámenes o formularios con validación inmediata.
+
+El icono solo se dibuja con la opción marcada, y el resultado se **anuncia en ese mismo caso**: a un lector de pantalla se le lee «Correcto» o «Incorrecto» como descripción, así recibe lo mismo que quien ve. No se anuncia en las opciones sin marcar, para no revelar cuál era la correcta. Los textos se pueden reemplazar con \`messages\`.
         `,
       },
     },
@@ -101,7 +107,77 @@ Radio button con estados de validación visual.
   args: {
     label: "Right state ✔",
     state: "right",
+    defaultChecked: true,
   },
+};
+
+const CAPITALS = [
+  { id: "madrid", label: "Madrid", correct: false },
+  { id: "paris", label: "París", correct: true },
+  { id: "roma", label: "Roma", correct: false },
+];
+
+const ActivityExample = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [checked, setChecked] = useState(false);
+  const [summary, setSummary] = useState("");
+
+  const check = () => {
+    const selected = new FormData(formRef.current as HTMLFormElement).get("capital");
+    const answer = CAPITALS.find((c) => c.id === selected);
+    setSummary(!answer ? "No marcaste ninguna opción." : answer.correct ? "Respuesta correcta." : "Respuesta incorrecta.");
+    setChecked(true);
+  };
+
+  const reset = () => {
+    formRef.current?.reset();
+    setSummary("");
+    setChecked(false);
+  };
+
+  return (
+    <form ref={formRef} onSubmit={(event) => event.preventDefault()} style={{ display: "grid", gap: "0.75rem" }}>
+      <fieldset style={{ display: "grid", gap: "0.5rem" }}>
+        <legend>¿Cuál es la capital de Francia?</legend>
+        {CAPITALS.map((capital) => (
+          <Radio
+            key={capital.id}
+            id={`capital-${capital.id}`}
+            name="capital"
+            value={capital.id}
+            label={capital.label}
+            disabled={checked}
+            state={checked ? (capital.correct ? "right" : "wrong") : undefined}
+          />
+        ))}
+      </fieldset>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        <button type="button" onClick={check}>
+          Comprobar
+        </button>
+        <button type="button" onClick={reset}>
+          Reiniciar
+        </button>
+      </div>
+      {/* Un resumen para toda la actividad: avisa una sola vez. */}
+      <p role="status">{summary}</p>
+    </form>
+  );
+};
+
+export const ActivityResult: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Una actividad de selección única. Al comprobar, **cada opción** recibe su \`state\`, pero solo se ve —y se anuncia— el de la opción que marcaste: las demás no revelan cuál era la correcta.
+
+Con un lector de pantalla, al enfocar la opción marcada se lee su nombre y su resultado. Al cambiar de opción con las flechas, el anuncio pasa a la nueva. El resumen va en una región \`role="status"\` de la actividad.
+        `,
+      },
+    },
+  },
+  render: () => <ActivityExample />,
 };
 
 export const Checked: Story = {

@@ -1,3 +1,5 @@
+import { useRef, useState } from "react";
+
 import { CheckBox } from "@components";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
@@ -17,6 +19,7 @@ El componente **CheckBox** es un input personalizado para selección múltiple.
 
 - **Estados visuales**: Normal, correcto (right), incorrecto (wrong)
 - **Iconos integrados**: Feedback visual con iconos SVG
+- **Resultado accesible**: El resultado (\`right\` o \`wrong\`) se anuncia a los lectores de pantalla en la opción marcada
 - **Label flexible**: Soporta HTML para formateo rico
 - **Accesible**: Atributos ARIA y asociación label-input correcta
 - **Controlado/No controlado**: Funciona en ambos modos
@@ -75,6 +78,8 @@ El checkbox soporta tres estados visuales:
 - **wrong**: Muestra un icono de error/incorrecto (✗)
 
 Los estados \`right\` y \`wrong\` son útiles para validación en tiempo real o feedback de formularios.
+
+El resultado se muestra y se **anuncia solo en la opción marcada**: el icono solo se dibuja cuando está marcada, y a un lector de pantalla se le lee «Correcto» o «Incorrecto» como descripción en ese mismo caso, así recibe lo mismo que quien ve. No se anuncia en las opciones sin marcar, para no revelar cuáles eran las correctas. Los textos se pueden reemplazar con \`messages\`.
         `,
       },
     },
@@ -85,7 +90,79 @@ Los estados \`right\` y \`wrong\` son útiles para validación en tiempo real o 
   args: {
     label: "Right state ✔",
     state: "right",
+    defaultChecked: true,
   },
+};
+
+const CITIES = [
+  { id: "madrid", label: "Madrid", correct: true },
+  { id: "lima", label: "Lima", correct: false },
+  { id: "roma", label: "Roma", correct: true },
+  { id: "quito", label: "Quito", correct: false },
+];
+
+const ActivityExample = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [checked, setChecked] = useState(false);
+  const [summary, setSummary] = useState("");
+
+  const check = () => {
+    const selected = new FormData(formRef.current as HTMLFormElement).getAll("ciudades");
+    const hits = CITIES.filter((c) => selected.includes(c.id) && c.correct).length;
+    const misses = selected.length - hits;
+    setSummary(`Acertaste ${hits} y fallaste ${misses}.`);
+    setChecked(true);
+  };
+
+  const reset = () => {
+    formRef.current?.reset();
+    setSummary("");
+    setChecked(false);
+  };
+
+  return (
+    <form ref={formRef} onSubmit={(event) => event.preventDefault()} style={{ display: "grid", gap: "0.75rem" }}>
+      <fieldset style={{ display: "grid", gap: "0.5rem" }}>
+        <legend>Marca las capitales de Europa</legend>
+        {CITIES.map((city) => (
+          <CheckBox
+            key={city.id}
+            id={`ciudad-${city.id}`}
+            name="ciudades"
+            value={city.id}
+            label={city.label}
+            disabled={checked}
+            state={checked ? (city.correct ? "right" : "wrong") : "normal"}
+          />
+        ))}
+      </fieldset>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        <button type="button" onClick={check}>
+          Comprobar
+        </button>
+        <button type="button" onClick={reset}>
+          Reiniciar
+        </button>
+      </div>
+      {/* Un resumen para toda la actividad: avisa una sola vez. */}
+      <p role="status">{summary}</p>
+    </form>
+  );
+};
+
+export const ActivityResult: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Una actividad de selección múltiple. Al comprobar, **cada opción** recibe su \`state\` (correcta o incorrecta), pero solo se ve —y se anuncia— el de las que marcaste: las demás no revelan si eran correctas.
+
+Con un lector de pantalla, al enfocar una opción marcada se lee su nombre y su resultado («Madrid, casilla de verificación, marcada, Correcto»). El resumen va en una región \`role="status"\` de la actividad, así se anuncia una sola vez.
+        `,
+      },
+    },
+  },
+  render: () => <ActivityExample />,
 };
 
 export const Checked: Story = {

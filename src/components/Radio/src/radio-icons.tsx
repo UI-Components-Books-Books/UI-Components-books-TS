@@ -1,5 +1,7 @@
 export const RightIcon = () => (
   <svg
+    aria-hidden="true"
+    focusable="false"
     xmlns="http://www.w3.org/2000/svg"
     height="24"
     fill="currentColor"
@@ -12,6 +14,8 @@ export const RightIcon = () => (
 
 export const WrongIcon = () => (
   <svg
+    aria-hidden="true"
+    focusable="false"
     xmlns="http://www.w3.org/2000/svg"
     height="24"
     fill="currentColor"
