@@ -1,0 +1,134 @@
+/*
+ * Todos los colores son variables: cada OVA puede ponerle su paleta. Los valores por defecto son
+ * grises sobre fondo blanco y cumplen los contrastes de WCAG (ver tests/text-field-contrast.test.ts).
+ * El resultado nunca depende solo del color: lleva un icono, un texto para lectores de pantalla y
+ * un estilo de borde distinto (continuo si es correcto, discontinuo si es incorrecto).
+ */
+.c-text-field {
+    --text-field-color: var(--ui-color-gray-900);
+    --text-field-bg: #fff;
+    --text-field-border: var(--ui-color-gray-600);
+    --text-field-hint-color: var(--ui-color-gray-700);
+    --text-field-placeholder: var(--ui-color-gray-600);
+    --text-field-right: var(--ui-color-gray-900);
+    --text-field-wrong: var(--ui-color-gray-900);
+    --text-field-border-size: 2px;
+    --text-field-radius: 0.375rem;
+    --text-field-height: 2.5rem;
+    --text-field-inline-width: 12ch;
+    --text-field-transition-property: background-color, border-color, color;
+}
+
+.c-text-field--small {
+    --text-field-height: 2rem;
+    font-size: 0.875rem;
+}
+
+.c-text-field--big {
+    --text-field-height: 3rem;
+    font-size: 1.125rem;
+}
+
+:where(.c-text-field) {
+    display: grid;
+    gap: 0.25rem;
+    color: var(--text-field-color);
+}
+
+/*
+ * En línea, para completar una frase. `--text-field-inline-width` es el ancho del texto: a eso se
+ * suma el borde, el relleno y el espacio del icono del resultado (0.75rem + 2.5rem + 2 × 2px), así
+ * el campo no cambia de ancho al mostrar el resultado y el texto siempre cabe.
+ */
+.c-text-field--inline {
+    display: inline-grid;
+    inline-size: calc(var(--text-field-inline-width) + 3.5rem);
+    vertical-align: middle;
+}
+
+:where(.c-text-field__label) {
+    font-weight: 600;
+}
+
+:where(.c-text-field__hint) {
+    color: var(--text-field-hint-color);
+    font-size: 0.875em;
+}
+
+:where(.c-text-field__error) {
+    color: var(--text-field-wrong);
+    font-size: 0.875em;
+    font-weight: 600;
+}
+
+:where(.c-text-field__control) {
+    position: relative;
+    display: block;
+}
+
+:where(.c-text-field__input) {
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+    min-block-size: var(--text-field-height);
+    padding-block: 0.25rem;
+    padding-inline: 0.75rem;
+    font: inherit;
+    color: var(--text-field-color);
+    background-color: var(--text-field-bg);
+    border: var(--text-field-border-size) solid var(--text-field-border);
+    border-radius: var(--text-field-radius);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    :where(.c-text-field__input) {
+        transition: var(--text-field-transition-property) 120ms ease;
+    }
+}
+
+.c-text-field__input::placeholder {
+    color: var(--text-field-placeholder);
+    opacity: 1;
+}
+
+:where(.c-text-field__input:disabled) {
+    color: var(--ui-color-gray-600);
+    background-color: var(--ui-color-gray-100);
+    cursor: not-allowed;
+}
+
+/* Resultado: icono a la derecha y borde propio. El icono es decorativo (el resultado se lee aparte). */
+:where(.c-text-field__icon) {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0.5rem;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+:where(.c-text-field__icon svg) {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+}
+
+.c-text-field:not([data-state="normal"]) .c-text-field__input {
+    padding-inline-end: 2.5rem;
+}
+
+.c-text-field[data-state="right"] .c-text-field__input {
+    border-color: var(--text-field-right);
+}
+
+.c-text-field[data-state="right"] .c-text-field__icon {
+    color: var(--text-field-right);
+}
+
+.c-text-field[data-state="wrong"] .c-text-field__input {
+    border-color: var(--text-field-wrong);
+    border-style: dashed;
+}
+
+.c-text-field[data-state="wrong"] .c-text-field__icon {
+    color: var(--text-field-wrong);
+}

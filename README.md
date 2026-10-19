@@ -90,6 +90,7 @@ function App() {
 - `Radio` - Botones de radio con grupos
 - `Select` - Selector con búsqueda y opciones múltiples
 - `NumberInput` - Input numérico con steppers
+- `TextField` - Campo de texto con ayuda, error y resultado de actividad
 - `Switch` - Interruptor toggle
 
 ### Feedback & Overlays

@@ -25,6 +25,7 @@ import {
   Select,
   Switch,
   Tabs,
+  TextField,
   Toggletip,
   Tooltip,
   Tour,
@@ -48,6 +49,12 @@ export const ssrCases: Array<[string, ReactElement]> = [
   ['CheckBox', <CheckBox label="a" />],
   ['Radio', <Radio label="a" name="g" />],
   ['Switch', <Switch label="a" />],
+  ['TextField', <TextField label="a" />],
+  [
+    'TextField con ayuda, error y resultado',
+    <TextField label="a" hint="ayuda" error="error" state="wrong" required />,
+  ],
+  ['TextField en línea', <TextField label="a" isLabelVisible={false} inline state="right" />],
   [
     'NumberInput',
     <NumberInput>
