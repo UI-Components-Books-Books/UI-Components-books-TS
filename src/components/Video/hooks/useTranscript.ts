@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-interface Cue {
+export interface Cue {
     start: number;
     end: number;
     text: string;
@@ -72,25 +72,23 @@ const parseVTT = (vttText: string): Cue[] => {
 };
 
 /**
- * Hook personalizado para gestionar y sincronizar la transcripción de un video a partir de un archivo VTT.
+ * Hook personalizado para cargar la transcripción de un video a partir de un archivo VTT.
  *
- * Este hook carga, analiza y sincroniza las pistas de subtítulos de un video específico, proporcionando la transcripción estructurada y el ID del cue actualmente activo.
+ * Descarga y analiza el archivo, y devuelve la transcripción estructurada. Qué cue está activo no
+ * lo decide el hook: se calcula con el tiempo del reproductor, que es la única fuente de verdad.
  *
  * @link https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
  *
  * @example
- *  const { transcript, currentCueId } = useTranscript('myVideo', 'subtitles.vtt');
+ *  const { transcript } = useTranscript('subtitles.vtt');
  *
- * @param {string} uid - Id del contenedor del reproductor, que contiene el elemento de video al que se asociará la transcripción.
  * @param {string} [caption] - URL del archivo VTT que contiene la transcripción del video.
  *
  * @returns {Object} Hook de transcripción.
  * @returns {Cue[]} return.transcript - Lista de objetos `Cue` representando los segmentos de la transcripción.
- * @returns {number | null} return.currentCueId - Índice del cue actualmente activo, o `null` si no hay ninguno.
  */
-export const useTranscript = (uid: string, caption?: string) => {
+export const useTranscript = (caption?: string) => {
     const [transcript, setTranscript] = useState<Cue[]>([]);
-    const [currentCueId, setCurrentCueId] = useState<number | null>(null);
 
     // Cargar y parsear el archivo .vtt
     useEffect(() => {
@@ -111,33 +109,5 @@ export const useTranscript = (uid: string, caption?: string) => {
         loadTranscript();
     }, [caption]);
 
-    // Configurar el evento cuechange
-    useEffect(() => {
-        // El video es el único <video> del contenedor que lleva el id del reproductor.
-        const videoElement = document
-            .getElementById(uid)
-            ?.querySelector('video') ?? null;
-
-        if (videoElement && transcript.length > 0) {
-            const textTrack = videoElement.textTracks[0]; // Selecciona la primera pista de texto
-
-            textTrack.oncuechange = () => {
-                const activeCue = textTrack.activeCues?.[0] as VTTCue | undefined;
-
-                if (activeCue) {
-                    // Encuentra el ID del cue activo en la transcripción
-                    const cueId = transcript.findIndex(
-                        (cue) =>
-                            cue.start === activeCue.startTime && cue.end === activeCue.endTime
-                    );
-
-                    setCurrentCueId(cueId !== -1 ? cueId : null);
-                } else {
-                    setCurrentCueId(null);
-                }
-            };
-        }
-    }, [transcript, uid]);
-
-    return { transcript, currentCueId };
+    return { transcript };
 };

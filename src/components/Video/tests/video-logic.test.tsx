@@ -110,17 +110,16 @@ describe('useTranscript', () => {
   it('no pide nada si no hay archivo de subtítulos', () => {
     stubFetch(VTT)
 
-    const { result } = renderHook(() => useTranscript('vid'))
+    const { result } = renderHook(() => useTranscript())
 
     expect(fetch).not.toHaveBeenCalled()
     expect(result.current.transcript).toEqual([])
-    expect(result.current.currentCueId).toBeNull()
   })
 
   it('descarga el VTT y lo convierte en cues con inicio, fin y texto', async () => {
     stubFetch(VTT)
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(2))
     expect(fetch).toHaveBeenCalledWith('/subs.vtt')
@@ -133,7 +132,7 @@ describe('useTranscript', () => {
   it('entiende tiempos con formato MM:SS.mmm (sin horas)', async () => {
     stubFetch('WEBVTT\n\n01:30.500 --> 02:00.000\nTexto\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0]).toMatchObject({ start: 90.5, end: 120 })
@@ -142,7 +141,7 @@ describe('useTranscript', () => {
   it('con ajustes de cue (align, position...) el inicio se interpreta bien', async () => {
     stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:02.000 align:start position:0%\nTexto\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0].start).toBe(1)
@@ -151,7 +150,7 @@ describe('useTranscript', () => {
   it('con ajustes de cue (align, position...) el fin también se interpreta bien', async () => {
     stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:02.000 align:start position:0%\nTexto\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0].end).toBe(2)
@@ -160,7 +159,7 @@ describe('useTranscript', () => {
   it('con varios ajustes de cue y fin de más de un minuto, el fin sigue siendo correcto', async () => {
     stubFetch('WEBVTT\n\n00:01:00.000 --> 00:02:30.500 line:90% align:center size:60%\nTexto\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0]).toMatchObject({ start: 60, end: 150.5 })
@@ -169,7 +168,7 @@ describe('useTranscript', () => {
   it('con archivo de líneas CRLF sigue interpretando bien los tiempos', async () => {
     stubFetch('WEBVTT\r\n\r\n00:00:01.000 --> 00:00:02.000\r\nHola\r\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0]).toMatchObject({ start: 1, end: 2 })
@@ -180,7 +179,7 @@ describe('useTranscript', () => {
     const error = vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('sin red')))
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(error).toHaveBeenCalled())
     expect(result.current.transcript).toEqual([])
@@ -189,7 +188,7 @@ describe('useTranscript', () => {
   it('no pega los identificadores numéricos de cue al texto del cue anterior', async () => {
     stubFetch('WEBVTT\n\n1\n00:00:01.000 --> 00:00:03.000\nHola\n\n2\n00:00:04.000 --> 00:00:06.000\nMundo\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(2))
     expect(result.current.transcript.map((cue) => cue.text)).toEqual(['Hola', 'Mundo'])
@@ -198,7 +197,7 @@ describe('useTranscript', () => {
   it('ignora los identificadores de cue con texto (no solo numéricos)', async () => {
     stubFetch('WEBVTT\n\nintro\n00:00:01.000 --> 00:00:03.000\nHola\n\nfinal\n00:00:04.000 --> 00:00:06.000\nAdiós\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(2))
     expect(result.current.transcript.map((cue) => cue.text)).toEqual(['Hola', 'Adiós'])
@@ -226,7 +225,7 @@ describe('useTranscript', () => {
       ].join('\n')
     )
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(2))
     expect(result.current.transcript.map((cue) => cue.text)).toEqual(['Hola', 'Mundo'])
@@ -235,7 +234,7 @@ describe('useTranscript', () => {
   it('el texto de un cue de varias líneas se une con espacios, sin espacios sobrantes', async () => {
     stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:03.000\n  Primera línea  \nSegunda línea\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0].text).toBe('Primera línea Segunda línea')
@@ -244,7 +243,7 @@ describe('useTranscript', () => {
   it('descarta las líneas de tiempos que no se pueden interpretar', async () => {
     stubFetch('WEBVTT\n\nabc --> def\nInválido\n\n00:00:04.000 --> 00:00:06.000\nVálido\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0].text).toBe('Válido')
@@ -253,75 +252,10 @@ describe('useTranscript', () => {
   it('un cue sin texto se conserva con texto vacío', async () => {
     stubFetch('WEBVTT\n\n00:00:01.000 --> 00:00:03.000\n')
 
-    const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
+    const { result } = renderHook(() => useTranscript('/subs.vtt'))
 
     await waitFor(() => expect(result.current.transcript).toHaveLength(1))
     expect(result.current.transcript[0]).toEqual({ start: 1, end: 3, text: '' })
-  })
-
-  describe('cue activo', () => {
-    const makeVideo = () => {
-      const track: { activeCues: Array<{ startTime: number; endTime: number }>; oncuechange: null | (() => void) } = {
-        activeCues: [],
-        oncuechange: null,
-      }
-      // El video va dentro de un contenedor con el id del reproductor, que es el único con ese id.
-      const container = document.createElement('div')
-      container.id = 'vid'
-      const video = document.createElement('video')
-      Object.defineProperty(video, 'textTracks', { value: [track] })
-      container.appendChild(video)
-      document.body.appendChild(container)
-      return { container, track }
-    }
-
-    it('informa qué cue está activo cuando el video dispara cuechange', async () => {
-      stubFetch(VTT)
-      const { container, track } = makeVideo()
-
-      const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
-      await waitFor(() => expect(result.current.transcript).toHaveLength(2))
-
-      track.activeCues = [{ startTime: 65.25, endTime: 3600 }]
-      act(() => track.oncuechange?.())
-      expect(result.current.currentCueId).toBe(1)
-
-      track.activeCues = []
-      act(() => track.oncuechange?.())
-      expect(result.current.currentCueId).toBeNull()
-
-      container.remove()
-    })
-
-    it('escucha el video de su propio contenedor aunque haya otros reproductores en la página', async () => {
-      stubFetch(VTT)
-      const other = makeVideo()
-      other.container.id = 'otro'
-      const own = makeVideo()
-      const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
-      await waitFor(() => expect(result.current.transcript).toHaveLength(2))
-
-      own.track.activeCues = [{ startTime: 65.25, endTime: 3600 }]
-      act(() => own.track.oncuechange?.())
-
-      expect(result.current.currentCueId).toBe(1)
-      expect(other.track.oncuechange).toBeNull()
-      other.container.remove()
-      own.container.remove()
-    })
-
-    it('si el cue activo no está en la transcripción, no hay cue actual', async () => {
-      stubFetch(VTT)
-      const { container, track } = makeVideo()
-      const { result } = renderHook(() => useTranscript('vid', '/subs.vtt'))
-      await waitFor(() => expect(result.current.transcript).toHaveLength(2))
-
-      track.activeCues = [{ startTime: 999, endTime: 1000 }]
-      act(() => track.oncuechange?.())
-
-      expect(result.current.currentCueId).toBeNull()
-      container.remove()
-    })
   })
 })
 

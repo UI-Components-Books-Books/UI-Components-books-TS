@@ -6,7 +6,20 @@ import gsap from "gsap";
 
 import { usePlayerContext, usePlayerDispatchContext } from "./video-context";
 import { useTranscript } from "../hooks/useTranscript";
+import type { Cue } from "../hooks/useTranscript";
 import { PlayerActionKind } from "../types/types";
+
+// Tras un gesto del usuario sobre la lista (rueda, táctil, barra de desplazamiento o teclado) la
+// lista no se desplaza sola durante este tiempo, para no quitarle el control.
+const USER_SCROLL_PAUSE_MS = 5000;
+
+// Índice del cue que contiene el tiempo dado, o -1 si no hay ninguno.
+const findActiveCueIndex = (transcript: Cue[], time: number) =>
+  transcript.findIndex((cue) => time >= cue.start && time < cue.end);
+
+const prefersReducedMotion = () =>
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 interface Props {
   caption?: string;
@@ -14,9 +27,24 @@ interface Props {
 
 export const VideoTranscription: React.FC<Props> = ({ caption }) => {
   const { uid, currentTime, activeVideoTranscription } = usePlayerContext();
-  const { transcript, currentCueId } = useTranscript(uid, caption);
+  const { transcript } = useTranscript(caption);
   const dispatch = usePlayerDispatchContext();
   const transcriptionRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const lastUserScrollRef = useRef(0);
+
+  // Cue activo según el tiempo del reproductor. El resaltado y el desplazamiento usan este mismo
+  // valor, así no hay dos fuentes que puedan discrepar.
+  const activeCueIndex = findActiveCueIndex(transcript, currentTime);
+
+  const pauseAutoScroll = () => {
+    lastUserScrollRef.current = Date.now();
+  };
+
+  // Un puntero sobre la propia lista (y no sobre uno de sus segmentos) es la barra de desplazamiento.
+  const handleListPointerDown = (event: React.PointerEvent<HTMLUListElement>) => {
+    if (event.target === event.currentTarget) pauseAutoScroll();
+  };
 
   /**
    * Salta al tiempo específico del video cuando se hace clic en un segmento de transcripción.
@@ -51,24 +79,24 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
     }
   }, [activeVideoTranscription]);
 
+  // Lleva la lista al cue activo, pero solo cuando el cue cambia (no en cada actualización del
+  // tiempo) y sin pelear con el usuario mientras la recorre él.
   useEffect(() => {
-    // Encuentra el índice del cue actual basado en el tiempo del video
-    const currentCueId = transcript.findIndex(
-      (cue) => currentTime >= cue.start && currentTime < cue.end
-    );
-  
-    if (currentCueId !== -1) {
-      // Obtiene el elemento del cue activo y su contenedor
-      const cueElement = document.getElementById(`${uid}-cue-${currentCueId}`);
-      const container = cueElement?.parentElement;
-  
-      if (cueElement && container) {
-        // Calcula la posición de desplazamiento relativa al contenedor
-        const offsetTop = cueElement.offsetTop - container.offsetTop;
-        container.scrollTo({ top: offsetTop - container.clientHeight / 2, behavior: "smooth" });
-      }
-    }
-  }, [uid, transcript, currentTime]);
+    const list = listRef.current;
+
+    if (!activeVideoTranscription || !list || activeCueIndex === -1) return;
+    if (Date.now() - lastUserScrollRef.current < USER_SCROLL_PAUSE_MS) return;
+
+    const cueElement = list.children[activeCueIndex] as HTMLElement | undefined;
+    if (!cueElement) return;
+
+    // Calcula la posición de desplazamiento relativa a la lista
+    const offsetTop = cueElement.offsetTop - list.offsetTop;
+    list.scrollTo({
+      top: offsetTop - list.clientHeight / 2,
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
+  }, [activeVideoTranscription, activeCueIndex]);
 
   return (
     <>
@@ -100,12 +128,19 @@ export const VideoTranscription: React.FC<Props> = ({ caption }) => {
             </div>
           </div>
 
-          <ul className="video-player__transcription__segment-list">
+          <ul
+            ref={listRef}
+            className="video-player__transcription__segment-list"
+            onWheel={pauseAutoScroll}
+            onTouchMove={pauseAutoScroll}
+            onKeyDown={pauseAutoScroll}
+            onPointerDown={handleListPointerDown}
+          >
             {transcript.map((cue, index) => (
               <li
                 key={index}
                 id={`${uid}-cue-${index}`}
-                data-is-active={index === currentCueId}
+                data-is-active={index === activeCueIndex}
                 className="video-player__transcription__segment"
               >
                 <div className="video-player__transcription-badge-container">

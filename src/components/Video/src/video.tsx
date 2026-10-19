@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 
 import { cn } from '@utils/cn';
 
@@ -26,25 +26,44 @@ export const Video = () => {
   const dispatch = usePlayerDispatchContext();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const audioDescriptionRef = useRef<HTMLAudioElement>();
+
+  // El audio descriptivo es estado y no una ref: así los efectos que lo usan se repiten cuando
+  // cambia la pista (`audio`) y la nueva queda sincronizada con el video.
+  const [audioDescription, setAudioDescription] = useState<HTMLAudioElement | null>(null);
+
+  // Último tiempo que el estado y el video tienen en común: el que el video informó con
+  // `timeupdate` o el que se le aplicó en la última búsqueda.
+  const syncedTimeRef = useRef(0);
 
   // Función para pausar o iniciar la reproducción del video.
   const togglePlayVideo = () => {
     dispatch({ type: PlayerActionKind.PLAY_PAUSE, payload: !isPlaying });
   };
 
-  // Función que crea un nuevo HTMLAudioElement para manejar el audio descriptivo.
-  const createAudioDescription = (url: string) => {
-    if (!audioDescriptionRef.current) {
-      // Crear una nueva instancia de Audio con la URL del audio descriptivo.
-      const audioInstance = new Audio(url);
-      audioDescriptionRef.current = audioInstance;
-    }
-  };
+  // Inicia la reproducción de un elemento. `play()` devuelve una promesa que se rechaza si el
+  // navegador no deja reproducir (NotAllowedError, NotSupportedError) o si se pausa antes de que
+  // empiece (AbortError); sin atender ese rechazo queda como error sin capturar.
+  const playMedia = useCallback(
+    (mediaElement: HTMLMediaElement) => {
+      Promise.resolve(mediaElement.play()).catch((error: unknown) => {
+        // Pausar a media carga es lo normal al pulsar rápido: el estado ya dice "pausado".
+        if ((error as { name?: string } | null)?.name === "AbortError") return;
+
+        // Si no pudo reproducirse el video, el botón no debe seguir mostrando "Pausar". Un fallo
+        // del audio descriptivo no detiene el video.
+        if (mediaElement === videoRef.current) {
+          dispatch({ type: PlayerActionKind.PLAY_PAUSE, payload: false });
+        }
+      });
+    },
+    [dispatch]
+  );
 
   // Actualiza el tiempo actual del video en el estado
   const handleTimeUpdate = () => {
     if (videoRef.current && isPlaying && !isSeeking) {
+      syncedTimeRef.current = videoRef.current.currentTime;
+
       dispatch({
         type: PlayerActionKind.UPDATE_VIDEO_CURRENT_TIME,
         payload: videoRef.current.currentTime,
@@ -87,12 +106,12 @@ export const Video = () => {
       mediaElement.muted = muted;
 
       if (isPlaying) {
-        mediaElement.play();
+        playMedia(mediaElement);
       } else {
         mediaElement.pause();
       }
     },
-    [volume, muted, isPlaying]
+    [volume, muted, isPlaying, playMedia]
   );
 
   useEffect(() => {
@@ -102,31 +121,47 @@ export const Video = () => {
     manageMediaPlayback({ mediaElement: videoRef.current });
 
     // Controla la reproducción y muteo del audio descriptivo si está activo.
-    if (isActiveAD && audioDescriptionRef.current) {
-      manageMediaPlayback({ mediaElement: audioDescriptionRef.current, customVolume: volumeAD });
+    if (isActiveAD && audioDescription) {
+      manageMediaPlayback({ mediaElement: audioDescription, customVolume: volumeAD });
     }
-  }, [isPlaying, muted, volume, isActiveAD, volumeAD, manageMediaPlayback]);
+  }, [isPlaying, muted, volume, isActiveAD, volumeAD, audioDescription, manageMediaPlayback]);
 
   // Sincroniza los tiempos actuales de video y audio cuando se busca un nuevo tiempo.
   useEffect(() => {
-    if (videoRef.current && (isSeeking || !isPlaying)) {
-      videoRef.current.currentTime = currentTime;
+    const videoElement = videoRef.current;
 
-      if (isActiveAD && audioDescriptionRef.current) {
-        audioDescriptionRef.current.currentTime = currentTime;
+    if (!videoElement || !(isSeeking || !isPlaying)) return;
+
+    if (currentTime !== syncedTimeRef.current) {
+      // El tiempo del estado cambió desde la última sincronización (un salto o una búsqueda):
+      // se aplica al video.
+      syncedTimeRef.current = currentTime;
+      videoElement.currentTime = currentTime;
+
+      if (isActiveAD && audioDescription) {
+        audioDescription.currentTime = currentTime;
       }
+    } else if (!isPlaying && !isSeeking && videoElement.currentTime !== currentTime) {
+      // Al pausar, el estado va unos milisegundos por detrás del video (solo se actualiza con
+      // `timeupdate`). Escribirlo en el video lo haría retroceder: es el estado quien adopta la
+      // posición real.
+      syncedTimeRef.current = videoElement.currentTime;
+      dispatch({
+        type: PlayerActionKind.UPDATE_VIDEO_CURRENT_TIME,
+        payload: videoElement.currentTime,
+      });
     }
-  }, [currentTime, isSeeking, isPlaying, isActiveAD]);
+  }, [currentTime, isSeeking, isPlaying, isActiveAD, audioDescription, dispatch]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    const audioDescriptionElement = audioDescriptionRef.current;
+    const audioDescriptionElement = audioDescription;
 
     if (!audioDescriptionElement || !videoElement) return;
 
     // Si el audio descriptivo está activado y el video está en reproducción:
     if (isActiveAD && isPlaying) {
-      audioDescriptionElement.play();
+      playMedia(audioDescriptionElement);
       const currentVideoTime = videoElement.currentTime;
 
       // Sincroniza el tiempo del audio descriptivo con el tiempo del video
@@ -143,10 +178,20 @@ export const Video = () => {
         audioDescriptionElement.pause();
       }
     };
-  }, [isActiveAD, isPlaying]);
+  }, [isActiveAD, isPlaying, audioDescription, playMedia]);
 
+  // Crea el audio descriptivo. Si la pista cambia o se quita, se suelta la anterior y se crea la
+  // nueva, para que no siga sonando la vieja.
   useEffect(() => {
-    if (audio) createAudioDescription(audio);
+    if (!audio) return;
+
+    const audioInstance = new Audio(audio);
+    setAudioDescription(audioInstance);
+
+    return () => {
+      audioInstance.pause();
+      setAudioDescription(null);
+    };
   }, [audio]);
 
   return (
