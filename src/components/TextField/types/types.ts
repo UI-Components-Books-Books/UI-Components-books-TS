@@ -19,12 +19,9 @@ export interface TextFieldMessages {
 }
 
 /**
- * Propiedades para el componente de campo de texto.
- *
- * El resto de atributos de `<input>` (`value`, `defaultValue`, `onChange`, `name`, `required`,
- * `maxLength`, `autoComplete`, `inputMode`, `placeholder`, etc.) se pasan al `<input>`.
+ * Propiedades que comparten `TextField` y `TextArea`.
  */
-export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
+export interface TextFieldBaseProps {
     /**
      * Identificador único del campo. Los ids de la ayuda, el error y el resultado se derivan de él.
      */
@@ -64,16 +61,31 @@ export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInput
     messages?: TextFieldMessages;
 
     /**
-     * Tipo de campo. Para números usa `NumberInput`.
-     * @default 'text'
-     */
-    type?: 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
-
-    /**
      * Tamaño del campo.
      * @default 'normal'
      */
     size?: 'small' | 'normal' | 'big';
+
+    /**
+     * Clase adicional para el contenedor del campo.
+     */
+    addClass?: string;
+}
+
+/**
+ * Propiedades para el componente de campo de texto.
+ *
+ * El resto de atributos de `<input>` (`value`, `defaultValue`, `onChange`, `name`, `required`,
+ * `maxLength`, `autoComplete`, `inputMode`, `placeholder`, etc.) se pasan al `<input>`.
+ */
+export interface TextFieldProps
+    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'>,
+        TextFieldBaseProps {
+    /**
+     * Tipo de campo. Para números usa `NumberInput`.
+     * @default 'text'
+     */
+    type?: 'text' | 'email' | 'tel' | 'url' | 'search' | 'password';
 
     /**
      * Muestra el campo en línea, para completar una frase. Normalmente se combina con
@@ -81,9 +93,20 @@ export interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInput
      * @default false
      */
     inline?: boolean;
+}
 
+/**
+ * Propiedades para el componente de campo de texto de varias líneas.
+ *
+ * El resto de atributos de `<textarea>` (`value`, `defaultValue`, `onChange`, `name`, `required`,
+ * `maxLength`, `placeholder`, etc.) se pasan al `<textarea>`.
+ */
+export interface TextAreaProps
+    extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+        TextFieldBaseProps {
     /**
-     * Clase adicional para el contenedor del campo.
+     * Número de líneas visibles.
+     * @default 4
      */
-    addClass?: string;
+    rows?: number;
 }

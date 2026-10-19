@@ -132,3 +132,23 @@
 .c-text-field[data-state="wrong"] .c-text-field__icon {
     color: var(--text-field-wrong);
 }
+
+/*
+ * TextArea (varias líneas). El icono del resultado va arriba, no centrado, y apartado del borde
+ * para no quedar sobre la barra de desplazamiento cuando el texto es largo.
+ */
+:where(.c-text-field--area .c-text-field__input) {
+    padding-block: 0.5rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.c-text-field--area:not([data-state="normal"]) .c-text-field__input {
+    padding-inline-end: 3.5rem;
+}
+
+.c-text-field--area .c-text-field__icon {
+    inset-block: 0.5rem auto;
+    inset-inline-end: 1.5rem;
+    place-items: start;
+}
