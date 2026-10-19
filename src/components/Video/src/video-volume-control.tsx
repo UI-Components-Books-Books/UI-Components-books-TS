@@ -64,6 +64,10 @@ const VolumeSlider = () => {
 
     const lastVolumeValue = useRef<number>(volume)
 
+    // El volumen se guarda como fracción: 0.55 * 100 da 55.00000000000001, que un lector de
+    // pantalla leería tal cual. Se redondea para mostrar siempre el porcentaje entero.
+    const percentage = Math.round(volume * 100)
+
     // Función para manejar el cambio de volumen
     const handleVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
         const volumeElement = event.target;
@@ -107,9 +111,9 @@ const VolumeSlider = () => {
                 min='0'
                 max='100'
                 step='5'
-                value={volume * 100}
+                value={percentage}
                 onChange={handleVolume}
-                aria-valuetext={`${volume * 100}%`}
+                aria-valuetext={`${percentage}%`}
             />
         </label>
     )

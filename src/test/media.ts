@@ -37,16 +37,6 @@ export function mockMediaPlayback() {
 
   vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => {})
 
-  // Un navegador real crea un TextTrack en `textTracks[0]` por cada <track default>; jsdom devuelve
-  // una lista vacía. Se simula una pista por elemento con la misma forma que usa useTranscript.
-  const textTracks = new WeakMap<HTMLMediaElement, unknown[]>()
-  vi.spyOn(HTMLMediaElement.prototype, 'textTracks', 'get').mockImplementation(function (
-    this: HTMLMediaElement
-  ) {
-    if (!textTracks.has(this)) textTracks.set(this, [{ activeCues: [], oncuechange: null }])
-    return textTracks.get(this) as unknown as TextTrackList
-  })
-
   return {
     play,
     pause,

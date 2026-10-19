@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { mockMatchMedia } from '../../../test/matchMedia'
 import { mockMediaPlayback, setMediaProps } from '../../../test/media'
 import { VideoPlayer } from '../index'
 import type { VideoPlayerProps } from '../types/types'
@@ -42,6 +43,12 @@ const timeText = () => document.querySelector('.video-player__time')?.textConten
 const loadVideo = (duration = 125) => {
   setMediaProps(videoEl(), { duration })
   fireEvent.loadedData(videoEl())
+}
+
+/** Simula que el navegador informó (con `timeupdate`) que el video va en el tiempo dado. */
+const advanceTo = (time: number) => {
+  setMediaProps(videoEl(), { currentTime: time })
+  fireEvent.timeUpdate(videoEl())
 }
 
 const adToolbar = () => document.querySelector('.video-audio-description') as HTMLElement
@@ -212,6 +219,58 @@ describe('VideoPlayer', () => {
       fireEvent.timeUpdate(videoEl())
 
       expect(timeText()).toBe('00:00/02:05')
+    })
+
+    it('al pausar no retrocede el video al tiempo del último timeupdate', async () => {
+      setup()
+      loadVideo(125)
+      await userEvent.click(tool('Reproducir video'))
+      advanceTo(10)
+      // El video avanzó un poco más antes de que llegara el siguiente timeupdate.
+      setMediaProps(videoEl(), { currentTime: 10.2 })
+
+      await userEvent.click(tool('Pausar video'))
+
+      expect(videoEl().currentTime).toBe(10.2)
+      expect(timeText()).toBe('00:10/02:05')
+    })
+
+    it('estando en pausa, una búsqueda sí se aplica al video', async () => {
+      setup()
+      loadVideo(125)
+      await userEvent.click(tool('Reproducir video'))
+      advanceTo(10)
+      await userEvent.click(tool('Pausar video'))
+
+      fireEvent.keyDown(slider(), { key: 'End' })
+      fireEvent.keyUp(slider(), { key: 'End' })
+
+      expect(videoEl().currentTime).toBe(125)
+    })
+
+    describe('cuando el navegador rechaza play()', () => {
+      it('si bloquea la reproducción, el botón vuelve a "Reproducir"', async () => {
+        media.play.mockImplementationOnce(() =>
+          Promise.reject(new DOMException('bloqueada', 'NotAllowedError'))
+        )
+        setup()
+
+        await userEvent.click(tool('Reproducir video'))
+
+        await waitFor(() => expect(tool('Reproducir video')).toBeInTheDocument())
+      })
+
+      it('si se pausa antes de que empiece (AbortError) lo ignora y no deja errores sin capturar', async () => {
+        media.play.mockImplementationOnce(() =>
+          Promise.reject(new DOMException('interrumpida', 'AbortError'))
+        )
+        setup()
+
+        await userEvent.click(tool('Reproducir video'))
+        await act(async () => {})
+
+        expect(tool('Pausar video')).toBeInTheDocument()
+      })
     })
 
     it('el slider describe el progreso con palabras para lectores de pantalla', async () => {
@@ -434,6 +493,15 @@ describe('VideoPlayer', () => {
       expect(volumeSlider()).toHaveAttribute('aria-valuetext', '50%')
     })
 
+    it('el texto del valor es siempre un porcentaje entero (0.55 * 100 no se lee como 55.00000000000001)', () => {
+      setup()
+
+      fireEvent.change(volumeSlider(), { target: { value: '55' } })
+
+      expect(volumeSlider()).toHaveValue('55')
+      expect(volumeSlider()).toHaveAttribute('aria-valuetext', '55%')
+    })
+
     it('el botón de silencio mutea el video y deja el volumen en 0', async () => {
       setup()
 
@@ -559,6 +627,111 @@ describe('VideoPlayer', () => {
       expect(document.querySelector('.video-player__transcription-header')).toHaveTextContent('00:00')
     })
 
+    it('resalta el segmento que corresponde al tiempo del video', async () => {
+      await openTranscript()
+      await userEvent.click(tool('Reproducir video'))
+      const active = () => document.querySelector('[data-is-active="true"]')
+
+      advanceTo(6)
+      expect(active()).toHaveTextContent('Primer segmento')
+
+      advanceTo(10.5)
+      expect(active()).toHaveTextContent('Segundo segmento')
+
+      advanceTo(20)
+      expect(active()).toBeNull()
+    })
+
+    describe('desplazamiento automático', () => {
+      const listEl = () => document.querySelector('.video-player__transcription__segment-list') as HTMLElement
+
+      beforeEach(() => {
+        mockMatchMedia()
+      })
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      const openAndPlay = async () => {
+        await openTranscript()
+        await userEvent.click(tool('Reproducir video'))
+        return vi.spyOn(Element.prototype, 'scrollTo')
+      }
+
+      it('solo se desplaza cuando cambia el segmento activo, no en cada actualización del tiempo', async () => {
+        const scrollTo = await openAndPlay()
+
+        advanceTo(6)
+        expect(scrollTo).toHaveBeenCalledTimes(1)
+
+        advanceTo(6.5)
+        advanceTo(7)
+        expect(scrollTo).toHaveBeenCalledTimes(1)
+
+        advanceTo(10.5)
+        expect(scrollTo).toHaveBeenCalledTimes(2)
+      })
+
+      it.each([
+        ['la rueda del ratón', () => fireEvent.wheel(listEl())],
+        ['el gesto táctil', () => fireEvent.touchMove(listEl())],
+        ['el teclado dentro de la lista', () => fireEvent.keyDown(listEl(), { key: 'ArrowDown' })],
+        ['la barra de desplazamiento', () => fireEvent.pointerDown(listEl())],
+      ])('no se desplaza sola justo después de usar %s', async (_gesture, gesture) => {
+        const scrollTo = await openAndPlay()
+
+        gesture()
+        advanceTo(6)
+
+        expect(scrollTo).not.toHaveBeenCalled()
+      })
+
+      it('retoma el desplazamiento pasado un rato desde el último gesto del usuario', async () => {
+        const scrollTo = await openAndPlay()
+        vi.useFakeTimers({ toFake: ['Date'] })
+
+        fireEvent.wheel(listEl())
+        advanceTo(6)
+        expect(scrollTo).not.toHaveBeenCalled()
+
+        vi.setSystemTime(Date.now() + 5001)
+        advanceTo(10.5)
+
+        expect(scrollTo).toHaveBeenCalledTimes(1)
+      })
+
+      it('tocar un segmento no cuenta como desplazarse: la lista sigue al video', async () => {
+        const scrollTo = await openAndPlay()
+
+        await userEvent.click(screen.getByRole('button', { name: 'Primer segmento' }))
+        scrollTo.mockClear()
+
+        // Tras el clic el reproductor ignora timeupdate unos 100 ms mientras aplica el salto.
+        await waitFor(() => {
+          advanceTo(10.5)
+          expect(scrollTo).toHaveBeenCalledTimes(1)
+        })
+      })
+
+      it('se desplaza con animación suave por defecto', async () => {
+        const scrollTo = await openAndPlay()
+
+        advanceTo(6)
+
+        expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'smooth' }))
+      })
+
+      it('sin animación si el usuario pidió reducir el movimiento', async () => {
+        mockMatchMedia({ '(prefers-reduced-motion: reduce)': true })
+        const scrollTo = await openAndPlay()
+
+        advanceTo(6)
+
+        expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }))
+      })
+    })
+
     it('al hacer click en un segmento el video salta al inicio de ese segmento', async () => {
       await openTranscript()
 
@@ -631,10 +804,11 @@ describe('VideoPlayer', () => {
       await userEvent.click(tool('Audio descriptivo'))
     }
 
-    it('empieza oculto, con el botón sin presionar', () => {
+    it('empieza oculto, con el botón sin expandir', () => {
       setup({ audio: AUDIO })
 
-      expect(tool('Audio descriptivo')).toHaveAttribute('aria-pressed', 'false')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-expanded', 'false')
+      expect(tool('Audio descriptivo')).not.toHaveAttribute('aria-pressed')
       expect(adToolbar()).not.toBeInTheDocument()
     })
 
@@ -643,8 +817,18 @@ describe('VideoPlayer', () => {
 
       expect(adToolbar()).toBeInTheDocument()
       expect(adToolbar()).toHaveAttribute('aria-label', 'Controles del audio descriptivo')
-      expect(tool('Audio descriptivo')).toHaveAttribute('aria-pressed', 'true')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-expanded', 'true')
       expect(adToolbar()).toHaveFocus()
+    })
+
+    it('la barra es un diálogo modal con nombre, y el botón que la abre indica cuál controla', async () => {
+      await openAD()
+
+      const dialog = screen.getByRole('dialog', { name: 'Controles del audio descriptivo' })
+
+      expect(dialog).toBe(adToolbar())
+      expect(dialog).toHaveAttribute('aria-modal', 'true')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-controls', dialog.id)
     })
 
     it('al abrirla activa el audio descriptivo (el interruptor queda encendido)', async () => {
@@ -670,7 +854,7 @@ describe('VideoPlayer', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Cerrar los controles del audio descriptivo' }))
 
       expect(adToolbar()).not.toBeInTheDocument()
-      expect(tool('Audio descriptivo')).toHaveAttribute('aria-pressed', 'false')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-expanded', 'false')
     })
 
     it('Escape cierra la barra', async () => {
@@ -679,6 +863,33 @@ describe('VideoPlayer', () => {
       fireEvent.keyDown(adToolbar(), { key: 'Escape' })
 
       expect(adToolbar()).not.toBeInTheDocument()
+    })
+
+    it('al cerrar con el botón Cerrar el foco vuelve al botón que abrió la barra', async () => {
+      await openAD()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Cerrar los controles del audio descriptivo' }))
+
+      expect(tool('Audio descriptivo')).toHaveFocus()
+    })
+
+    it('al cerrar con Escape el foco vuelve al botón que abrió la barra', async () => {
+      await openAD()
+
+      fireEvent.keyDown(adToolbar(), { key: 'Escape' })
+
+      expect(tool('Audio descriptivo')).toHaveFocus()
+    })
+
+    it('el foco vuelve al botón aunque la barra se abra y se cierre más de una vez', async () => {
+      await openAD()
+      fireEvent.keyDown(adToolbar(), { key: 'Escape' })
+
+      await userEvent.click(tool('Audio descriptivo'))
+      expect(adToolbar()).toHaveFocus()
+      fireEvent.keyDown(adToolbar(), { key: 'Escape' })
+
+      expect(tool('Audio descriptivo')).toHaveFocus()
     })
 
     it('el foco queda atrapado: Tab en el último elemento vuelve al primero', async () => {
@@ -763,57 +974,126 @@ describe('VideoPlayer', () => {
       expect(players.some((p) => p instanceof HTMLAudioElement && p.src.endsWith(AUDIO))).toBe(true)
     })
 
+    describe('pista de audio', () => {
+      const audioElements = (calls: { mock: { instances: unknown[] } }) =>
+        calls.mock.instances.filter((element): element is HTMLAudioElement => element instanceof HTMLAudioElement)
+
+      it('si cambia la pista, deja de sonar la anterior y suena la nueva', async () => {
+        const { rerender } = setup({ audio: AUDIO })
+        await userEvent.click(tool('Audio descriptivo'))
+        await userEvent.click(tool('Reproducir video'))
+        const previous = audioElements(media.play).find((element) => element.src.endsWith(AUDIO)) as HTMLAudioElement
+        media.pause.mockClear()
+
+        rerender(<VideoPlayer src={SRC} audio="/otra.mp3" />)
+
+        expect(media.pause.mock.instances).toContain(previous)
+        await waitFor(() =>
+          expect(audioElements(media.play).some((element) => element.src.endsWith('/otra.mp3'))).toBe(true)
+        )
+      })
+
+      it('si se quita la pista, deja de sonar', async () => {
+        const { rerender } = setup({ audio: AUDIO })
+        await userEvent.click(tool('Audio descriptivo'))
+        await userEvent.click(tool('Reproducir video'))
+        const previous = audioElements(media.play).find((element) => element.src.endsWith(AUDIO)) as HTMLAudioElement
+        media.pause.mockClear()
+
+        rerender(<VideoPlayer src={SRC} />)
+
+        expect(media.pause.mock.instances).toContain(previous)
+      })
+    })
+
     describe('saltos de 10 segundos', () => {
-      it('"Avanzar" suma 10 segundos al presionar y los aplica al video', async () => {
+      // El nombre accesible es el texto visible del botón (WCAG 2.5.3).
+      const forward = () => screen.getByRole('button', { name: '10s Adelante' })
+      const backward = () => screen.getByRole('button', { name: '10s Atrás' })
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      it('"Adelante" suma 10 segundos al hacer clic y los aplica al video', async () => {
         await openAD()
         loadVideo(100)
 
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
+        fireEvent.click(forward())
 
         expect(timeText()).toBe('00:10/01:40')
         expect(videoEl().currentTime).toBe(10)
       })
 
-      it('"Retroceder" resta 10 segundos sin bajar de 0', async () => {
+      it('"Atrás" resta 10 segundos sin bajar de 0', async () => {
         await openAD()
         loadVideo(100)
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
-        fireEvent.mouseUp(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
+        fireEvent.click(forward())
 
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Retroceder 10 segundos del video' }))
+        fireEvent.click(backward())
         expect(timeText()).toBe('00:00/01:40')
 
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Retroceder 10 segundos del video' }))
+        fireEvent.click(backward())
         expect(timeText()).toBe('00:00/01:40')
       })
 
-      it('"Avanzar" no pasa de la duración total', async () => {
+      it('"Adelante" no pasa de la duración total', async () => {
         await openAD()
         loadVideo(15)
 
-        const forward = screen.getByRole('button', { name: 'Avanzar 10 segundos del video' })
-        fireEvent.mouseDown(forward)
-        fireEvent.mouseUp(forward)
-        fireEvent.mouseDown(forward)
+        fireEvent.click(forward())
+        fireEvent.click(forward())
 
         expect(timeText()).toBe('00:15/00:15')
       })
 
-      it('también funcionan con el teclado (Enter)', async () => {
+      it('funcionan con el teclado (Enter y Espacio), que el navegador convierte en clic', async () => {
+        await openAD()
+        loadVideo(100)
+        forward().focus()
+
+        await userEvent.keyboard('{Enter}')
+        expect(timeText()).toBe('00:10/01:40')
+
+        await userEvent.keyboard(' ')
+        expect(timeText()).toBe('00:20/01:40')
+      })
+
+      it('no actúan al presionar el botón, solo al completar el clic (se puede cancelar saliendo del botón)', async () => {
         await openAD()
         loadVideo(100)
 
-        fireEvent.keyDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }), { key: 'Enter' })
+        fireEvent.mouseDown(forward())
 
+        expect(timeText()).toBe('00:00/01:40')
+      })
+
+      it('tras el salto el reproductor vuelve a seguir al video sin esperar a que se suelte el puntero', async () => {
+        vi.useFakeTimers()
+        setup({ audio: AUDIO })
+        fireEvent.click(tool('Audio descriptivo'))
+        loadVideo(100)
+        fireEvent.click(tool('Reproducir video'))
+
+        fireEvent.click(forward())
+        setMediaProps(videoEl(), { currentTime: 50 })
+        fireEvent.timeUpdate(videoEl())
+        // Mientras dura el salto el avance del video se ignora, para no pisar el tiempo nuevo.
         expect(timeText()).toBe('00:10/01:40')
+
+        act(() => {
+          vi.advanceTimersByTime(100)
+        })
+        fireEvent.timeUpdate(videoEl())
+
+        expect(timeText()).toBe('00:50/01:40')
       })
     })
 
     it('cerrar la barra no pierde la posición del video', async () => {
       await openAD()
       loadVideo(100)
-      fireEvent.mouseDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
-      fireEvent.mouseUp(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
+      fireEvent.click(screen.getByRole('button', { name: '10s Adelante' }))
 
       await act(async () => {
         await userEvent.click(screen.getByRole('button', { name: 'Cerrar los controles del audio descriptivo' }))
@@ -897,18 +1177,15 @@ describe('VideoPlayer', () => {
       expect(scrollTo.mock.contexts).not.toContain(listOf(players[0]))
     })
 
-    it('el segmento activo se marca en el reproductor cuyo video cambió de subtítulo', async () => {
+    it('el segmento activo se marca en el reproductor cuyo video avanzó', async () => {
       const players = renderPlayers([{}, {}])
       await openEverything(players[0])
       await openEverything(players[1])
-      const videos = players.map((player) => player.querySelector('video') as HTMLVideoElement)
-      const track = videos[1].textTracks[0] as unknown as {
-        activeCues: Array<{ startTime: number; endTime: number }>
-        oncuechange: () => void
-      }
+      const video = players[1].querySelector('video') as HTMLVideoElement
+      await userEvent.click(toolOf(players[1], 'Reproducir video'))
 
-      track.activeCues = [{ startTime: 10, endTime: 14 }]
-      act(() => track.oncuechange())
+      setMediaProps(video, { currentTime: 10 })
+      fireEvent.timeUpdate(video)
 
       expect(players[1].querySelector('[data-is-active="true"]')).toHaveTextContent('Segundo segmento')
       expect(players[0].querySelector('[data-is-active="true"]')).toBeNull()
