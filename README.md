@@ -91,6 +91,7 @@ function App() {
 - `Select` - Selector con búsqueda y opciones múltiples
 - `NumberInput` - Input numérico con steppers
 - `TextField` - Campo de texto con ayuda, error y resultado de actividad
+- `TextArea` - Campo de texto de varias líneas, con las mismas ayudas que `TextField`
 - `Switch` - Interruptor toggle
 
 ### Feedback & Overlays

@@ -26,8 +26,10 @@ El componente **TextField** es un campo de texto de una línea, con etiqueta, ay
 
 ## Uso ideal
 
-- Respuestas libres en actividades (completar frases, preguntas abiertas)
+- Respuestas libres en actividades (completar frases, respuestas cortas)
 - Formularios (nombre, correo, teléfono)
+
+Para varias líneas usa \`TextArea\`.
 
 ## Accesibilidad
 
