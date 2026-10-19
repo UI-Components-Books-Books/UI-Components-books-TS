@@ -434,6 +434,15 @@ describe('VideoPlayer', () => {
       expect(volumeSlider()).toHaveAttribute('aria-valuetext', '50%')
     })
 
+    it('el texto del valor es siempre un porcentaje entero (0.55 * 100 no se lee como 55.00000000000001)', () => {
+      setup()
+
+      fireEvent.change(volumeSlider(), { target: { value: '55' } })
+
+      expect(volumeSlider()).toHaveValue('55')
+      expect(volumeSlider()).toHaveAttribute('aria-valuetext', '55%')
+    })
+
     it('el botón de silencio mutea el video y deja el volumen en 0', async () => {
       setup()
 
@@ -631,10 +640,11 @@ describe('VideoPlayer', () => {
       await userEvent.click(tool('Audio descriptivo'))
     }
 
-    it('empieza oculto, con el botón sin presionar', () => {
+    it('empieza oculto, con el botón sin expandir', () => {
       setup({ audio: AUDIO })
 
-      expect(tool('Audio descriptivo')).toHaveAttribute('aria-pressed', 'false')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-expanded', 'false')
+      expect(tool('Audio descriptivo')).not.toHaveAttribute('aria-pressed')
       expect(adToolbar()).not.toBeInTheDocument()
     })
 
@@ -643,8 +653,18 @@ describe('VideoPlayer', () => {
 
       expect(adToolbar()).toBeInTheDocument()
       expect(adToolbar()).toHaveAttribute('aria-label', 'Controles del audio descriptivo')
-      expect(tool('Audio descriptivo')).toHaveAttribute('aria-pressed', 'true')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-expanded', 'true')
       expect(adToolbar()).toHaveFocus()
+    })
+
+    it('la barra es un diálogo modal con nombre, y el botón que la abre indica cuál controla', async () => {
+      await openAD()
+
+      const dialog = screen.getByRole('dialog', { name: 'Controles del audio descriptivo' })
+
+      expect(dialog).toBe(adToolbar())
+      expect(dialog).toHaveAttribute('aria-modal', 'true')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-controls', dialog.id)
     })
 
     it('al abrirla activa el audio descriptivo (el interruptor queda encendido)', async () => {
@@ -670,7 +690,7 @@ describe('VideoPlayer', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Cerrar los controles del audio descriptivo' }))
 
       expect(adToolbar()).not.toBeInTheDocument()
-      expect(tool('Audio descriptivo')).toHaveAttribute('aria-pressed', 'false')
+      expect(tool('Audio descriptivo')).toHaveAttribute('aria-expanded', 'false')
     })
 
     it('Escape cierra la barra', async () => {
@@ -679,6 +699,33 @@ describe('VideoPlayer', () => {
       fireEvent.keyDown(adToolbar(), { key: 'Escape' })
 
       expect(adToolbar()).not.toBeInTheDocument()
+    })
+
+    it('al cerrar con el botón Cerrar el foco vuelve al botón que abrió la barra', async () => {
+      await openAD()
+
+      await userEvent.click(screen.getByRole('button', { name: 'Cerrar los controles del audio descriptivo' }))
+
+      expect(tool('Audio descriptivo')).toHaveFocus()
+    })
+
+    it('al cerrar con Escape el foco vuelve al botón que abrió la barra', async () => {
+      await openAD()
+
+      fireEvent.keyDown(adToolbar(), { key: 'Escape' })
+
+      expect(tool('Audio descriptivo')).toHaveFocus()
+    })
+
+    it('el foco vuelve al botón aunque la barra se abra y se cierre más de una vez', async () => {
+      await openAD()
+      fireEvent.keyDown(adToolbar(), { key: 'Escape' })
+
+      await userEvent.click(tool('Audio descriptivo'))
+      expect(adToolbar()).toHaveFocus()
+      fireEvent.keyDown(adToolbar(), { key: 'Escape' })
+
+      expect(tool('Audio descriptivo')).toHaveFocus()
     })
 
     it('el foco queda atrapado: Tab en el último elemento vuelve al primero', async () => {
@@ -764,56 +811,93 @@ describe('VideoPlayer', () => {
     })
 
     describe('saltos de 10 segundos', () => {
-      it('"Avanzar" suma 10 segundos al presionar y los aplica al video', async () => {
+      // El nombre accesible es el texto visible del botón (WCAG 2.5.3).
+      const forward = () => screen.getByRole('button', { name: '10s Adelante' })
+      const backward = () => screen.getByRole('button', { name: '10s Atrás' })
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      it('"Adelante" suma 10 segundos al hacer clic y los aplica al video', async () => {
         await openAD()
         loadVideo(100)
 
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
+        fireEvent.click(forward())
 
         expect(timeText()).toBe('00:10/01:40')
         expect(videoEl().currentTime).toBe(10)
       })
 
-      it('"Retroceder" resta 10 segundos sin bajar de 0', async () => {
+      it('"Atrás" resta 10 segundos sin bajar de 0', async () => {
         await openAD()
         loadVideo(100)
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
-        fireEvent.mouseUp(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
+        fireEvent.click(forward())
 
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Retroceder 10 segundos del video' }))
+        fireEvent.click(backward())
         expect(timeText()).toBe('00:00/01:40')
 
-        fireEvent.mouseDown(screen.getByRole('button', { name: 'Retroceder 10 segundos del video' }))
+        fireEvent.click(backward())
         expect(timeText()).toBe('00:00/01:40')
       })
 
-      it('"Avanzar" no pasa de la duración total', async () => {
+      it('"Adelante" no pasa de la duración total', async () => {
         await openAD()
         loadVideo(15)
 
-        const forward = screen.getByRole('button', { name: 'Avanzar 10 segundos del video' })
-        fireEvent.mouseDown(forward)
-        fireEvent.mouseUp(forward)
-        fireEvent.mouseDown(forward)
+        fireEvent.click(forward())
+        fireEvent.click(forward())
 
         expect(timeText()).toBe('00:15/00:15')
       })
 
-      it('también funcionan con el teclado (Enter)', async () => {
+      it('funcionan con el teclado (Enter y Espacio), que el navegador convierte en clic', async () => {
+        await openAD()
+        loadVideo(100)
+        forward().focus()
+
+        await userEvent.keyboard('{Enter}')
+        expect(timeText()).toBe('00:10/01:40')
+
+        await userEvent.keyboard(' ')
+        expect(timeText()).toBe('00:20/01:40')
+      })
+
+      it('no actúan al presionar el botón, solo al completar el clic (se puede cancelar saliendo del botón)', async () => {
         await openAD()
         loadVideo(100)
 
-        fireEvent.keyDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }), { key: 'Enter' })
+        fireEvent.mouseDown(forward())
 
+        expect(timeText()).toBe('00:00/01:40')
+      })
+
+      it('tras el salto el reproductor vuelve a seguir al video sin esperar a que se suelte el puntero', async () => {
+        vi.useFakeTimers()
+        setup({ audio: AUDIO })
+        fireEvent.click(tool('Audio descriptivo'))
+        loadVideo(100)
+        fireEvent.click(tool('Reproducir video'))
+
+        fireEvent.click(forward())
+        setMediaProps(videoEl(), { currentTime: 50 })
+        fireEvent.timeUpdate(videoEl())
+        // Mientras dura el salto el avance del video se ignora, para no pisar el tiempo nuevo.
         expect(timeText()).toBe('00:10/01:40')
+
+        act(() => {
+          vi.advanceTimersByTime(100)
+        })
+        fireEvent.timeUpdate(videoEl())
+
+        expect(timeText()).toBe('00:50/01:40')
       })
     })
 
     it('cerrar la barra no pierde la posición del video', async () => {
       await openAD()
       loadVideo(100)
-      fireEvent.mouseDown(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
-      fireEvent.mouseUp(screen.getByRole('button', { name: 'Avanzar 10 segundos del video' }))
+      fireEvent.click(screen.getByRole('button', { name: '10s Adelante' }))
 
       await act(async () => {
         await userEvent.click(screen.getByRole('button', { name: 'Cerrar los controles del audio descriptivo' }))

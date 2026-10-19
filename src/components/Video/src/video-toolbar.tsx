@@ -170,7 +170,7 @@ const FullScreenButton = () => {
 };
 
 const AudioDescriptionButton = () => {
-  const { showAD, isActiveAD , audio } = usePlayerContext();
+  const { uid, showAD, isActiveAD , audio } = usePlayerContext();
   const dispatch = usePlayerDispatchContext();
 
   const toogleAudioDescription = () => {
@@ -185,8 +185,10 @@ const AudioDescriptionButton = () => {
   };
 
   return audio ? (
+    // Abre y cierra un panel, así que expone `aria-expanded` (y qué panel controla) en vez de `aria-pressed`.
     <button
-      aria-pressed={showAD}
+      aria-expanded={showAD}
+      aria-controls={`${uid}-audio-description`}
       type="button"
       aria-label="Audio descriptivo"
       onClick={toogleAudioDescription}

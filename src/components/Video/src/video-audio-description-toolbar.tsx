@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Icon, Switch } from "@components";
 import { useIsomorphicLayoutEffect } from "@utils/useIsomorphicLayoutEffect";
@@ -14,14 +14,28 @@ import {
 } from "./video-icons";
 import { PlayerActionKind } from "../types/types";
 
+// Segundos que salta cada pulsación de "Atrás" y "Adelante".
+const SKIP_SECONDS = 10;
+
+// Tiempo que se mantiene el estado "buscando" tras un salto, para que el video alcance a aplicarlo.
+const SKIP_SETTLE_MS = 100;
+
 export const VideoAudioDescriptionToolbar = () => {
   const refElement = useRef<HTMLDivElement>(null);
   const { uid, showAD, isActiveAD, isPlaying } = usePlayerContext();
 
-  // Id derivado del reproductor, para que no se repita si hay más de uno en la página.
-  const titleId = `${uid}-audio-description-title`;
+  // Ids derivados del reproductor, para que no se repitan si hay más de uno en la página.
+  // El del panel lo referencia `aria-controls` del botón que lo abre.
+  const panelId = `${uid}-audio-description`;
+  const titleId = `${panelId}-title`;
   const dispatch = usePlayerDispatchContext();
   const [shouldRender, setShouldRender] = useState(false);
+
+  // Elemento que tenía el foco al abrir la barra, para devolvérselo al cerrarla.
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const settleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(settleTimeoutRef.current), []);
 
   // Cierra la barra de herramientas de audio descriptivo
   const closeAudioDescriptionControls = () => {
@@ -33,6 +47,11 @@ export const VideoAudioDescriptionToolbar = () => {
       type: PlayerActionKind.AUDIO_DESCRIPTION_CHANGE,
       payload: false,
     });
+
+    // Sin esto el foco se pierde al desmontarse la barra y vuelve al inicio de la página.
+    const trigger = triggerRef.current;
+    triggerRef.current = null;
+    if (trigger?.isConnected) trigger.focus();
   };
 
   // Activa o desactiva el audio descriptivo
@@ -48,36 +67,19 @@ export const VideoAudioDescriptionToolbar = () => {
     dispatch({ type: PlayerActionKind.PLAY_PAUSE, payload: !isPlaying });
   };
 
-  // Retrocede 10 segundos en el video
-  const rewindVideoBy10Seconds = () => {
+  // Salta el video hacia atrás o hacia adelante. Se ejecuta con `click` (que cubre ratón, teclado,
+  // táctil y lectores de pantalla), y el estado "buscando" se suelta solo: así no puede quedar
+  // activo si el puntero sale del botón antes de soltarse.
+  const skipVideo = (
+    kind: PlayerActionKind.VIDEO_SKIP_BACKWARD | PlayerActionKind.VIDEO_SKIP_FORWARD
+  ) => {
     dispatch({ type: PlayerActionKind.UPDATE_SEEKING, payload: true });
-    dispatch({
-      type: PlayerActionKind.VIDEO_SKIP_BACKWARD,
-      payload: 10,
-    });
-  };
+    dispatch({ type: kind, payload: SKIP_SECONDS });
 
-  // Detiene la acción de búsqueda (seeking) al soltar el botón del mouse
-  const stopSeeking = () => {
-    dispatch({ type: PlayerActionKind.UPDATE_SEEKING, payload: false });
-  };
-
-  // Avanza 10 segundos en el video
-  const fastForwardVideoBy10Seconds = () => {
-    dispatch({ type: PlayerActionKind.UPDATE_SEEKING, payload: true });
-    dispatch({
-      type: PlayerActionKind.VIDEO_SKIP_FORWARD,
-      payload: 10,
-    });
-  };
-
-  // Maneja los eventos de teclado para los botónes que están en el menu de audio descriptivo
-  const handleControlButtonKeyDown = (event: React.KeyboardEvent, callback: () => void) => {
-    // Si se presiona Enter o la barra espaciadora, ejecuta el callback asociado
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      callback();
-    }
+    clearTimeout(settleTimeoutRef.current);
+    settleTimeoutRef.current = setTimeout(() => {
+      dispatch({ type: PlayerActionKind.UPDATE_SEEKING, payload: false });
+    }, SKIP_SETTLE_MS);
   };
 
   const handleToolbarKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -120,6 +122,12 @@ export const VideoAudioDescriptionToolbar = () => {
   useIsomorphicLayoutEffect(() => {
     if (!shouldRender || !refElement.current) return;
 
+    // Guarda quién tenía el foco (el botón que abrió la barra) antes de moverlo.
+    const activeElement = document.activeElement;
+    if (activeElement instanceof HTMLElement && !refElement.current.contains(activeElement)) {
+      triggerRef.current = activeElement;
+    }
+
     // Enfoca el primer elemento del toolbar
     refElement.current.focus();
   }, [shouldRender, refElement]);
@@ -160,6 +168,11 @@ export const VideoAudioDescriptionToolbar = () => {
       {shouldRender && (
         <div
           ref={refElement}
+          id={panelId}
+          role="dialog"
+          // Modal: atrapa el Tab y se cierra con Escape (ver `handleToolbarKeyDown`), y trae sus
+          // propios controles de reproducción, así que no hace falta salir de él mientras está abierto.
+          aria-modal="true"
           tabIndex={-1}
           aria-label="Controles del audio descriptivo"
           className="video-audio-description u-flow"
@@ -222,14 +235,11 @@ export const VideoAudioDescriptionToolbar = () => {
             aria-label="Controles de reproducción"
             className="video-audio-description__controls"
           >
+            {/* Sin `aria-label`: el nombre accesible es el texto visible (WCAG 2.5.3, etiqueta en el nombre). */}
             <button
               type="button"
-              aria-label="Retroceder 10 segundos del video"
               className="video-audio-description__button video-audio-description__button--control"
-              onMouseDown={rewindVideoBy10Seconds}
-              onMouseUp={stopSeeking}
-              onKeyDown={(event) => handleControlButtonKeyDown(event, rewindVideoBy10Seconds)}
-              onKeyUp={(event) => handleControlButtonKeyDown(event, stopSeeking)}
+              onClick={() => skipVideo(PlayerActionKind.VIDEO_SKIP_BACKWARD)}
             >
               <Icon>
                 <SkipPreviousIcon />
@@ -247,12 +257,8 @@ export const VideoAudioDescriptionToolbar = () => {
             </button>
             <button
               type="button"
-              aria-label="Avanzar 10 segundos del video"
               className="video-audio-description__button video-audio-description__button--control"
-              onMouseDown={fastForwardVideoBy10Seconds}
-              onMouseUp={stopSeeking}
-              onKeyDown={(event) => handleControlButtonKeyDown(event, fastForwardVideoBy10Seconds)}
-              onKeyUp={(event) => handleControlButtonKeyDown(event, stopSeeking)}
+              onClick={() => skipVideo(PlayerActionKind.VIDEO_SKIP_FORWARD)}
             >
               10s Adelante&nbsp;
               <Icon>
